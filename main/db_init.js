@@ -8,9 +8,10 @@ const {getExtensionPath} = require("./schema.js");
 (function(){
 
     const appDir = path.join(path.dirname(require.main.filename), "..");
-    const extPath = getExtensionPath(appDir);
+    const extPath = getExtensionPath(path.join(appDir, "libsimple"));
     const dictPath = path.join(appDir, extPath, "dict");
     const dbPath = path.join(appDir, "slippod.db");
+    console.log(extPath);
     if (fs.existsSync(dbPath)){
         //don't init db twice
         return
