@@ -60,4 +60,5 @@ CREATE TABLE IF NOT EXISTS links(
 CREATE INDEX IF NOT EXISTS idx_links_card_id on links(card_id);
 `;
 
+
 module.exports.schema = sqlSchema

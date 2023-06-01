@@ -55,9 +55,11 @@ function registerDBFunctions(functionNames) {
     });
   });
   console.log(app.getAppPath());
-  var lib_path = path.join(app.getAppPath(), "/libsimple/");
-  var dict_path = path.join(lib_path, "dict");
-  db.initialize(path.join(lib_path, 'libsimple'), dict_path, './test.db');
+  const libPath = path.join(app.getAppPath(), "/libsimple/libsimple");
+  const dictPath = path.join(libPath, "dict");
+  const dbPath = path.join(app.getAppPath(), "slippod.db");
+
+  db.initialize(libPath, dictPath, dbPath);
 }
 registerDBFunctions(Object.keys(db));
 
