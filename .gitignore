@@ -4,6 +4,8 @@ dist
 out
 *.local
 thumbs.db
+.vscode
+*.db
 
 .eslintcache
 .browserslistrc
