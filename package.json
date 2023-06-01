@@ -44,7 +44,7 @@
       "target": "nsis"
     },
     "files":[
-      "libsimple",
+      "libsimple/",
       "main",
       "renderer",
       "front_dist/*/**",
