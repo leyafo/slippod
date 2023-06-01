@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="module" src="renderer/index.js"></script>
+    <link rel="stylesheet" href="renderer/style.css" />
+    <title>slippod</title>
+</head>
+<body>
+    <div class="container m-auto ">
+        <div class="flex w-full">
+            <div class="sidebar w-1/5 bg-gray-200 p-4">
+                <div class="tags-container">
+                    <a class="text-blue-600 visited:text-purple-600 a-tag" href="/tag/#" tag="#">ALL</a>
+                </div>
+            </div>
+            <div class="w-2/5 bg-gray-300 p-4">
+                <div class="search-container flex flex-col w-full">
+                    <div class="flex w-full">
+                        <input class="w-4/5 p-2" type="text" placeholder="Search any thing here" />
+                    </div>
+                </div>
+                <div class="list-container">
+                    <div id="listView" ></div>
+                </div>
+            </div>
+            <div class="w-full bg-gray-400 p-2" id="card-detail-container" card-id="">
+                <div class="textview hidden" id="card-view" >
+                    <div class="flex justify-between item-view">
+                        <div class="markdown-body"></div>
+                    </div>
+                    <div>
+                        <button class="bg-blue-500 text-white p-2 edit-btn">Edit</button>
+                        <button class="bg-red-500 text-white p-2 delete-btn">Delete</button>
+                    </div>
+                    <div class="grid gap-4 grid-cols-1">
+                        <h2 class="text-lg font-bold">Reference card</h2>
+                        <div class="card-references divide-y divide-slate-100">
+                        </div>
+                    </div>
+                    <div class="flex flex-col">
+                        <h2 class="text-lg font-bold">References By</h2>
+                        <div class="card-references-by divide-y divide-slate-100">
+                        </div>
+                    </div>
+                </div>
+                <div class="editor hidden" id="editor-view">
+                    <div class="flex justify-between item-view">
+                        <textarea class="w-full p-2 edit-area" id="longTextInput" rows="5" placeholder="Enter your long text here..."></textarea>
+                    </div>
+                    <div>
+                        <button id="submitButton" class="bg-green-500 text-white p-2 editor-submit-btn">Submit</button>
+                        <button class="bg-gray-500 text-white p-2 editor-cancel-btn">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <template id="listItemTemplate">
+        <div class="list-item overflow-hidden">
+            <div class="top-row">
+                <span class="card-id font-bold"></span>
+            </div>
+            <div class="content markdown-body h-20"></div>
+        </div>
+    </template>
+    <template id="articleTemplate">
+        <div class="row-span-3 bg-white">
+            <div class="top-row">
+                <span class="card-id font-bold"></span>
+            </div>
+            <article class="content markdown-body py-10 sm:py-12">
+            </article>
+        </div>
+    </template>
+</body>
+</html>
