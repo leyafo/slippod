@@ -2,7 +2,7 @@
 
 const db = require("./db.js");
 const path = require('path');
-const fs = require("fs")
+const fs = require("fs");
 
 (function(){
 
@@ -10,7 +10,7 @@ const fs = require("fs")
     const extPath = path.join(appDir, "libsimple/libsimple");
     const dictPath = path.join(appDir, extPath, "dict");
     const dbPath = path.join(appDir, "slippod.db");
-    if (fs.existsSync()){
+    if (fs.existsSync(dbPath)){
         //don't init db twice
         return
     }
