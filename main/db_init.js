@@ -3,11 +3,12 @@
 const db = require("./db.js");
 const path = require('path');
 const fs = require("fs");
+const {getExtensionPath} = require("./schema.js");
 
 (function(){
 
     const appDir = path.join(path.dirname(require.main.filename), "..");
-    const extPath = path.join(appDir, "libsimple/libsimple");
+    const extPath = getExtensionPath(appDir);
     const dictPath = path.join(appDir, extPath, "dict");
     const dbPath = path.join(appDir, "slippod.db");
     if (fs.existsSync(dbPath)){

@@ -26,7 +26,10 @@ function createWindow () {
   mainWindow.loadURL(url);
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  if (process.env.NODE_ENV == 'development'){
+    mainWindow.webContents.openDevTools();
+  }
+
   mainWindow.setMenuBarVisibility(false);
   contextMenu({
     prepend: (defaultActions, params, browserWindow) => [
@@ -55,7 +58,9 @@ function registerDBFunctions(functionNames) {
     });
   });
   console.log(app.getAppPath());
-  const libPath = path.join(app.getAppPath(), "/libsimple/libsimple");
+  const {getExtensionPath} = require("./schema.js")
+
+  const libPath = getExtensionPath(path.join(app.getAppPath(), "libsimple"));
   const dictPath = path.join(libPath, "dict");
   const dbPath = path.join(app.getAppPath(), "slippod.db");
 

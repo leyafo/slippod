@@ -60,5 +60,15 @@ CREATE TABLE IF NOT EXISTS links(
 CREATE INDEX IF NOT EXISTS idx_links_card_id on links(card_id);
 `;
 
+function getExtensionPath(extensionDir){
+    const os = require('os');
+    const path = require("path")
+    if(os.platform == "win32"){
+        return path.join(extensionDir, "libsimple.dll") 
+    }else{
+        return path.join(extensionDir, "libsimple") 
+    }
+};
 
-module.exports.schema = sqlSchema
+module.exports.schema = sqlSchema;
+module.exports.getExtensionPath = getExtensionPath;
