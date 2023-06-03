@@ -1,8 +1,13 @@
+const fs = require("fs");
 
 var isInitlized = false
 function initialize(extPath, dictPath, dbPath){
     if (isInitlized){
         return
+    }
+    if (!fs.existsSync(dictPath)){
+        console.log(`${dictPath} is not existed.`);
+        process.exit(1);
     }
     //global variable
     db = require('better-sqlite3')(dbPath, { verbose: console.log });
