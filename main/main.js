@@ -1,7 +1,7 @@
 // main.js
 
 // Modules to control application life and create native browser window
-const {remote, globalShortcut, ipcMain, app, BrowserWindow } = require('electron')
+const {globalShortcut, ipcMain, app, BrowserWindow } = require('electron')
 const path = require('path')
 const db = require('./db.js')
 
@@ -57,12 +57,13 @@ function registerDBFunctions(functionNames) {
       return db[funcName](...args);
     });
   });
-  console.log(app.getAppPath());
+  const appPath = app.getAppPath();
+  console.log(appPath);
   const {getExtensionPath} = require("./schema.js")
 
-  const libPath = getExtensionPath(path.join(app.getAppPath(), "libsimple"));
-  const dictPath = path.join(libPath, "dict");
-  const dbPath = path.join(app.getAppPath(), "slippod.db");
+  const libPath = getExtensionPath(path.join(appPath, "libsimple"));
+  const dictPath = path.join(appPath, "libsimple", "dict")
+  const dbPath = path.join(appPath, "slippod.db");
 
   db.initialize(libPath, dictPath, dbPath);
 }
