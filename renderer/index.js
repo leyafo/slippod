@@ -6,6 +6,10 @@ String.prototype.isEmpty = function() {
     return (this.length === 0 || !this.trim());
 };
 
+function unixTimeFormat(unixTime){
+    const d = new Date(unixTime*1000);
+    return `${d.getFullYear()}-${d.getMonth()+1}-${d.getUTCDate()} ${d.getHours()}:${d.getMinutes()}`;
+}
 
 function clickHandle(selector, handle){
   document.addEventListener("click", function(event){
@@ -93,8 +97,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
     }
-
   });
+  clickHandle(".markdown-body a", function(event){
+    event.preventDefault();
+    const targetContent = event.target.textContent.trim()
+    if (targetContent[0] == '@'){
+      const cardID = targetContent.slice(1, targetContent.length)
+      showCard(cardID)
+    }else if(targetContent[0] == '#'){
+      const tag = targetContent.slice(1, targetContent.length)
+      db.getCardsByTag(tag, 0, 10000).then(function(cards){
+        listView.innerHTML = '';
+        for (let card of cards) {
+          insertCard(card, orderBeforeLast);
+        }
+      });
+    }
+  })
 
   //list-items envents listener
   clickHandle(".list-item", function(event){
@@ -123,6 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function showEditor(cardID){
     cardView.classList.add("hidden");
     editorViewPanel.classList.remove("hidden");
+    cardDetailContainer.setAttribute("card-id", cardID);
     db.getCardByID(cardID).then(function(card){
       longTextInput.value = card.entry;
       longTextInput.focus();
@@ -136,12 +156,20 @@ document.addEventListener('DOMContentLoaded', () => {
       cardView.classList.remove("hidden")
       editorViewPanel.classList.add("hidden");
 
+      let spanID = cardView.querySelector("span.card-id");
+      spanID.textContent = cardID;
+      let cardCreatedAt = cardView.querySelector("span.card-created-at");
+      cardCreatedAt.textContent = "Created At: " + unixTimeFormat(cardDetails.card.created_at);
+      let cardUpdatedAt = cardView.querySelector("span.card-updated-at");
+      cardUpdatedAt.textContent = "Updated At: "+ unixTimeFormat(cardDetails.card.updated_at);
+
       let refView = cardView.querySelector(".card-references")
       refView.innerHTML = '';
 
       let refByView = cardView.querySelector(".card-references-by")
       refByView.innerHTML = '';
 
+      //更新list列表用的
       if (isNeedUpdateList==needUpdateList){
         const listItem = document.getElementById(`list-item-${cardID}`);
         listItem.querySelector(".content").innerHTML = mdContentHTML;
@@ -246,6 +274,13 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener("keydown",function(event){
     if (event.ctrlKey && event.key == 'k'){
       searchInput.focus();
+    }else if(event.ctrlKey && event.key == "n"){
+      db.createNewCard("").then((newCardID) => {
+        db.getCardByID(newCardID).then((card) => {
+          insertCard(card, orderBeforeFirst);
+          showEditor(card.id);
+        });
+      })
     }
   })
 
