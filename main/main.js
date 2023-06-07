@@ -19,36 +19,32 @@ function createWindow () {
     }
   })
 
-  // mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
   const url = process.env.NODE_ENV === 'development'
   ? 'http://localhost:5173' // The URL of the Vite dev server.
   : `file://${path.join(app.getAppPath(),"front_dist/index.html")}`; // The path to your built index.html file.
-  mainWindow.loadURL(url);
 
+  mainWindow.loadURL(url);
   // Open the DevTools.
   if (process.env.NODE_ENV == 'development'){
     mainWindow.webContents.openDevTools();
+
+    globalShortcut.register('CommandOrControl+R', function() {
+      console.log('CommandOrControl+R is pressed');
+      mainWindow.reload();
+    })
   }
 
   mainWindow.setMenuBarVisibility(false);
   contextMenu({
     prepend: (defaultActions, params, browserWindow) => [
-      // new MenuItem({
-      //   label: "Inspect Element",
-      //   click: () => {
-      //     browserWindow.webContents.inspectElement(params.x, params.y);
-      //   },
-      // }),
       { type: "separator" },
     ],
   });
-  globalShortcut.register('CommandOrControl+R', function() {
-		console.log('CommandOrControl+R is pressed');
-		mainWindow.reload();
-	})
   ipcMain.handle("reloadAll", async(event, ...args)=>{
     mainWindow.reload();
   })
+
+  return mainWindow
 }
 
 function registerDBFunctions(functionNames) {

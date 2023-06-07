@@ -16,14 +16,15 @@ window.addEventListener('DOMContentLoaded', () => {
 
 const { contextBridge, ipcRenderer } = require('electron')
 
-contextBridge.exposeInMainWorld('utils', {
-  reloadAll: (...args) => ipcRenderer.invoke("reloadAll", ...args)
-});
+function unixTimeFormat(unixTime){
+    const d = new Date(unixTime*1000);
+    return `${d.getFullYear}-${d.getMonth()}-${d.getDay} ${d.getHours()}:${d.getMinutes()}`;
+}
 
-contextBridge.exposeInMainWorld('electronAPI', {
-  openFile: () => ipcRenderer.invoke('dialog:openFile'),
-  handleCounter: (callback) => ipcRenderer.on('update-counter', callback)
-})
+contextBridge.exposeInMainWorld('utils', {
+  reloadAll: (...args) => ipcRenderer.invoke("reloadAll", ...args),
+  unixTimeFormat: (unixTime) => unixTimeFormat(unixTime),
+});
 
 
 function exposeDBFunctions(exposeFunctionNames) {

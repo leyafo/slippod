@@ -131,7 +131,7 @@ function editCardByID(id, cardEntry){
     const existedLinks = db.prepare("select link_id from links where card_id = ?").pluck().all(id)
     const existedLinksSet = new Set(existedLinks);
     db.transaction(function(cardID, entry, newTags, newLinks, oldTags, oldLinks){
-        db.prepare("update cards set entry = ? where id = ?").run(entry, cardID)
+        db.prepare("update cards set entry = ?, updated_at=strftime('%s', 'now') where id = ?").run(entry, cardID)
 
         //delete removed tags
         oldTags.forEach(function(tag){
@@ -162,11 +162,19 @@ function editCardByID(id, cardEntry){
 }
 
 function searchCards(keyWord){
-    const sql = `SELECT rowid FROM cards_fts WHERE entry MATCH jieba_query('${keyWord}')`;
-    const rowids =  db.prepare(sql).pluck().all()
-    const bindingParameters = JSON.stringify(rowids)
-    const result = db.prepare(`select * from cards where id in (SELECT value FROM json_each(?))`).all(bindingParameters);
-    return result
+    const sql = `SELECT rowid, entry FROM cards_fts WHERE entry MATCH jieba_query('${keyWord}') ORDER BY rank;`;
+    const result =  db.prepare(sql).all()
+    let cards = [];
+    for(r of result){
+        console.log(r);
+        cards.push({
+            id: r.rowid,
+            entry: r.entry,
+            created_at: 0,
+            updated_at: 0,
+        })
+    }
+    return cards
 }
 
 module.exports = {

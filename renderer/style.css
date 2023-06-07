@@ -14,24 +14,27 @@
   box-sizing: inherit;
 }
 
+body, html{
+  height: 100%;
+}
+
 body {
   background-color: #eee;
   font-family: Helvetica, Arial, sans-serif;
   margin: 0;
   padding: 0;
+  overflow-y: hidden;
 }
 
 body * + * {
   margin-top: 1.5em;
 }
 
-/*
 .container {
-  display: grid;
-  grid-template-columns: 20% 70%;
-  grid-gap: 20px;
-} 
-*/
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
 
 textarea#longTextInput {
   width: 100%;
@@ -48,6 +51,10 @@ textarea#longTextInput:focus {
 
 .list-container {
   width: 100%;
+  margin-bottom: 15px;
+  scroll-padding-bottom: 15px;
+  min-height: 0;
+  /* height: calc(100vh - 100px); */
 }
 
 .list-item {
@@ -58,6 +65,7 @@ textarea#longTextInput:focus {
   margin-bottom: 15px !important;
   border: 1px solid rgba(0, 0, 0, 0.1); /* Add weak border */
   transition: all 0.3s;
+  min-height: 0;
 }
 
 .list-item .card-id {
