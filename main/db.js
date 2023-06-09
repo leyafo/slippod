@@ -35,6 +35,26 @@ function reloadDB(dbPath){
     db = checkDB;
 }
 
+function createSchema(extPath, dictPath, dbPath){
+    if (configs.isInitlized){
+        return
+    }
+    if (!fs.existsSync(dictPath)){
+        console.log(`${dictPath} is not existed.`);
+        process.exit(1);
+    }
+    db = require('better-sqlite3')(dbPath, {verbose: console.log})
+
+    db.loadExtension(extPath);
+    //set jieba dict path
+    db.prepare("select jieba_dict(?)").run(dictPath);
+
+    db.exec(schema.schema);
+    configs.dictPath = dictPath;
+    configs.extPath = extPath;
+    configs.isInitlized = true
+}
+
 function initialize(extPath, dictPath, dbPath){
     if (configs.isInitlized){
         return
@@ -213,6 +233,7 @@ function searchCards(keyWord){
 }
 
 module.exports = {
+    createSchema,
     reloadDB,
     getAllTags,
     getCards,

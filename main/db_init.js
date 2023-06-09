@@ -24,7 +24,7 @@ const {getExtensionPath} = require("./schema.js");
         process.exit(1);
     }
 
-    db.initialize(extPath, dictPath, dbPath);
+    db.createSchema(extPath, dictPath, dbPath);
 
     const slippodTag = `[#slippod]()`
     const sqliteTag = `[#sqlite]()`
