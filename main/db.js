@@ -1,32 +1,65 @@
 const fs = require("fs");
+const schema = require("./schema")
+var db = null;
+const configs = {
+    isInitlized: false,
+    extPath: "",
+    dictPath: "",
+}
 
-var isInitlized = false
+function checkDBSchema(dbPath){
+    const checkdb = require('better-sqlite3')(dbPath, {verbose: console.log})
+    const tables = checkdb.prepare(
+        `SELECT name FROM sqlite_master WHERE type='table'`
+        ).pluck().all()
+    const setTables = new Set(tables)
+    for(t of schema.tables){
+        if (!setTables.has(t)){
+            return null
+        }
+    }
+    return checkdb
+}
+
+function reloadDB(dbPath){
+    if (!configs.isInitlized){
+        throw "db is not initialized";
+        process.exit(1);
+    }
+    const checkDB = checkDBSchema(dbPath);
+    if(checkDB == null){
+        throw "db is invalidated";
+    }
+    checkDB.loadExtension(configs.extPath)
+    checkDB.prepare("select jieba_dict(?)").run(configs.dictPath);
+    db = checkDB;
+}
+
 function initialize(extPath, dictPath, dbPath){
-    if (isInitlized){
+    if (configs.isInitlized){
         return
     }
     if (!fs.existsSync(dictPath)){
         console.log(`${dictPath} is not existed.`);
         process.exit(1);
     }
-    //global variable
-    db = require('better-sqlite3')(dbPath, { verbose: console.log });
-
+    db = checkDBSchema(dbPath);
+    if(db == null){
+        console.log(`${dbPath} is not matched.`);
+        process.exit(1);
+    }
     db.loadExtension(extPath);
+
     //set jieba dict path
     db.prepare("select jieba_dict(?)").run(dictPath);
-
-    const tables = db.prepare("SELECT name FROM sqlite_master WHERE type='table'").all()
-    if(tables.length == 0){ //db is not initialized
-        const { schema } = require('./schema');
-        db.exec(schema);
-    }
-    isInitlized = true
+    configs.dictPath = dictPath;
+    configs.extPath = extPath;
+    configs.isInitlized = true
 }
 
 //for test use
 function initializeMemoryDB(extPath, dictPath){
-    if (isInitlized){
+    if (configs.isInitlized){
         return
     }
     db = require('better-sqlite3')(":memory:", {verbose: console.log})
@@ -36,7 +69,9 @@ function initializeMemoryDB(extPath, dictPath){
     db.prepare("select jieba_dict(?)").run(dictPath);
     const {schema} = require('./schema.js');
     db.exec(schema)
-    isInitlized = true
+    configs.dictPath = dictPath;
+    configs.extPath = extPath;
+    configs.isInitlized = true
 }
 
 function getCards(offset, limit){
@@ -178,6 +213,7 @@ function searchCards(keyWord){
 }
 
 module.exports = {
+    reloadDB,
     getAllTags,
     getCards,
     createNewCard,

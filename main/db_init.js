@@ -2,6 +2,7 @@
 
 const db = require("./db.js");
 const path = require('path');
+const configFile = require('./config.js');
 const fs = require("fs");
 const {getExtensionPath} = require("./schema.js");
 
@@ -11,10 +12,16 @@ const {getExtensionPath} = require("./schema.js");
     const extPath = getExtensionPath(path.join(appDir, "libsimple"));
     const dictPath = path.join(appDir, "libsimple", "dict")
     const dbPath = path.join(appDir, "slippod.db");
-    console.log(extPath);
     if (fs.existsSync(dbPath)){
         //don't init db twice
         return
+    }
+    //save db path to config file
+    try{
+        configFile.writeDBPathConfig(dbPath)
+    }catch(err){
+        console.log(err)
+        process.exit(1);
     }
 
     db.initialize(extPath, dictPath, dbPath);

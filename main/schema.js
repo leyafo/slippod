@@ -70,5 +70,9 @@ function getExtensionPath(extensionDir){
     }
 };
 
+
+const tables = ['cards', 'links', 'tags', 'configurations'];
+
 module.exports.schema = sqlSchema;
+module.exports.tables = tables;
 module.exports.getExtensionPath = getExtensionPath;
