@@ -51,7 +51,8 @@
       "renderer",
       "front_dist/*/**",
       "front_dist/*",
-      "slippod.db"
+      "slippod.db",
+      "slippod.config"
     ]
   }
 }
