@@ -217,7 +217,7 @@ function editCardByID(id, cardEntry){
 }
 
 function searchCards(keyWord, offset, limit){
-    const sql = `SELECT rowid, entry FROM cards_fts WHERE entry MATCH jieba_query('${keyWord}') ORDER BY rank limit ?, ?;`;
+    const sql = `SELECT rowid, entry FROM cards_fts WHERE entry MATCH simple_query('${keyWord}') ORDER BY rank limit ?, ?;`;
     const result =  db.prepare(sql).all(offset, limit)
     let cards = [];
     for(r of result){
