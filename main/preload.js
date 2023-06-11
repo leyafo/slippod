@@ -2,34 +2,37 @@
 const { contextBridge, ipcRenderer } = require('electron')
 
 contextBridge.exposeInMainWorld('utils', {
-  reloadAll: (...args) => ipcRenderer.invoke("reloadAll", ...args),
-  unixTimeFormat: (unixTime) => unixTimeFormat(unixTime),
+  reloadAll: (...args) => ipcRenderer.invoke("reloadAll", ...args)
 });
 
 
-function exposeDBFunctions(exposeFunctionNames) {
-  const backendFunctions = {};
-
-  exposeFunctionNames.forEach((funcName) => {
+(function(){
+  const listDBFunctions = [
+    "getCards",
+    "searchCards",
+    "getCardsByTag",
+  ]
+  const otherDBFunctions = [
+    "createNewCard", 
+    "getAllTags",
+    "getCardByID",
+    "deleteCardByID",
+    "editCardByID",
+    "getCardDetails",
+  ]
+  let backendFunctions = {};
+  listDBFunctions.forEach((funcName) =>{
+    backendFunctions[funcName] = (...args) => {
+      localStorage.setItem('list_call', JSON.stringify({
+        'funcName': funcName,
+        'args': args,
+      }));
+      console.log(funcName, ...args);
+      return ipcRenderer.invoke(funcName, ...args)
+    };
+  })
+  otherDBFunctions.forEach((funcName)=>{
     backendFunctions[funcName] = (...args) => ipcRenderer.invoke(funcName, ...args);
-  });
-
+  })
   contextBridge.exposeInMainWorld('db', backendFunctions);
-}
-
-
-exposeDBFunctions([
-  "getCards",
-  "createNewCard", 
-  "getAllTags",
-  "getCardsByTag",
-  "getCardByID",
-  "deleteCardByID",
-  "editCardByID",
-  "getCardDetails",
-  "searchCards",
-])
-
-
-window.addEventListener('DOMContentLoaded', () => {
-})
+})();

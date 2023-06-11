@@ -11,7 +11,7 @@ CREATE VIRTUAL TABLE IF NOT EXISTS cards_fts USING fts5(
     entry, 
     content='cards', 
     content_rowid='id',
-    tokenize='simple' 
+    tokenize='simple 0' 
 );
 
 CREATE TRIGGER IF NOT EXISTS cards_ai AFTER INSERT ON cards
