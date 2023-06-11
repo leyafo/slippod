@@ -12,7 +12,7 @@ function getResourceURL(...pathes){
     return urlPath
   }
   
-  const filePath = path.join(app.getPath(), ...pathes)
+  const filePath = path.join(app.getAppPath(), ...pathes)
   return `file://${filePath}`
 }
 
@@ -26,7 +26,11 @@ function createWindow () {
     }
   })
 
-  mainWindow.loadURL(getResourceURL('index.html'));
+  const url =
+    process.env.NODE_ENV === "development"
+      ? "http://localhost:5173" // The URL of the Vite dev server.
+      : `file://${path.join(app.getAppPath(), "front_dist/index.html")}`;
+  mainWindow.loadURL(url);
   // Open the DevTools.
   if (process.env.NODE_ENV == 'development'){
     globalShortcut.register('CommandOrControl+R', function() {
@@ -87,6 +91,10 @@ function createSettingsWindow() {
   });
 
 
+  // const url =
+  //   process.env.NODE_ENV === "development"
+  //     ? "http://localhost:5173/settings.html" // The URL of the Vite dev server.
+  //     : `file://${path.join(app.getAppPath(), "front_dist/settings.html")}`;
   settingsWindow.loadURL(getResourceURL('renderer', 'settings.html'));
   settingsWindow.on("closed", () => {
     settingsWindow = null;
@@ -138,9 +146,10 @@ ipcMain.handle("filePicker", async(event, ...args)=>{
       configFile.writeDBPathConfig(dbPath[0]);
       mainWindow.reload();
     }catch(err){
+      console.log(err)
       dialog.showMessageBoxSync(
         mainWindow, 
-        {message: err},
+        {message: err.message},
       )
     }
   }
