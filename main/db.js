@@ -1,6 +1,6 @@
 const fs = require("fs");
 const schema = require("./schema")
-var db = null;
+let db = null;
 const configs = {
     isInitlized: false,
     extPath: "",
@@ -24,7 +24,6 @@ function checkDBSchema(dbPath){
 function reloadDB(dbPath){
     if (!configs.isInitlized){
         throw "db is not initialized";
-        process.exit(1);
     }
     const checkDB = checkDBSchema(dbPath);
     if(checkDB == null){
@@ -94,6 +93,7 @@ function initializeMemoryDB(extPath, dictPath){
     configs.isInitlized = true
 }
 
+//the newest card is order in first
 function getCards(offset, limit){
     return db.prepare(`select * from cards order by id desc limit ?, ?`).all(Math.floor(Number(offset)), 
                     Math.floor(Number(limit)))
@@ -216,12 +216,11 @@ function editCardByID(id, cardEntry){
     return id;
 }
 
-function searchCards(keyWord){
-    const sql = `SELECT rowid, entry FROM cards_fts WHERE entry MATCH jieba_query('${keyWord}') ORDER BY rank;`;
-    const result =  db.prepare(sql).all()
+function searchCards(keyWord, offset, limit){
+    const sql = `SELECT rowid, entry FROM cards_fts WHERE entry MATCH jieba_query('${keyWord}') ORDER BY rank limit ?, ?;`;
+    const result =  db.prepare(sql).all(offset, limit)
     let cards = [];
     for(r of result){
-        console.log(r);
         cards.push({
             id: r.rowid,
             entry: r.entry,

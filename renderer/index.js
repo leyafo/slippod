@@ -31,9 +31,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const cardView = document.getElementById('card-view');
   const editorViewPanel = document.getElementById('editor-view');
   const cardDetailContainer = document.getElementById('card-detail-container');
-  const orderBeforeLast = 1;
-  const orderBeforeFirst = 2;
+  const listInsertFirst = 1;
+  const listInsertLast = 2;
   const needUpdateList = true;
+  const limitItems = 20;
 
   function insertCard(card, order) {
     const template = document.getElementById("listItemTemplate");
@@ -49,19 +50,19 @@ document.addEventListener('DOMContentLoaded', () => {
     listItem.querySelector(".list-item").setAttribute("card-id", card.id);
     listItem.querySelector(".list-item").setAttribute("id", `list-item-${card.id}`);
 
-    if (order == orderBeforeFirst) {
+    if (order == listInsertLast) {
       listView.insertBefore(listItem, listView.firstChild);
-    } else if (order == orderBeforeLast) {
-      listView.insertBefore(listItem, listView.lastChild);
+    } else if (order == listInsertFirst) {
+      listView.insertBefore(listItem, null);
     }
   }
 
 
   //load cards
   (async ()=>{
-    db.getCards(0, 20).then(function(cards){
+    db.getCards(0, limitItems).then(function(cards){
       for(let card of cards){
-        insertCard(card, orderBeforeLast);
+        insertCard(card, listInsertFirst);
       }
     });
 
@@ -90,10 +91,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if(tag == '#'){
       utils.reloadAll();
     }else{
-      db.getCardsByTag(tag, 0, 10000).then(function(cards){
+      db.getCardsByTag(tag, 0, limitItems).then(function(cards){
         listView.innerHTML = '';
         for (let card of cards) {
-          insertCard(card, orderBeforeLast);
+          insertCard(card, listInsertFirst);
         }
       });
     }
@@ -106,10 +107,10 @@ document.addEventListener('DOMContentLoaded', () => {
       showCard(cardID)
     }else if(targetContent[0] == '#'){
       const tag = targetContent.slice(1, targetContent.length)
-      db.getCardsByTag(tag, 0, 10000).then(function(cards){
+      db.getCardsByTag(tag, 0, limitItems).then(function(cards){
         listView.innerHTML = '';
         for (let card of cards) {
-          insertCard(card, orderBeforeLast);
+          insertCard(card, listInsertFirst);
         }
       });
     }
@@ -221,7 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     db.createNewCard(inputContent).then(newCardID=>{
       db.getCardByID(newCardID).then(card => {
-        insertCard(card, orderBeforeFirst);
+        insertCard(card, listInsertLast);
         longTextInput.value = '';
       })
     });
@@ -241,7 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // if(cards.length > 0){
       listView.innerHTML = '';
       for (const card of cards){
-        insertCard(card, orderBeforeLast);
+        insertCard(card, listInsertFirst);
       }
     // }
   }
@@ -255,7 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       db.createNewCard(searchTerm).then((newCardID) => {
         db.getCardByID(newCardID).then((card) => {
-          insertCard(card, orderBeforeFirst);
+          insertCard(card, listInsertLast);
           searchInput.value = "";
           searchInput.blur();
           showEditor(card.id);
@@ -265,7 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
       searchInput.blur();
     } else{
       if(searchTerm.length>0){
-        db.searchCards(searchTerm).then(function(cards){
+        db.searchCards(searchTerm, 0, limitItems).then(function(cards){
           displaySearchResult(cards);
         });
       }
@@ -277,25 +278,37 @@ document.addEventListener('DOMContentLoaded', () => {
     }else if(event.ctrlKey && event.key == "n"){
       db.createNewCard("").then((newCardID) => {
         db.getCardByID(newCardID).then((card) => {
-          insertCard(card, orderBeforeFirst);
+          insertCard(card, listInsertLast);
           showEditor(card.id);
         });
       })
     }
   })
 
-  // window.onscroll = function(ev) {
-  //   if ((window.innerHeight + Math.ceil(window.pageYOffset)) >= document.body.offsetHeight) {
-  //       // you're at the bottom of the page
-  //       console.log('test');
-  //       let listOffset = Number(localStorage.getItem("list_offset"))
-  //       db.getCards('', listOffset, 10).then(cards => {
-  //         for(const card of cards){
-  //           insertCard(card, orderBeforeLast);
-  //           listOffset+=1;
-  //         }
-  //         localStorage.setItem("list_offset", listOffset)
-  //       })
-  //   }
-  // };
+  let listHasGetLastItem = 0;
+  document.querySelector('.list-container').onscroll = function(ev) {
+    const listContainer = ev.target;
+    const totalHeight = listContainer.scrollHeight - listContainer.offsetHeight;
+    if ((totalHeight - listContainer.scrollTop) < 2){
+      let lastCallList = JSON.parse(localStorage.getItem('list_call'));
+      let fn = db[lastCallList.funcName];
+      let args = lastCallList.args
+      const offsetArgsIndex=args.length-2
+      if(args[offsetArgsIndex] == 0){
+        listHasGetLastItem = 0;
+      }
+      if(listHasGetLastItem == 1){
+        return
+      }
+      args[offsetArgsIndex]+=limitItems;
+      fn(...args).then(function(cards){
+        for(let card of cards){
+          insertCard(card, listInsertFirst);
+        }
+        if(cards.length < limitItems){
+          listHasGetLastItem = 1;
+        }
+      })
+    }
+  };
 });

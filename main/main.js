@@ -79,8 +79,6 @@ function createSettingsWindow() {
     width: 400,
     height: 400,
     webPreferences: {
-      // Set the path to your settings page HTML file
-      // Assuming you have a settings.html file in the app folder
       preload: path.join(__dirname, 'settings_preload.js'),
     },
     parent: mainWindow,
