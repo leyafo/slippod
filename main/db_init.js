@@ -1,32 +1,5 @@
-
-
-const db = require("./db.js");
-const path = require('path');
-const configFile = require('./config.js');
-const fs = require("fs");
-const {getExtensionPath} = require("./schema.js");
-
-(function(){
-
-    const appDir = path.join(path.dirname(require.main.filename), "..");
-    const extPath = getExtensionPath(path.join(appDir, "libsimple"));
-    const dictPath = path.join(appDir, "libsimple", "dict")
-    const dbPath = path.join(appDir, "slippod.db");
-    if (fs.existsSync(dbPath)){
-        //don't init db twice
-        return
-    }
-    //save db path to config file
-    try{
-        configFile.writeDBPathConfig(dbPath)
-    }catch(err){
-        console.log(err)
-        process.exit(1);
-    }
-
-    db.createSchema(extPath, dictPath, dbPath);
-
-    const slippodTag = `[#slippod]()`
+const db = require('./db.js')
+function insertSampleData(){ const slippodTag = `[#slippod]()`
     const sqliteTag = `[#sqlite]()`
     const firstCardID = db.createNewCard(`这是一张简单的卡片。  slippodTag`);
     db.createNewCard(`本项目采用 sqlite 做为后端存储。  
@@ -40,16 +13,24 @@ const {getExtensionPath} = require("./schema.js");
 * 
 ${slippodTag} ${sqliteTag}
     `);
+
     db.createNewCard(`
 全文搜索的意思是你敲下的每一个字都会索引，你在搜索框（快捷键 ctrl+k ） 搜索任何内容都可以在秒级返回。   
 ${sqliteTag}
 ${slippodTag}
     `)
+    const tagExample = '\[\#tag\]\(\)';
+    const atExample = '[@1]()'
     db.createNewCard(`笔记支持 tag。 tag 直接在卡片的内容中插入，格式为:     
-\[\#tag\]\(\)
+\`\`\`
+${tagExample}
+\`\`\`
 
 也支持链接到其他任何笔记。格式为:   
-\[@\]\(\)   
+\`\`\`
+${atExample}
+\`\`\`
+
 比如这里 [@${firstCardID}]() 链接到第一条笔记。
 
 [#slippod]()  
@@ -65,5 +46,8 @@ ${slippodTag}
 
 ${slippodTag}
     `)
+}
 
-}());
+module.exports = {
+    insertSampleData,
+}

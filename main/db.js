@@ -1,5 +1,6 @@
 const fs = require("fs");
-const schema = require("./schema")
+const schema = require("./schema");
+const sqlite3 = require("better-sqlite3");
 let db = null;
 const configs = {
     isInitlized: false,
@@ -7,73 +8,49 @@ const configs = {
     dictPath: "",
 }
 
-function checkDBSchema(dbPath){
-    const checkdb = require('better-sqlite3')(dbPath, {verbose: console.log})
-    const tables = checkdb.prepare(
-        `SELECT name FROM sqlite_master WHERE type='table'`
-        ).pluck().all()
+function checkDBSchema(checkDB){
+    const tables = checkDB.prepare(`SELECT name FROM sqlite_master WHERE type='table'`).pluck().all()
     const setTables = new Set(tables)
     for(t of schema.tables){
         if (!setTables.has(t)){
-            return null
+            return false
         }
     }
-    return checkdb
+    return true
 }
 
-function reloadDB(dbPath){
-    if (!configs.isInitlized){
-        throw "db is not initialized";
-    }
-    const checkDB = checkDBSchema(dbPath);
-    if(checkDB == null){
-        throw "db is invalidated";
-    }
-    checkDB.loadExtension(configs.extPath)
-    checkDB.prepare("select jieba_dict(?)").run(configs.dictPath);
-    db = checkDB;
-}
-
-function createSchema(extPath, dictPath, dbPath){
-    if (configs.isInitlized){
-        return
-    }
-    if (!fs.existsSync(dictPath)){
-        console.log(`${dictPath} is not existed.`);
-        process.exit(1);
-    }
-    db = require('better-sqlite3')(dbPath, {verbose: console.log})
-
-    db.loadExtension(extPath);
+function openDB(extPath, dictPath, dbPath){
+    let newDB = null;
+    newDB = sqlite3(dbPath, {verbose: console.log})
+    newDB.loadExtension(extPath);
     //set jieba dict path
-    db.prepare("select jieba_dict(?)").run(dictPath);
+    newDB.prepare("select jieba_dict(?)").run(dictPath);
+    return newDB
+}
 
-    db.exec(schema.schema);
-    configs.dictPath = dictPath;
-    configs.extPath = extPath;
-    configs.isInitlized = true
+function reloadDB(newDbPath){
+    if (!configs.isInitlized){
+        throw new Error("db is not initialized");
+    }
+    let newDB = openDB(configs.extPath, configs.dictPath, newDbPath)
+    if(checkDBSchema(newDB) == false){
+        throw new Error("db is invalidated");
+    }
+    db = newDB;
 }
 
 function initialize(extPath, dictPath, dbPath){
     if (configs.isInitlized){
         return
     }
-    if (!fs.existsSync(dictPath)){
-        console.log(`${dictPath} is not existed.`);
-        process.exit(1);
-    }
-    db = checkDBSchema(dbPath);
-    if(db == null){
-        console.log(`${dbPath} is not matched.`);
-        process.exit(1);
-    }
-    db.loadExtension(extPath);
-
-    //set jieba dict path
-    db.prepare("select jieba_dict(?)").run(dictPath);
+    db = openDB(extPath, dictPath, dbPath)
     configs.dictPath = dictPath;
     configs.extPath = extPath;
     configs.isInitlized = true
+}
+
+function createSchema(){
+    return db.exec(schema.schema);
 }
 
 //for test use
@@ -81,13 +58,8 @@ function initializeMemoryDB(extPath, dictPath){
     if (configs.isInitlized){
         return
     }
-    db = require('better-sqlite3')(":memory:", {verbose: console.log})
-
-    db.loadExtension(extPath);
-    //set jieba dict path
-    db.prepare("select jieba_dict(?)").run(dictPath);
-    const {schema} = require('./schema.js');
-    db.exec(schema)
+    db = openDB(extPath, dictPath, ":memory:")
+    createSchema()
     configs.dictPath = dictPath;
     configs.extPath = extPath;
     configs.isInitlized = true

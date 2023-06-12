@@ -2,9 +2,8 @@
 const {dialog, globalShortcut, ipcMain, app, BrowserWindow, Menu, webFrame } = require('electron');
 const path = require('path');
 const fs = require('fs');
-const configFile = require('./config.js')
+const config = require('./config.js')
 const db = require('./db.js');
-
 
 function getResourceURL(...pathes){
   if (process.env.NODE_ENV === 'development'){
@@ -12,7 +11,7 @@ function getResourceURL(...pathes){
     return urlPath
   }
   
-  const filePath = path.join(app.getAppPath(), ...pathes)
+  const filePath = path.join(app.getAppPath(), 'dist', ...pathes)
   return `file://${filePath}`
 }
 
@@ -26,12 +25,8 @@ function createWindow () {
     }
   })
 
-  const url =
-    process.env.NODE_ENV === "development"
-      ? "http://localhost:5173" // The URL of the Vite dev server.
-      : `file://${path.join(app.getAppPath(), "front_dist/index.html")}`;
+  const url = getResourceURL("resource", "app", "index.html");
   mainWindow.loadURL(url);
-  // Open the DevTools.
   if (process.env.NODE_ENV == 'development'){
     globalShortcut.register('CommandOrControl+R', function() {
       console.log('CommandOrControl+R is pressed');
@@ -90,12 +85,8 @@ function createSettingsWindow() {
     show: true,
   });
 
-
-  // const url =
-  //   process.env.NODE_ENV === "development"
-  //     ? "http://localhost:5173/settings.html" // The URL of the Vite dev server.
-  //     : `file://${path.join(app.getAppPath(), "front_dist/settings.html")}`;
-  settingsWindow.loadURL(getResourceURL('renderer', 'settings.html'));
+  const url = getResourceURL("resource", "settings", "index.html");
+  settingsWindow.loadURL(url);
   settingsWindow.on("closed", () => {
     settingsWindow = null;
   });
@@ -143,10 +134,10 @@ ipcMain.handle("filePicker", async(event, ...args)=>{
   if (dbPath != undefined){
     try{
       db.reloadDB(dbPath[0]);
-      configFile.writeDBPathConfig(dbPath[0]);
+      config.writeDBPathConfig(dbPath[0]);
       mainWindow.reload();
     }catch(err){
-      console.log(err)
+      console.error(err)
       dialog.showMessageBoxSync(
         mainWindow, 
         {message: err.message},
@@ -157,7 +148,7 @@ ipcMain.handle("filePicker", async(event, ...args)=>{
 })
 
 ipcMain.handle("getDBPath", async(event, ...args)=>{
-  return configFile.readDBPathConfig()
+  return config.readDBPathConfig()
 })
 
 function registerDBFunctions(functionNames) {
@@ -167,13 +158,17 @@ function registerDBFunctions(functionNames) {
     });
   });
   const appPath = app.getAppPath();
-  console.log(appPath);
-  const {getExtensionPath} = require("./schema.js")
-
-  const libPath = getExtensionPath(path.join(appPath, "libsimple"));
-  const dictPath = path.join(appPath, "libsimple", "dict")
-  const dbPath = configFile.readDBPathConfig();
-
-  db.initialize(libPath, dictPath, dbPath);
+  const extPath = config.getExtensionPath(appPath);
+  const dictPath = config.getExtensionPath(appPath);
+  let dbPath = config.readDBPathConfig();
+  if(dbPath == "" || !(fs.existsSync(dbPath))){
+    dbPath = path.join(config.getAppDataPath(), "slippod.db");
+    config.writeDBPathConfig(dbPath);
+    db.initialize(extPath, dictPath, dbPath);
+    db.createSchema();
+    require('./db_init.js').insertSampleData()
+  }else{
+    db.initialize(extPath, dictPath, dbPath);
+  }
 }
 registerDBFunctions(Object.keys(db));
