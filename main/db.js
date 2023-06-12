@@ -144,9 +144,9 @@ function getCardDetails(id){
 
 function deleteCardByID(id){
     db.transaction(function(cardID){
-        db.prepare("delete from cards where id = ?").run(cardID);
         db.prepare("delete from links where card_id = ? OR link_id = ? ").run(cardID, cardID);
         db.prepare("delete from tags where card_id = ?").run(cardID);
+        db.prepare("delete from cards where id = ?").run(cardID);
     })(id)
     return 
 }

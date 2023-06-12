@@ -28,10 +28,6 @@ function createWindow () {
   const url = getResourceURL("resource", "app", "index.html");
   mainWindow.loadURL(url);
   if (process.env.NODE_ENV == 'development'){
-    globalShortcut.register('CommandOrControl+R', function() {
-      console.log('CommandOrControl+R is pressed');
-      mainWindow.reload();
-    })
 
     const contextMenu = require('electron-context-menu');
     contextMenu({
@@ -41,6 +37,10 @@ function createWindow () {
     });
   }
 
+  globalShortcut.register('CommandOrControl+R', function() {
+    console.log('CommandOrControl+R is pressed');
+    mainWindow.reload();
+  })
   // mainWindow.setMenuBarVisibility(false);
   mainWindow.once("ready-to-show", ()=>{
     mainWindow.show();
