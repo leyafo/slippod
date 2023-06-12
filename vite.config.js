@@ -6,8 +6,8 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        settings: fileURLToPath(new URL('./renderer/settings.html', import.meta.url)),
-        app: fileURLToPath(new URL('./index.html', import.meta.url)),
+        settings: fileURLToPath(new URL('./resource/settings/index.html', import.meta.url)),
+        app: fileURLToPath(new URL('./resource/app/index.html', import.meta.url)),
       },
     },
   },
