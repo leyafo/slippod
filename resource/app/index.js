@@ -215,23 +215,13 @@ document.addEventListener('DOMContentLoaded', () => {
     showCard(cardID);
   });
 
-  function addListItem() {
-    const inputContent = longTextInput.value;
-    if (inputContent.isEmpty()) {
-      return
-    }
-    db.createNewCard(inputContent).then(newCardID=>{
-      db.getCardByID(newCardID).then(card => {
-        insertCard(card, listInsertLast);
-        longTextInput.value = '';
-      })
-    });
-  }
-
   longTextInput.addEventListener('keydown', (event) => {
     if (event.key === 'Enter' && event.ctrlKey) {
       event.preventDefault();
-      addListItem();
+      const cardID = cardDetailContainer.getAttribute("card-id")
+      db.editCardByID(cardID, longTextInput.value).then(function(cardID){
+        showCard(cardID, true);
+      });
     }
   });
 
