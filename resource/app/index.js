@@ -116,11 +116,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   })
 
-  //list-items envents listener
+
+  //list-item event listener
   clickHandle(".list-item", function(event){
     const listItem = event.target.closest(".list-item");
     const cardID = listItem.getAttribute("card-id");
     cardDetailContainer.setAttribute("card-id", cardID);
+    listItem.classList.add("hl-list-item");
     showCard(cardID);
   });
 
@@ -254,6 +256,9 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }else if(event.key == "Escape"){
       searchInput.blur();
+      utils.reloadAll()
+    }else if(event.key == "n" && event.ctrlKey){
+      console.log('test');
     } else{
       if(searchTerm.length>0){
         db.searchCards(searchTerm, 0, limitItems).then(function(cards){
@@ -264,8 +269,10 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   window.addEventListener("keydown",function(event){
     if (event.ctrlKey && event.key == 'k'){
+      event.preventDefault();
       searchInput.focus();
-    }else if(event.ctrlKey && event.key == "n"){
+    }else if(event.key == 'F3'){//f3 
+      event.preventDefault();
       db.createNewCard("").then((newCardID) => {
         db.getCardByID(newCardID).then((card) => {
           insertCard(card, listInsertLast);
