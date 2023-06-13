@@ -165,3 +165,8 @@ textarea#longTextInput:focus {
 .markdown-body{
   background: none;
 }
+
+.hl-list-item{
+  border-radius: 4px;
+  background: #59667224;
+}
