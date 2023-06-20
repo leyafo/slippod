@@ -26,10 +26,6 @@ body {
   overflow-y: hidden;
 }
 
-body * + * {
-  margin-top: 1.5em;
-}
-
 .container {
   display: flex;
   flex-direction: column;
@@ -50,11 +46,11 @@ textarea#longTextInput:focus {
 }
 
 .list-container {
-  width: 100%;
-  margin-bottom: 15px;
-  scroll-padding-bottom: 15px;
-  min-height: 0;
-  /* height: calc(100vh - 100px); */
+    margin-top: 0.5em;
+    margin-bottom: 15px;
+    scroll-padding-bottom: 15px;
+    min-height: 0;
+    /* height: calc(100vh - 100px); */
 }
 
 .list-item {

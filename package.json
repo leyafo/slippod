@@ -21,17 +21,18 @@
     "autoprefixer": "^10.4.14",
     "electron": "^24.2.0",
     "electron-builder": "^23.6.0",
+    "electron-context-menu": "^3.6.1",
     "electron-rebuild": "^3.2.9",
+    "electron-squirrel-startup": "^1.0.0",
     "mocha": "^10.2.0",
     "postcss": "^8.4.23",
     "postcss-import": "^15.1.0",
     "tailwindcss": "^3.3.2",
-    "vite": "^4.3.9",
-    "electron-squirrel-startup": "^1.0.0",
-    "electron-context-menu": "^3.6.1"
+    "vite": "^4.3.9"
   },
   "dependencies": {
     "better-sqlite3": "^8.4.0",
+    "codemirror": "5.65.13",
     "marked": "^5.0.2"
   },
   "build": {
