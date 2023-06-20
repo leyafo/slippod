@@ -2,7 +2,8 @@
 const { contextBridge, ipcRenderer } = require('electron')
 
 contextBridge.exposeInMainWorld('utils', {
-  reloadAll: (...args) => ipcRenderer.invoke("reloadAll", ...args)
+  reloadAll: (...args) => ipcRenderer.invoke("reloadAll", ...args),
+  uploadCardEditing: (id, entry) => ipcRenderer.invoke("uploadCardEditing", id, entry),
 });
 
 
