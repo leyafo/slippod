@@ -133,7 +133,7 @@ ipcMain.handle("reloadAll", async (event, ...args) => {
 });
 
 ipcMain.handle("uploadCardEditing", async (event, id, entry) => {
-    editorUpdating.pushContentInQueue(id, entry);
+    editorUpdating.uploadCardEditing(id, entry);
 });
 
 ipcMain.handle("filePicker", async (event, ...args) => {

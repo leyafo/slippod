@@ -49,15 +49,6 @@ CREATE TABLE IF NOT EXISTS tags (
   FOREIGN KEY (card_id) REFERENCES cards(id)
 );
 CREATE INDEX IF NOT EXISTS idx_tags_card_id on tags(card_id);
-
-CREATE TABLE IF NOT EXISTS links(
-  id INTEGER PRIMARY KEY,
-  card_id INTEGER NOT NULL,
-  link_id INTEGER NOT NULL,
-  UNIQUE (link_id, card_id), /*create link index automatically*/
-  FOREIGN KEY (card_id) REFERENCES cards(id)
-);
-CREATE INDEX IF NOT EXISTS idx_links_card_id on links(card_id);
 `;
 
 
