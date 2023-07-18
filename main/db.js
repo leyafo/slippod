@@ -137,7 +137,7 @@ function deleteCardByID(id){
 }
 
 function editCardByID(id, cardEntry){
-    db.prepare("update cards set entry = ?, updated_at=strftime('%s', 'now') where id = ?").run(entry, cardID)
+    db.prepare("update cards set entry = ?, updated_at=strftime('%s', 'now') where id = ?").run(cardEntry, id)
     return id;
 }
 
