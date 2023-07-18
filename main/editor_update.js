@@ -2,7 +2,7 @@
 const db = require("./db.js")
 let queue = new Map();
 
-function pushContentInQueue(id, entry){
+function uploadCardEditing(id, entry){
     queue.set(id, entry);
 }
 
@@ -15,5 +15,5 @@ setInterval(function(){
 
 
 module.exports = {
-    pushContentInQueue,
+    uploadCardEditing,
 }

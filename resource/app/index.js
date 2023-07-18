@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const listInsertFirst = 1;
     const listInsertLast = 2;
     const limitItems = 20;
-    let editorUpdateCardID = new Set();
+    const updatingCardsContainer = new Map();
 
     let editor = CodeMirror.fromTextArea(longTextInput, {
         theme: "default",
@@ -47,25 +47,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
     editor.on("change", function(cm, obj) {
         const cardID = cardDetailContainer.getAttribute("card-id");
-        utils.uploadCardEditing(cardID, editor.getValue());
-        editorUpdateCardID.add(cardID);
+        updatingCardsContainer.set(cardID, editor.getValue());
     });
     setInterval(() => {
-        for(const cardID of editorUpdateCardID){
-            const editingID = cardDetailContainer.getAttribute("card-id");
-            if(editingID == cardID){
+        updatingCardsContainer.forEach(function(entry, cardID, map){
+            db.editCardByID(cardID, entry).then(function(cardID){
                 db.getCardByID(cardID).then(function(card){
-                    let cardUpdatedAt = editorView.querySelector("span.card-updated-at");
-                        cardUpdatedAt.textContent =
-                            "Updated At: " + unixTimeFormat(card.updated_at);
-                    
+                    const editingID = cardDetailContainer.getAttribute("card-id");
+                    if(editingID == cardID){
+                        let cardUpdatedAt = editorView.querySelector("span.card-updated-at");
+                            cardUpdatedAt.textContent =
+                                "Updated At: " + unixTimeFormat(card.updated_at);
+                    }
                     const listItem = document.getElementById(`list-item-${cardID}`);
                     listItem.querySelector(".content").innerHTML = marked.parse(card.entry);
-                    editorUpdateCardID.delete(cardID);
+                    updatingCardsContainer.delete(cardID);
                 })
-            }
-        }
-    }, 2000);
+            })
+        })
+    }, 5000);//saving cards for 5s
 
     function insertCard(card, order) {
         const template = document.getElementById("listItemTemplate");
@@ -134,12 +134,17 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     //list-item event listener
+    let lastHighLightItem = 0;
     clickHandle(".list-item", function(event) {
+        if(lastHighLightItem != 0){
+            document.getElementById(`list-item-${lastHighLightItem}`).classList.remove('hl-list-item');
+        }
         const listItem = event.target.closest(".list-item");
         const cardID = listItem.getAttribute("card-id");
         cardDetailContainer.setAttribute("card-id", cardID);
         listItem.classList.add("hl-list-item");
         showCardInEditor(cardID);
+        lastHighLightItem = cardID;
     });
 
     function showCardInEditor(cardID) {
@@ -147,9 +152,14 @@ document.addEventListener("DOMContentLoaded", () => {
             editorView.remove("hidden");
         }
         db.getCardDetails(cardID).then(function(cardDetails) {
-            editor.setValue(cardDetails.card.entry);
+            //缓存里面有数据就直接读缓存里面的
+            let entry = updatingCardsContainer.get(cardID);
+            if(entry == undefined){//没有就去读数据库里的
+                entry = cardDetails.card.entry
+            }
+            editor.setValue(entry);
+            editor.setCursor(entry.length);
             editor.focus();
-            editor.setCursor(cardDetails.card.entry.length);
             let spanID = editorView.querySelector("span.card-id");
             spanID.textContent = cardID;
             let cardCreatedAt = editorView.querySelector("span.card-created-at");
