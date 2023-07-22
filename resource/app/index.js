@@ -55,9 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 db.getCardByID(cardID).then(function(card){
                     const editingID = cardDetailContainer.getAttribute("card-id");
                     if(editingID == cardID){
-                        let cardUpdatedAt = editorView.querySelector("span.card-updated-at");
-                            cardUpdatedAt.textContent =
-                                "Updated At: " + unixTimeFormat(card.updated_at);
+                        displayUpdatedAtTime(card.updated_at);
                     }
                     const listItem = document.getElementById(`list-item-${cardID}`);
                     listItem.querySelector(".content").innerHTML = marked.parse(card.entry);
@@ -133,25 +131,52 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    clickHandle("div.CodeMirror span.cm-link", function(event){
+        let linkContent = event.target.textContent;
+        const cardID = linkContent.replace(/\[|\]/gm, "");
+        db.cardIsExisted(cardID).then(function(r){
+            if (r != undefined) {
+                highlightListItem(cardID);
+                showCardInEditor(r.id);
+            }
+        });
+    });
+
     //list-item event listener
     let lastHighLightItem = 0;
-    clickHandle(".list-item", function(event) {
+    function highlightListItem(cardID){
         if(lastHighLightItem != 0){
             document.getElementById(`list-item-${lastHighLightItem}`).classList.remove('hl-list-item');
         }
+        document.getElementById(`list-item-${cardID}`).classList.add('hl-list-item');
+        lastHighLightItem = cardID;
+    }
+
+    clickHandle(".list-item", function(event) {
         const listItem = event.target.closest(".list-item");
         const cardID = listItem.getAttribute("card-id");
-        cardDetailContainer.setAttribute("card-id", cardID);
-        listItem.classList.add("hl-list-item");
+        highlightListItem(cardID);
         showCardInEditor(cardID);
-        lastHighLightItem = cardID;
     });
+
+    function displayCreatedAtTime(createAt){
+        let cardCreatedAt = editorView.querySelector("span.card-created-at");
+        cardCreatedAt.textContent =
+            "Created At: " + unixTimeFormat(createAt);
+    }
+
+    function displayUpdatedAtTime(updateAt){
+        let cardUpdatedAt = editorView.querySelector("span.card-updated-at");
+        cardUpdatedAt.textContent =
+            "Updated At: " + unixTimeFormat(updateAt);
+    }
 
     function showCardInEditor(cardID) {
         if (editorView.classList.contains("hidden")) {
             editorView.remove("hidden");
         }
         db.getCardDetails(cardID).then(function(cardDetails) {
+            cardDetailContainer.setAttribute("card-id", cardID);
             //缓存里面有数据就直接读缓存里面的
             let entry = updatingCardsContainer.get(cardID);
             if(entry == undefined){//没有就去读数据库里的
@@ -162,12 +187,8 @@ document.addEventListener("DOMContentLoaded", () => {
             editor.focus();
             let spanID = editorView.querySelector("span.card-id");
             spanID.textContent = cardID;
-            let cardCreatedAt = editorView.querySelector("span.card-created-at");
-            cardCreatedAt.textContent =
-                "Created At: " + unixTimeFormat(cardDetails.card.created_at);
-            let cardUpdatedAt = editorView.querySelector("span.card-updated-at");
-            cardUpdatedAt.textContent =
-                "Updated At: " + unixTimeFormat(cardDetails.card.updated_at);
+            displayCreatedAtTime(cardDetails.card.created_at);
+            displayUpdatedAtTime(cardDetails.card.updated_at);
         });
     }
 

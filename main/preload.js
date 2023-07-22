@@ -20,6 +20,7 @@ contextBridge.exposeInMainWorld('utils', {
     "deleteCardByID",
     "editCardByID",
     "getCardDetails",
+    "cardIsExisted",
   ]
   let backendFunctions = {};
   listDBFunctions.forEach((funcName) =>{
