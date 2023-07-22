@@ -73,7 +73,7 @@ function getCards(offset, limit){
 
 function createNewCard(cardEntry){
     try {
-        const changes = db.prepare(`insert into cards(entry) values(?)`).run(entry);
+        const changes = db.prepare(`insert into cards(entry) values(?)`).run(cardEntry);
         return changes.lastInsertRowid
     } catch (err) {
         if (!db.inTransaction) throw err; // (transaction was forcefully rolled back)
@@ -119,8 +119,17 @@ function getCardByID(id){
 function getCardDetails(id){
     var result = {}
     result.card = getCardByID(id)
-    result.references = {}
-    result.referencesBy = {} 
+    result.referencesBy = [] 
+    const searchRef = `SELECT rowid, entry FROM cards_fts WHERE entry MATCH simple_query('[${id}]') ORDER BY rank`;
+    const refResult =  db.prepare(searchRef).all()
+    for(r of refResult){
+        result.referencesBy.push({
+            id: r.rowid,
+            entry: r.entry,
+            created_at: 0,
+            updated_at: 0,
+        })
+    }
     result.tags = db.prepare(`
         SELECT tag from tags where card_id = ?
     `).all(id)
@@ -134,6 +143,10 @@ function deleteCardByID(id){
         db.prepare("delete from cards where id = ?").run(cardID);
     })(id)
     return 
+}
+
+function cardIsExisted(id){
+    return db.prepare(`select id from cards where id=?`).get(id);
 }
 
 function editCardByID(id, cardEntry){
@@ -170,4 +183,5 @@ module.exports = {
     initializeMemoryDB,
     getCardDetails,
     searchCards,
+    cardIsExisted,
 }
