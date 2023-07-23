@@ -120,15 +120,20 @@ function getCardDetails(id){
     var result = {}
     result.card = getCardByID(id)
     result.referencesBy = [] 
-    const searchRef = `SELECT rowid, entry FROM cards_fts WHERE entry MATCH simple_query('[${id}]') ORDER BY rank`;
+    const keyword = `[${id}]`
+    const tokenLengh = keyword.length; //limit the token size
+    const searchRef = `SELECT rowid, simple_snippet(cards_fts, 0, '', '', '', ${tokenLengh}) as entry FROM cards_fts WHERE entry MATCH simple_query('${keyword}') ORDER BY rank`;
     const refResult =  db.prepare(searchRef).all()
     for(r of refResult){
-        result.referencesBy.push({
-            id: r.rowid,
-            entry: r.entry,
-            created_at: 0,
-            updated_at: 0,
-        })
+        console.log(r);
+        if(r.entry.indexOf(keyword) != -1){
+            result.referencesBy.push({
+                id: r.rowid,
+                entry: '',
+                created_at: 0,
+                updated_at: 0,
+            })
+        }
     }
     result.tags = db.prepare(`
         SELECT tag from tags where card_id = ?
@@ -155,7 +160,8 @@ function editCardByID(id, cardEntry){
 }
 
 function searchCards(keyWord, offset, limit){
-    const sql = `SELECT rowid, entry FROM cards_fts WHERE entry MATCH simple_query('${keyWord}') ORDER BY rank limit ?, ?;`;
+    // in simple_query, we accept a second params, '0' means disable pinyin split
+    const sql = `SELECT rowid, entry FROM cards_fts WHERE entry MATCH simple_query('${keyWord}', '0') ORDER BY rank limit ?, ?;`;
     const result =  db.prepare(sql).all(offset, limit)
     let cards = [];
     for(r of result){
