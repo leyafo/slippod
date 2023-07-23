@@ -155,6 +155,7 @@ document.addEventListener("DOMContentLoaded", () => {
     clickHandle(".list-item", function(event) {
         const listItem = event.target.closest(".list-item");
         const cardID = listItem.getAttribute("card-id");
+        console.log(cardID);
         highlightListItem(cardID);
         showCardInEditor(cardID);
     });
@@ -176,6 +177,7 @@ document.addEventListener("DOMContentLoaded", () => {
             editorView.remove("hidden");
         }
         db.getCardDetails(cardID).then(function(cardDetails) {
+            console.log(cardDetails.referencesBy);
             cardDetailContainer.setAttribute("card-id", cardID);
             //缓存里面有数据就直接读缓存里面的
             let entry = updatingCardsContainer.get(cardID);
