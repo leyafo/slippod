@@ -122,14 +122,13 @@ function getCardDetails(id){
     result.referencesBy = [] 
     const keyword = `[${id}]`
     const tokenLengh = keyword.length; //limit the token size
-    const searchRef = `SELECT rowid, simple_snippet(cards_fts, 0, '', '', '', ${tokenLengh}) as entry FROM cards_fts WHERE entry MATCH simple_query('${keyword}') ORDER BY rank`;
+    const searchRef = `SELECT rowid, entry, simple_snippet(cards_fts, 0, '', '', '', ${tokenLengh}) as snippet FROM cards_fts WHERE entry MATCH simple_query('${keyword}') ORDER BY rank`;
     const refResult =  db.prepare(searchRef).all()
     for(r of refResult){
-        console.log(r);
-        if(r.entry.indexOf(keyword) != -1){
+        if(r.snippet.indexOf(keyword) != -1){
             result.referencesBy.push({
                 id: r.rowid,
-                entry: '',
+                entry: r.entry,
                 created_at: 0,
                 updated_at: 0,
             })
