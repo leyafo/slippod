@@ -12,8 +12,11 @@
     <div class="container m-auto ">
         <div class="flex w-full">
             <div class="sidebar w-1/5 bg-gray-200 p-4">
-                <div class="tags-container">
+                <div class="tags-container" x-data="{ tags: [1,2,3,4] }" >
                     <a class="text-blue-600 visited:text-purple-600 a-tag" href="/tag/#" tag="#">ALL</a>
+                    <template x-for="tag in tags">
+                        <a class="text-blue-600 visited:text-purple-600 a-tag" x-text="tag" x-bind:href="'/tag/' + tag"></a>
+                    </template>
                 </div>
             </div>
             <div class="w-2/5 bg-gray-300 p-4 flex flex-col h-screen">

@@ -1,4 +1,5 @@
 import * as marked from "marked";
+import Alpine from 'alpinejs'
 
 function unixTimeFormat(unixTime) {
     const d = new Date(unixTime * 1000);
@@ -21,6 +22,9 @@ function clickHandle(selector, handle) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    window.Alpine = Alpine
+    Alpine.start()
+
     marked.use({
         mangle: false,
         headerIds: false
@@ -94,20 +98,20 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        db.getAllTags().then(function(tags) {
-            const tagsContainer = document.querySelector(".tags-container");
-            for (let tag of tags) {
-                let child = document.createElement("a");
-                child.setAttribute(
-                    "class",
-                    "text-blue-600 visited:text-purple-600 a-tag"
-                );
-                child.textContent = tag.tag;
-                child.setAttribute("href", `/tag/${tag.tag}`);
-                child.setAttribute("tag", tag.tag);
-                tagsContainer.insertBefore(child, tagsContainer.lastChild);
-            }
-        });
+        // db.getAllTags().then(function(tags) {
+        //     const tagsContainer = document.querySelector(".tags-container");
+        //     for (let tag of tags) {
+        //         let child = document.createElement("a");
+        //         child.setAttribute(
+        //             "class",
+        //             "text-blue-600 visited:text-purple-600 a-tag"
+        //         );
+        //         child.textContent = tag.tag;
+        //         child.setAttribute("href", `/tag/${tag.tag}`);
+        //         child.setAttribute("tag", tag.tag);
+        //         tagsContainer.insertBefore(child, tagsContainer.lastChild);
+        //     }
+        // });
     })();
 
     clickHandle(".a-tag", function(event) {
