@@ -12,14 +12,14 @@
     <div class="container m-auto ">
         <div class="flex w-full">
             <div class="sidebar w-1/5 bg-gray-200 p-4">
-                <div class="tags-container" x-data="{ tags: [1,2,3,4] }" >
-                    <a class="text-blue-600 visited:text-purple-600 a-tag" href="/tag/#" tag="#">ALL</a>
+                <div class="tags-container" x-data="{ tags: [] }" x-init=" tags = await db.getAllTags()" >
+                    <!-- <a class="text-blue-600 visited:text-purple-600 a-tag" href="/tag/#" tag="#">ALL</a> -->
                     <template x-for="tag in tags">
-                        <a class="text-blue-600 visited:text-purple-600 a-tag" x-text="tag" x-bind:href="'/tag/' + tag"></a>
+                        <a class="text-blue-600 visited:text-purple-600 a-tag" x-text="tag.tag" x-bind:href="'/tag/' + tag.tag"></a>
                     </template>
                 </div>
             </div>
-            <div class="w-2/5 bg-gray-300 p-4 flex flex-col h-screen">
+            <div class="w-full bg-gray-300 p-4 flex flex-col h-screen">
                 <div class="search-container flex flex-col w-full">
                     <div class="flex w-full">
                         <input class="w-4/5 p-2" type="text" placeholder="Search any thing here" />
@@ -29,7 +29,7 @@
                     <div id="listView" ></div>
                 </div>
             </div>
-            <div class="w-full bg-gray-400 p-2 h-screen overflow-y-hidden" id="card-detail-container" card-id="">
+            <!-- <div class="w-full bg-gray-400 p-2 h-screen overflow-y-hidden" id="card-detail-container" card-id="">
                 <div class="h-full" id="editor-view">
                     <div class="top-row border-b mb-3">
                         <span class="card-id font-bold "></span>
@@ -40,7 +40,7 @@
                         <textarea class="" id="longTextInput" rows="25" placeholder="Enter your long text here..."></textarea>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 
@@ -48,6 +48,28 @@
         <div class="list-item ">
             <div class="top-row">
                 <span class="card-id font-bold"></span>
+                <span class="card-created-at text-gray-63 dark:text-gray-94 px-8"></span>
+                <span class="card-updated-at text-gray-63 dark:text-gray-94"></span>
+                <button data-dropdown-toggle=""
+                    class="card-menu-button flex items-center justify-between w-full py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 md:w-auto dark:text-white md:dark:hover:text-blue-500 dark:focus:text-white dark:border-gray-700 dark:hover:bg-gray-700 md:dark:hover:bg-transparent">
+                    <svg class="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 10 6">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
+                    </svg>
+                </button>
+                <div id=""
+                    class="card-menu z-10 hidden font-normal bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
+                    <ul class="py-2 text-sm text-gray-700 dark:text-gray-400" aria-labelledby="dropdownLargeButton">
+                        <li>
+                            <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</a>
+                        </li>
+                        <li>
+                            <a href="#"
+                                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
             </div>
             <div class="content markdown-body h-20 overflow-hidden"></div>
         </div>

@@ -39,20 +39,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const limitItems = 20;
     const updatingCardsContainer = new Map();
 
-    let editor = CodeMirror.fromTextArea(longTextInput, {
-        theme: "default",
-        mode: "markdown",
-        keyMap: "emacs",
-        pollInterval: 1000,
-        lineWrapping: true,
-    });
-    editor.refresh();
-    editor.setSize("100%", "90%");
+    // let editor = CodeMirror.fromTextArea(longTextInput, {
+    //     theme: "default",
+    //     mode: "markdown",
+    //     keyMap: "emacs",
+    //     pollInterval: 1000,
+    //     lineWrapping: true,
+    // });
+    // editor.refresh();
+    // editor.setSize("100%", "90%");
 
-    editor.on("change", function(cm, obj) {
-        const cardID = cardDetailContainer.getAttribute("card-id");
-        updatingCardsContainer.set(cardID, editor.getValue());
-    });
+    // editor.on("change", function(cm, obj) {
+    //     const cardID = cardDetailContainer.getAttribute("card-id");
+    //     updatingCardsContainer.set(cardID, editor.getValue());
+    // });
     setInterval(() => {
         updatingCardsContainer.forEach(function(entry, cardID, map){
             db.editCardByID(cardID, entry).then(function(cardID){
@@ -75,6 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const content = listItem.querySelector(".content");
         content.innerHTML = marked.parse(card.entry);
 
+        const topRow = listItem.querySelector(".top-row");
         const idSpan = listItem.querySelector(".card-id");
         idSpan.textContent = card.id;
         //没法直接设置属性
@@ -82,6 +83,18 @@ document.addEventListener("DOMContentLoaded", () => {
         listItem
             .querySelector(".list-item")
             .setAttribute("id", `list-item-${card.id}`);
+
+        let cardCreatedAt = topRow.querySelector("span.card-created-at");
+        cardCreatedAt.textContent =
+            "Created At: " + unixTimeFormat(card.created_at);
+        let cardUpdatedAt = topRow.querySelector("span.card-updated-at");
+        cardUpdatedAt.textContent =
+            "Updated At: " + unixTimeFormat(card.updated_at);
+
+        const menuBtn = topRow.querySelector("button.card-menu-button");
+        menuBtn.setAttribute("data-dropdown-toggle", `card-${card.id}-menu`)
+        menuBtn.setAttribute("id", `card-${card.id}-menu-button`)
+        topRow.querySelector("div.card-menu").setAttribute("id", `card-${card.id}-menu`)
 
         if (order == listInsertLast) {
             listView.insertBefore(listItem, listView.firstChild);
@@ -97,21 +110,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 insertCard(card, listInsertFirst);
             }
         });
-
-        // db.getAllTags().then(function(tags) {
-        //     const tagsContainer = document.querySelector(".tags-container");
-        //     for (let tag of tags) {
-        //         let child = document.createElement("a");
-        //         child.setAttribute(
-        //             "class",
-        //             "text-blue-600 visited:text-purple-600 a-tag"
-        //         );
-        //         child.textContent = tag.tag;
-        //         child.setAttribute("href", `/tag/${tag.tag}`);
-        //         child.setAttribute("tag", tag.tag);
-        //         tagsContainer.insertBefore(child, tagsContainer.lastChild);
-        //     }
-        // });
     })();
 
     clickHandle(".a-tag", function(event) {
@@ -141,7 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
         db.cardIsExisted(cardID).then(function(r){
             if (r != undefined) {
                 highlightListItem(cardID);
-                showCardInEditor(r.id);
+                // showCardInEditor(r.id);
             }
         });
     });
@@ -156,13 +154,13 @@ document.addEventListener("DOMContentLoaded", () => {
         lastHighLightItem = cardID;
     }
 
-    clickHandle(".list-item", function(event) {
-        const listItem = event.target.closest(".list-item");
-        const cardID = listItem.getAttribute("card-id");
-        console.log(cardID);
-        highlightListItem(cardID);
-        showCardInEditor(cardID);
-    });
+    // clickHandle(".list-item", function(event) {
+    //     const listItem = event.target.closest(".list-item");
+    //     const cardID = listItem.getAttribute("card-id");
+    //     console.log(cardID);
+    //     highlightListItem(cardID);
+    //     // showCardInEditor(cardID);
+    // });
 
     function displayCreatedAtTime(createAt){
         let cardCreatedAt = editorView.querySelector("span.card-created-at");
@@ -176,27 +174,27 @@ document.addEventListener("DOMContentLoaded", () => {
             "Updated At: " + unixTimeFormat(updateAt);
     }
 
-    function showCardInEditor(cardID) {
-        if (editorView.classList.contains("hidden")) {
-            editorView.remove("hidden");
-        }
-        db.getCardDetails(cardID).then(function(cardDetails) {
-            console.log(cardDetails.referencesBy);
-            cardDetailContainer.setAttribute("card-id", cardID);
-            //缓存里面有数据就直接读缓存里面的
-            let entry = updatingCardsContainer.get(cardID);
-            if(entry == undefined){//没有就去读数据库里的
-                entry = cardDetails.card.entry
-            }
-            editor.setValue(entry);
-            editor.setCursor(entry.length);
-            editor.focus();
-            let spanID = editorView.querySelector("span.card-id");
-            spanID.textContent = cardID;
-            displayCreatedAtTime(cardDetails.card.created_at);
-            displayUpdatedAtTime(cardDetails.card.updated_at);
-        });
-    }
+    // function showCardInEditor(cardID) {
+    //     if (editorView.classList.contains("hidden")) {
+    //         editorView.remove("hidden");
+    //     }
+    //     db.getCardDetails(cardID).then(function(cardDetails) {
+    //         console.log(cardDetails.referencesBy);
+    //         cardDetailContainer.setAttribute("card-id", cardID);
+    //         //缓存里面有数据就直接读缓存里面的
+    //         let entry = updatingCardsContainer.get(cardID);
+    //         if(entry == undefined){//没有就去读数据库里的
+    //             entry = cardDetails.card.entry
+    //         }
+    //         editor.setValue(entry);
+    //         editor.setCursor(entry.length);
+    //         editor.focus();
+    //         let spanID = editorView.querySelector("span.card-id");
+    //         spanID.textContent = cardID;
+    //         displayCreatedAtTime(cardDetails.card.created_at);
+    //         displayUpdatedAtTime(cardDetails.card.updated_at);
+    //     });
+    // }
 
     const searchContainer = document.querySelector(".search-container");
     const searchInput = searchContainer.querySelector('input[type="text"]');
@@ -222,7 +220,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     insertCard(card, listInsertLast);
                     searchInput.value = "";
                     searchInput.blur();
-                    showCardInEditor(card.id);
+                    // showCardInEditor(card.id);
                 });
             });
         } else if (event.key == "Escape") {
