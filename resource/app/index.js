@@ -91,10 +91,10 @@ document.addEventListener("DOMContentLoaded", () => {
         cardUpdatedAt.textContent =
             "Updated At: " + unixTimeFormat(card.updated_at);
 
-        const menuBtn = topRow.querySelector("button.card-menu-button");
-        menuBtn.setAttribute("data-dropdown-toggle", `card-${card.id}-menu`)
-        menuBtn.setAttribute("id", `card-${card.id}-menu-button`)
-        topRow.querySelector("div.card-menu").setAttribute("id", `card-${card.id}-menu`)
+        // const menuBtn = topRow.querySelector("button.card-menu-button");
+        // menuBtn.setAttribute("data-dropdown-toggle", `card-${card.id}-menu`)
+        // menuBtn.setAttribute("id", `card-${card.id}-menu-button`)
+        // topRow.querySelector("div.card-menu").setAttribute("id", `card-${card.id}-menu`)
 
         if (order == listInsertLast) {
             listView.insertBefore(listItem, listView.firstChild);
