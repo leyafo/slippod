@@ -49,6 +49,16 @@ CREATE TABLE IF NOT EXISTS tags (
   FOREIGN KEY (card_id) REFERENCES cards(id)
 );
 CREATE INDEX IF NOT EXISTS idx_tags_card_id on tags(card_id);
+
+CREATE TABLE IF NOT EXISTS trash (
+  id INTEGER PRIMARY KEY,
+  card_id INTEGER NOT NULL,
+  card_entry TEXT NOT NULL,
+  card_created_at TIMESTAMP NOT NULL,
+  card_updated_at TIMESTAMP NOT NULL,
+  created_at TIMESTAMP DEFAULT (strftime('%s', 'now')) NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_trash_card_id on trash(card_id);
 `;
 
 

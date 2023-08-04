@@ -175,7 +175,7 @@ function registerDBFunctions(functionNames) {
     dbPath = path.join(config.getAppDataPath(), "slippod.db");
     config.writeDBPathConfig(dbPath);
     db.initialize(extPath, dictPath, dbPath);
-    db.createSchema();
+    db.updateSchema();
     require("./db_init.js").insertSampleData();
   } else {
     db.initialize(extPath, dictPath, dbPath);

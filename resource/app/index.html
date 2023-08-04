@@ -29,23 +29,11 @@
                     <div id="listView" ></div>
                 </div>
             </div>
-            <!-- <div class="w-full bg-gray-400 p-2 h-screen overflow-y-hidden" id="card-detail-container" card-id="">
-                <div class="h-full" id="editor-view">
-                    <div class="top-row border-b mb-3">
-                        <span class="card-id font-bold "></span>
-                        <span class="card-created-at text-gray-63 dark:text-gray-94 px-8"></span>
-                        <span class="card-updated-at text-gray-63 dark:text-gray-94"></span>
-                    </div>
-                    <div class="h-full w-full" id="editor-container">
-                        <textarea class="" id="longTextInput" rows="25" placeholder="Enter your long text here..."></textarea>
-                    </div>
-                </div>
-            </div> -->
         </div>
     </div>
 
     <template id="listItemTemplate">
-        <div class="list-item " x-data="">
+        <div class="list-item " x-data="{cardID: 0}">
             <div class="top-row">
                 <span class="card-id font-bold"></span>
                 <span class="card-created-at text-gray-63 dark:text-gray-94 px-8"></span>
@@ -100,7 +88,7 @@
                             style="display: none;"
                             class="absolute left-0 mt-2 w-40 rounded-md bg-white shadow-md "
                         >
-                            <a href="#" class="flex items-center gap-2 w-full first-of-type:rounded-t-md last-of-type:rounded-b-md px-4 py-2.5 text-left text-sm hover:bg-gray-50 disabled:text-gray-500">
+                            <a @click="editCard" href="#" class="flex items-center gap-2 w-full first-of-type:rounded-t-md last-of-type:rounded-b-md px-4 py-2.5 text-left text-sm hover:bg-gray-50 disabled:text-gray-500">
                                 Edit
                             </a>
 
@@ -110,10 +98,9 @@
                         </div>
                     </div>
                 </div>
-
-            </div>
             </div>
             <div class="content markdown-body"></div>
+            </div>
         </div>
     </template>
     <template id="articleTemplate">
