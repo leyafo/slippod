@@ -12,7 +12,8 @@
     "pack": "electron-builder --dir",
     "dist": "electron-builder --config.asar=false",
     "cross_dist": "electron-builder -mwl",
-    "local_release": "vite build && electron-builder --config.asar=false"
+    "local_release": "vite build && electron-builder --config.asar=false",
+    "update_schema": "node tasks/update_schema.js"
   },
   "keywords": [],
   "author": "Li Yafu",

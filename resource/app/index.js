@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const idSpan = listItem.querySelector(".card-id");
         idSpan.textContent = card.id;
         //没法直接设置属性
-        listItem.querySelector(".list-item").setAttribute("card-id", card.id);
+        listItem.querySelector(".list-item").setAttribute("x-data", `{cardID: ${card.id}}`);
         listItem
             .querySelector(".list-item")
             .setAttribute("id", `list-item-${card.id}`);
@@ -90,11 +90,6 @@ document.addEventListener("DOMContentLoaded", () => {
         let cardUpdatedAt = topRow.querySelector("span.card-updated-at");
         cardUpdatedAt.textContent =
             "Updated At: " + unixTimeFormat(card.updated_at);
-
-        // const menuBtn = topRow.querySelector("button.card-menu-button");
-        // menuBtn.setAttribute("data-dropdown-toggle", `card-${card.id}-menu`)
-        // menuBtn.setAttribute("id", `card-${card.id}-menu-button`)
-        // topRow.querySelector("div.card-menu").setAttribute("id", `card-${card.id}-menu`)
 
         if (order == listInsertLast) {
             listView.insertBefore(listItem, listView.firstChild);
@@ -174,27 +169,23 @@ document.addEventListener("DOMContentLoaded", () => {
             "Updated At: " + unixTimeFormat(updateAt);
     }
 
-    // function showCardInEditor(cardID) {
-    //     if (editorView.classList.contains("hidden")) {
-    //         editorView.remove("hidden");
-    //     }
-    //     db.getCardDetails(cardID).then(function(cardDetails) {
-    //         console.log(cardDetails.referencesBy);
-    //         cardDetailContainer.setAttribute("card-id", cardID);
-    //         //缓存里面有数据就直接读缓存里面的
-    //         let entry = updatingCardsContainer.get(cardID);
-    //         if(entry == undefined){//没有就去读数据库里的
-    //             entry = cardDetails.card.entry
-    //         }
-    //         editor.setValue(entry);
-    //         editor.setCursor(entry.length);
-    //         editor.focus();
-    //         let spanID = editorView.querySelector("span.card-id");
-    //         spanID.textContent = cardID;
-    //         displayCreatedAtTime(cardDetails.card.created_at);
-    //         displayUpdatedAtTime(cardDetails.card.updated_at);
-    //     });
-    // }
+    window.editCard=function(e){
+        const itemThis = this
+        itemThis.close();
+        const listItem = e.target.closest(".list-item");
+        const mdContent = listItem.querySelector(".markdown-body");
+        mdContent.innerHTML="";
+        let editor = CodeMirror(mdContent, {
+            theme: "default",
+            mode: "markdown",
+            keyMap: "emacs",
+            pollInterval: 1000,
+            lineWrapping: false,
+        });
+        db.getCardByID(itemThis.cardID).then(function(card){
+            editor.setValue(card.entry);
+        });
+    }
 
     const searchContainer = document.querySelector(".search-container");
     const searchInput = searchContainer.querySelector('input[type="text"]');

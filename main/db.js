@@ -49,7 +49,7 @@ function initialize(extPath, dictPath, dbPath){
     configs.isInitlized = true
 }
 
-function createSchema(){
+function updateSchema(){
     return db.exec(schema.schema);
 }
 
@@ -59,7 +59,7 @@ function initializeMemoryDB(extPath, dictPath){
         return
     }
     db = openDB(extPath, dictPath, ":memory:")
-    createSchema()
+    updateSchema()
     configs.dictPath = dictPath;
     configs.extPath = extPath;
     configs.isInitlized = true
@@ -142,9 +142,13 @@ function getCardDetails(id){
 }
 
 function deleteCardByID(id){
+    const card = getCardByID;
     db.transaction(function(cardID){
         db.prepare("delete from tags where card_id = ?").run(cardID);
         db.prepare("delete from cards where id = ?").run(cardID);
+        db.prepare(`insert into trash( 
+            card_id, card_entry, card_created_at, card_updated_at
+            ) values(?, ?, ?, ?)`).run(card.id, card.entry, card.created_at, card.updated_at);
     })(id)
     return 
 }
@@ -175,7 +179,7 @@ function searchCards(keyWord, offset, limit){
 }
 
 module.exports = {
-    createSchema,
+    updateSchema,
     reloadDB,
     getAllTags,
     getCards,
