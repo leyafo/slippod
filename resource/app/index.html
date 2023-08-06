@@ -13,10 +13,11 @@
         <div class="flex w-full">
             <div class="sidebar w-1/5 bg-gray-200 p-4">
                 <div class="tags-container" x-data="{ tags: [] }" x-init=" tags = await db.getAllTags()" >
-                    <!-- <a class="text-blue-600 visited:text-purple-600 a-tag" href="/tag/#" tag="#">ALL</a> -->
+                    <a @click="tagClick" class="text-blue-600 visited:text-purple-600 a-tag" href="/all" tag="#">ALL</a>
                     <template x-for="tag in tags">
-                        <a class="text-blue-600 visited:text-purple-600 a-tag" x-text="tag.tag" x-bind:href="'/tag/' + tag.tag"></a>
+                        <a @click="tagClick" class="text-blue-600 visited:text-purple-600 a-tag" x-text="tag.tag" x-bind:tag="tag.tag" x-bind:href="'/tag/' + tag.tag"></a>
                     </template>
+                    <a @click="tagClick" class="text-blue-600 visited:text-purple-600 a-tag" href="/trash" tag="#">Trash</a>
                 </div>
             </div>
             <div class="w-full bg-gray-300 p-4 flex flex-col h-screen">
@@ -92,8 +93,8 @@
                                 Edit
                             </a>
 
-                            <a href="#" class="flex items-center gap-2 w-full first-of-type:rounded-t-md last-of-type:rounded-b-md px-4 py-2.5 text-left text-sm hover:bg-gray-50 disabled:text-gray-500">
-                                <span class="text-red-600">Delete Task</span>
+                            <a @click="deleteCard" href="#" class="flex items-center gap-2 w-full first-of-type:rounded-t-md last-of-type:rounded-b-md px-4 py-2.5 text-left text-sm hover:bg-gray-50 disabled:text-gray-500">
+                                <span class="text-red-600">Delete</span>
                             </a>
                         </div>
                     </div>

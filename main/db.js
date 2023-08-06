@@ -71,35 +71,68 @@ function getCards(offset, limit){
                     Math.floor(Number(limit)))
 }
 
-function createNewCard(cardEntry){
-    try {
-        const changes = db.prepare(`insert into cards(entry) values(?)`).run(cardEntry);
-        return changes.lastInsertRowid
-    } catch (err) {
-        if (!db.inTransaction) throw err; // (transaction was forcefully rolled back)
+function getTrashCards(offset, limit){
+    const trashCards =  db.prepare(`select * from trash order by id desc limit ?, ?`).all(Math.floor(Number(offset)), 
+                    Math.floor(Number(limit)));
+    let cards = [];
+    for (tc of trashCards){
+        cards.push({
+            id: tc.card_id,
+            entry: tc.card_entry,
+            created_at: tc.card_created_at,
+            updated_at: tc.card_updated_at
+        });
     }
+    return cards;
 }
 
-// function parseTagsLinks(cardEntry){
-//     const pattern = /(\[#\w+\])|(\[@\d+\])/g;
-//     const links = new Set();
-//     const tags = new Set();
-//     const matches = cardEntry.matchAll(pattern);
-//     for (m of matches){
-//         let matchedString = m[0].trim()
-//         if (matchedString[1] == '@'){
-//             const id = parseInt(matchedString.slice(2, matchedString.length-1), 10);
-//             if (isNaN(id)){
-//                 continue;
-//             }
-//             links.add(id);
-//         }else if(matchedString[1] == '#'){
-//             tags.add(matchedString.slice(2, matchedString.length-1));
-//         }
-//     }
+function createNewCard(cardEntry) {
+  try {
+    const tagslinks = parseTagsLinks(cardEntry);
+    return db.transaction((entry, tags, links) => {
+      const changes = db
+        .prepare(`insert into cards(entry) values(?)`)
+        .run(entry);
+      tags.forEach((tag) => {
+        db.prepare(`insert into tags(card_id, tag) values(?, ?)`).run(
+          changes.lastInsertRowid,
+          tag
+        );
+      });
+    //   links.forEach((link) => {
+    //     db.prepare(`insert into links(card_id, link_id) values(?, ?)`).run(
+    //       changes.lastInsertRowid,
+    //       link
+    //     );
+    //   });
+      return changes.lastInsertRowid;
+    })(cardEntry, tagslinks[0], tagslinks[1]);
+  } catch (err) {
+    if (!db.inTransaction) throw err; // (transaction was forcefully rolled back)
+  }
+}
 
-//     return [tags, links]
-// }
+
+function parseTagsLinks(cardEntry){
+    const pattern = /(\[#\w+\])|(\[@\d+\])/g;
+    const links = new Set();
+    const tags = new Set();
+    const matches = cardEntry.matchAll(pattern);
+    for (m of matches){
+        let matchedString = m[0].trim()
+        if (matchedString[1] == '@'){
+            const id = parseInt(matchedString.slice(2, matchedString.length-1), 10);
+            if (isNaN(id)){
+                continue;
+            }
+            links.add(id);
+        }else if(matchedString[1] == '#'){
+            tags.add(matchedString.slice(2, matchedString.length-1));
+        }
+    }
+
+    return [tags, links]
+}
 
 function getAllTags(){
     const tags = db.prepare("select distinct(tag) from tags").all();
@@ -142,7 +175,7 @@ function getCardDetails(id){
 }
 
 function deleteCardByID(id){
-    const card = getCardByID;
+    const card = getCardByID(id);
     db.transaction(function(cardID){
         db.prepare("delete from tags where card_id = ?").run(cardID);
         db.prepare("delete from cards where id = ?").run(cardID);
@@ -191,6 +224,7 @@ module.exports = {
     initialize,
     initializeMemoryDB,
     getCardDetails,
+    getTrashCards,
     searchCards,
     cardIsExisted,
 }

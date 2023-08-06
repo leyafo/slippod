@@ -107,27 +107,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     })();
 
-    clickHandle(".a-tag", function(event) {
-        const element = event.target.closest(`a`);
-        const href = element.getAttribute("href");
-        //这里要小心，可能会把其他的link时间覆盖掉
-        if (href.indexOf("/tag/") != 0 && href.indexOf("/tags/") != 0) {
-            return;
-        }
-        event.preventDefault();
-        const tag = element.getAttribute("tag");
-        if (tag == "#") {
-            utils.reloadAll();
-        } else {
-            db.getCardsByTag(tag, 0, limitItems).then(function(cards) {
-                listView.innerHTML = "";
-                for (let card of cards) {
-                    insertCard(card, listInsertFirst);
-                }
-            });
-        }
-    });
-
     clickHandle("div.CodeMirror span.cm-link", function(event){
         let linkContent = event.target.textContent;
         const cardID = linkContent.replace(/\[|\]/gm, "");
@@ -185,6 +164,36 @@ document.addEventListener("DOMContentLoaded", () => {
         db.getCardByID(itemThis.cardID).then(function(card){
             editor.setValue(card.entry);
         });
+    }
+
+    window.deleteCard=function(e){
+        const itemThis = this
+        db.deleteCardByID(itemThis.cardID).then(function(){
+            const listItem = e.target.closest(".list-item");
+            listItem.remove();
+        })
+    }
+    window.tagClick=function(e){
+        e.preventDefault();
+        const href = e.target.getAttribute("href");
+        if (href == "/all"){
+            utils.reloadAll();
+        }else if (href == "/trash"){
+            db.getTrashCards(0, limitItems).then(function(cards){
+                listView.innerHTML = "";
+                for (let card of cards) {
+                    insertCard(card, listInsertFirst);
+                }
+            })
+        }else{
+            const tag = e.target.getAttribute("tag")
+            db.getCardsByTag(tag, 0, limitItems).then(function(cards) {
+                listView.innerHTML = "";
+                for (let card of cards) {
+                    insertCard(card, listInsertFirst);
+                }
+            });
+        }
     }
 
     const searchContainer = document.querySelector(".search-container");
