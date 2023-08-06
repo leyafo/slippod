@@ -13,7 +13,8 @@
     "dist": "electron-builder --config.asar=false",
     "cross_dist": "electron-builder -mwl",
     "local_release": "vite build && electron-builder --config.asar=false",
-    "update_schema": "node tasks/update_schema.js"
+    "update_schema": "node tasks/update_schema.js",
+    "install_app_deps": "./node_modules/.bin/electron-builder install-app-deps"
   },
   "keywords": [],
   "author": "Li Yafu",
