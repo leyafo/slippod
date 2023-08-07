@@ -30,7 +30,6 @@ document.addEventListener("DOMContentLoaded", () => {
         headerIds: false
     });
 
-    let longTextInput = document.getElementById("longTextInput");
     const listView = document.getElementById("listView");
     const editorView = document.getElementById("editor-view");
     const cardDetailContainer = document.getElementById("card-detail-container");
@@ -39,20 +38,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const limitItems = 20;
     const updatingCardsContainer = new Map();
 
-    // let editor = CodeMirror.fromTextArea(longTextInput, {
-    //     theme: "default",
-    //     mode: "markdown",
-    //     keyMap: "emacs",
-    //     pollInterval: 1000,
-    //     lineWrapping: true,
-    // });
-    // editor.refresh();
-    // editor.setSize("100%", "90%");
-
-    // editor.on("change", function(cm, obj) {
-    //     const cardID = cardDetailContainer.getAttribute("card-id");
-    //     updatingCardsContainer.set(cardID, editor.getValue());
-    // });
     setInterval(() => {
         updatingCardsContainer.forEach(function(entry, cardID, map){
             db.editCardByID(cardID, entry).then(function(cardID){
@@ -148,6 +133,28 @@ document.addEventListener("DOMContentLoaded", () => {
             "Updated At: " + unixTimeFormat(updateAt);
     }
 
+    function synonyms(cm, option) {
+      return new Promise(function (accept) {
+        console.log(accept);
+        setTimeout(function () {
+          var cursor = cm.getCursor(),
+            line = cm.getLine(cursor.line);
+          var start = cursor.ch,
+            end = cursor.ch;
+          while (start && /\w/.test(line.charAt(start - 1))) --start;
+          while (end < line.length && /\w/.test(line.charAt(end))) ++end;
+          var word = line.slice(start, end).toLowerCase();
+          for (var i = 0; i < comp.length; i++)
+            if (comp[i].indexOf(word) != -1)
+              return accept({
+                list: comp[i],
+                from: CodeMirror.Pos(cursor.line, start),
+                to: CodeMirror.Pos(cursor.line, end),
+              });
+          return accept(null);
+        }, 100);
+      });
+    }
     window.editCard=function(e){
         const itemThis = this
         itemThis.close();
@@ -155,11 +162,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const mdContent = listItem.querySelector(".markdown-body");
         mdContent.innerHTML="";
         let editor = CodeMirror(mdContent, {
-            theme: "default",
-            mode: "markdown",
-            keyMap: "emacs",
-            pollInterval: 1000,
-            lineWrapping: false,
+          theme: "default",
+          mode: "markdown",
+          keyMap: "emacs",
+          pollInterval: 1000,
+          hintOptions: { hint: synonyms },
+          lineWrapping: false,
         });
         db.getCardByID(itemThis.cardID).then(function(card){
             editor.setValue(card.entry);
@@ -196,52 +204,151 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    const searchContainer = document.querySelector(".search-container");
-    const searchInput = searchContainer.querySelector('input[type="text"]');
+    const searchBox = document.getElementById('searchBox');
+    const suggestionBox = document.getElementById('suggestionBox');
+    const suggestionResults = document.getElementById('suggestionResults');
+    const noResults = document.getElementById('noResults');
+    const highlightUp = 1;
+    const highlightDown = 2;
 
-    function displaySearchResult(cards) {
-        // if(cards.length > 0){
-        listView.innerHTML = "";
-        for (const card of cards) {
-            insertCard(card, listInsertFirst);
-        }
-        // }
-    }
-
-    searchInput.addEventListener("keyup", (event) => {
-        const searchTerm = searchInput.value;
-        if (event.key == "Enter") {
-            if (searchTerm.length == 0) {
-                utils.reloadAll();
-                return;
-            }
+    searchBox.addEventListener('keydown', function(event){
+        if (event.key === 'ArrowDown') {
+            highlightNote(event, highlightDown);
+        } else if (event.key === 'ArrowUp') {
+            highlightNote(event, highlightUp);
+        } else if (event.key == "Enter" && event.ctrlKey){
+            const searchTerm = searchBox.value;
             db.createNewCard(searchTerm).then((newCardID) => {
                 db.getCardByID(newCardID).then((card) => {
                     insertCard(card, listInsertLast);
-                    searchInput.value = "";
-                    searchInput.blur();
-                    // showCardInEditor(card.id);
+                    clearSearch(event);
                 });
             });
-        } else if (event.key == "Escape") {
-            searchInput.blur();
-            utils.reloadAll();
-        } else if (event.key == "n" && event.ctrlKey) {
-            console.log("test");
+        } else if (event.key == "Escape"){
+            clearSearch(event);
+        }
+    });
+
+    function highlightNote(event, arrowDirection) {
+        if(suggestionBox.classList.contains('hidden')){
+            return
+        }
+        //处理没有搜索结果的情况
+        if(!noResults.classList.contains('hidden')){
+            return
+        }
+        const highlightedNote = document.querySelector('#suggestionResults .highlighted');
+
+        let highlightNextNote = null;
+        if (arrowDirection === highlightUp){
+            highlightNextNote = highlightedNote.previousElementSibling || suggestionResults.lastChild;
+        }else if (arrowDirection === highlightDown){
+            highlightNextNote = highlightedNote.nextElementSibling || suggestionResults.firstChild;
+        }
+        if(highlightNextNote !== null){
+            highlightedNote.classList.remove('highlighted');
+            highlightNextNote.classList.add('highlighted');
+            highlightNextNote.scrollIntoView({block: 'nearest'});
+        }
+        event.preventDefault();
+    }
+
+    let isComposing = false;
+    searchBox.addEventListener('compositionstart', function(event) {
+        isComposing = true;
+    });
+
+    searchBox.addEventListener('compositionend', function(event) {
+        isComposing = false;
+        performSearch(event.target.value);
+    });
+
+    searchBox.addEventListener('input', function(event) {
+        if (!isComposing) {
+            performSearch(event.target.value);
+        }
+    });
+
+    function performSearch(searchTerm) {
+        // If the search term is empty, hide the suggestion box and exit the function
+        if (searchTerm === '') {
+            suggestionBox.classList.add("hidden")
+            return;
+        }
+
+        db.searchCards(searchTerm, 0, limitItems).then(function(cards) {
+            updateSuggestionBox(cards);
+        });
+    }
+
+    function updateSuggestionBox(cards) {
+        // Show the suggestion box
+        suggestionBox.classList.remove("hidden")
+
+        // Clear suggestion results
+        suggestionResults.innerHTML = '';
+
+        if (cards.length === 0) {
+            // If there are no matching notes, show the "No matched notes" message
+            noResults.classList.remove("hidden");
         } else {
-            if (searchTerm.length > 0) {
-                db.searchCards(searchTerm, 0, limitItems).then(function(cards) {
-                    displaySearchResult(cards);
+            // If there are matching notes, hide the "No matched notes" message
+            noResults.classList.add("hidden");
+
+            // Create a div for each matching note and add it to the suggestion box
+            for (let card of cards) {
+                const div = document.createElement('div');
+                div.textContent = card.entry.trim();
+                div.dataset.id = card.id;  // Attach the note's ID
+
+                // Mouseover event for highlighting
+                div.addEventListener('mouseover', function() {
+                    const currentlyHighlighted = document.querySelector('#suggestionResults .highlighted');
+                    if (currentlyHighlighted) {
+                        currentlyHighlighted.classList.remove('highlighted');
+                    }
+                    div.classList.add('highlighted');
                 });
+
+                suggestionResults.appendChild(div);
+
+                // Auto-highlight the first note
+                if (div === suggestionResults.firstChild) {
+                    div.classList.add('highlighted');
+                }
             }
+            // Show suggestion reuslts
+            suggestionResults.classList.remove('hidden');
+        }
+    }
+
+    function clearSearch(event) {
+        // Defocus the search box
+        searchBox.blur();
+
+        // Clear the search term
+        searchBox.value = '';
+
+        // Clear the suggested notes
+        suggestionResults.innerHTML = '';
+
+        // Hide the noResults message
+        noResults.classList.add("hidden");
+
+        // Hide the suggestionResults
+        suggestionResults.classList.add("hidden");
+
+        // Hide the entire suggestion box
+        suggestionBox.classList.add("hidden")
+    }
+
+    //全局快捷键盘
+    document.addEventListener('keydown', function(event) {
+        if (event.key == "k" &&event.ctrlKey){
+            searchBox.focus();
         }
     });
-    window.addEventListener("keydown", function(event) {
-        if (event.key == "F3") {
-            event.preventDefault();
-            searchInput.focus();
-        }
-    });
+
 
     let listHasGetLastItem = 0;
     document.querySelector(".list-container").onscroll = function(ev) {

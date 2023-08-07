@@ -166,3 +166,74 @@ textarea#longTextInput:focus {
   border-radius: 4px;
   background: #59667224;
 }
+
+
+/**************************************/
+#suggestion {
+    color: grey;
+    font-style: italic;
+}
+#notesList {
+    overflow: auto;
+    list-style-type: none;
+    padding: 0;
+}
+#notesList li {
+    min-height: 16px; /* Adjust as needed */
+}
+.selected {
+    background-color: #ddd; /* Adjust as needed */
+}
+.noteInput {
+    width: 80%;
+}
+
+.saveButton {
+    margin-left: 10px;
+}
+#searchContainer {
+    box-sizing: border-box;
+    position: fixed;
+    /* top: 0;
+    left: 0; */
+    width: 70%;
+    background-color: white;
+    z-index: 100;
+    padding: 8px;
+}
+#noteContainer {
+    margin-top: 50px;
+}
+#searchBox {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 5px;
+    font-size: 16px;
+}
+#suggestionBox {
+    position: absolute;
+    width: 100%;
+    top: 100%;
+    left: 0;
+    /* display: none; */
+    border: 1px solid #ccc;
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: white;
+}
+#suggestionResults {
+    /* display: none; */
+}
+#suggestionResults div {
+    padding: 5px;
+    border-bottom: 1px solid #ccc;
+}
+#suggestionResults div:last-child {
+    border-bottom: none;
+}
+#suggestionResults .highlighted {
+    background-color: #e0e0e0; /* You can adjust this color as needed */
+}
+#noResults {
+    /* display: none; */
+}
