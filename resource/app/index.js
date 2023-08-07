@@ -193,7 +193,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     insertCard(card, listInsertFirst);
                 }
             })
-        }else{
+        }else if ( href == "/notag"){
+            db.getNoTagCards(0, limitItems).then(function(cards){
+                listView.innerHTML = "";
+                for (let card of cards) {
+                    insertCard(card, listInsertFirst);
+                }
+            })
+        } else{
             const tag = e.target.getAttribute("tag")
             db.getCardsByTag(tag, 0, limitItems).then(function(cards) {
                 listView.innerHTML = "";
