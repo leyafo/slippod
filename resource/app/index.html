@@ -14,6 +14,7 @@
             <div class="sidebar w-1/5 bg-gray-200 p-4">
                 <div class="tags-container" x-data="{ tags: [] }" x-init=" tags = await db.getAllTags()" >
                     <a @click="tagClick" class="text-blue-600 visited:text-purple-600 a-tag" href="/all" tag="#">ALL</a>
+                    <a @click="tagClick" class="text-blue-600 visited:text-purple-600 a-tag" href="/notag" tag="#">No Tag</a>
                     <template x-for="tag in tags">
                         <a @click="tagClick" class="text-blue-600 visited:text-purple-600 a-tag" x-text="tag.tag" x-bind:tag="tag.tag" x-bind:href="'/tag/' + tag.tag"></a>
                     </template>

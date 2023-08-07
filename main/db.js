@@ -139,6 +139,11 @@ function getAllTags(){
     return tags
 }
 
+function getNoTagCards(offset, limit){
+   const cards = db.prepare("SELECT cards.* FROM cards LEFT JOIN tags ON cards.id = tags.card_id WHERE tags.card_id IS NULL limit ?, ?;").all(offset, limit)
+   return cards
+}
+
 function getCardsByTag(tag, offset, limit){
     const sql = `SELECT cards.* FROM cards JOIN tags ON cards.id = tags.card_id WHERE tags.tag = ? limit ?,?;`
     const cards = db.prepare(sql).all(tag, offset, limit)
@@ -212,19 +217,20 @@ function searchCards(keyWord, offset, limit){
 }
 
 module.exports = {
-    updateSchema,
-    reloadDB,
-    getAllTags,
-    getCards,
-    createNewCard,
-    getCardsByTag,
-    getCardByID,
-    deleteCardByID,
-    editCardByID,
-    initialize,
-    initializeMemoryDB,
-    getCardDetails,
-    getTrashCards,
-    searchCards,
-    cardIsExisted,
-}
+  updateSchema,
+  reloadDB,
+  getAllTags,
+  getCards,
+  createNewCard,
+  getCardsByTag,
+  getCardByID,
+  deleteCardByID,
+  editCardByID,
+  initialize,
+  initializeMemoryDB,
+  getCardDetails,
+  getTrashCards,
+  searchCards,
+  getNoTagCards,
+  cardIsExisted,
+};
