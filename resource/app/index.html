@@ -21,9 +21,11 @@
                 </div>
             </div>
             <div class="w-full bg-gray-300 p-4 flex flex-col h-screen">
-                <div class="search-container flex flex-col w-full">
-                    <div class="flex w-full">
-                        <input class="w-4/5 p-2" type="text" placeholder="Search any thing here" />
+                <div id="searchContainer">
+                    <input type="text" id="searchBox" placeholder="Cmd / Ctrl + K">
+                    <div id="suggestionBox" class="hidden">
+                        <div id="suggestionResults" class="hidden"></div>
+                        <div id="noResults" class="hidden">No matched notes</div>
                     </div>
                 </div>
                 <div class="list-container overflow-y-scroll flex-grow">
