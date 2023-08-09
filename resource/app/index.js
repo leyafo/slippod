@@ -223,6 +223,14 @@ document.addEventListener("DOMContentLoaded", () => {
             highlightNote(event, highlightDown);
         } else if (event.key === 'ArrowUp') {
             highlightNote(event, highlightUp);
+
+        } else if (event.key === 'Enter') {
+            const highlightedSuggestion = document.querySelector('#suggestionResults .highlighted');
+            if (highlightedSuggestion) {
+                handleOptionSelect(highlightedSuggestion.dataset.id);
+                clearSearch(event);
+                event.stopPropagation();
+            }
         } else if (event.key == "Enter" && event.ctrlKey){
             const searchTerm = searchBox.value;
             db.createNewCard(searchTerm).then((newCardID) => {
@@ -329,8 +337,14 @@ document.addEventListener("DOMContentLoaded", () => {
             suggestionResults.classList.remove('hidden');
         }
     }
-    window.searchOptionClick= function(event){
+
+    function searchOptionClick(event){
         const cardID = event.target.dataset.id
+        handleOptionSelect(cardID);
+        clearSearch(event);
+    }
+
+    function handleOptionSelect(cardID){
         const upoffset = Number(cardID) - Math.floor(Number(limitItems / 2));
         const downoffset = Number(cardID) + Math.floor(Number(limitItems /2));
         db.getCardsByMiddleID(cardID, upoffset, downoffset, 0 ).then(function(cards){
@@ -338,7 +352,6 @@ document.addEventListener("DOMContentLoaded", () => {
             for (let card of cards) {
                 insertCard(card, listInsertFirst);
             }
-            clearSearch(event);
         });
     }
 
@@ -373,7 +386,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let listHasGetLastItem = 0;
     document.querySelector(".list-container").onscroll = function(ev) {
         const listContainer = ev.target;
-        console.log(listContainer.scrollHeight, listContainer.offsetHeight, listContainer.scrollTop)
         const totalHeight = listContainer.scrollHeight - listContainer.offsetHeight;
         if (totalHeight - listContainer.scrollTop < 2) {
             let lastCallList = JSON.parse(localStorage.getItem("list_call"));
