@@ -14,6 +14,7 @@ contextBridge.exposeInMainWorld('utils', {
     "getCardsByTag",
     "getTrashCards",
     "getNoTagCards",
+    "getCardsByMiddleID",
   ]
   const otherDBFunctions = [
     "createNewCard", 
