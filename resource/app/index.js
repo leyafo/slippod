@@ -304,9 +304,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Create a div for each matching note and add it to the suggestion box
             for (let card of cards) {
-                const div = document.createElement('div');
+                const div = document.createElement("div")
                 div.textContent = card.entry.trim();
                 div.dataset.id = card.id;  // Attach the note's ID
+                div.onclick = searchOptionClick;
 
                 // Mouseover event for highlighting
                 div.addEventListener('mouseover', function() {
@@ -327,6 +328,18 @@ document.addEventListener("DOMContentLoaded", () => {
             // Show suggestion reuslts
             suggestionResults.classList.remove('hidden');
         }
+    }
+    window.searchOptionClick= function(event){
+        const cardID = event.target.dataset.id
+        const upoffset = Number(cardID) - Math.floor(Number(limitItems / 2));
+        const downoffset = Number(cardID) + Math.floor(Number(limitItems /2));
+        db.getCardsByMiddleID(cardID, upoffset, downoffset, 0 ).then(function(cards){
+            listView.innerHTML = "";
+            for (let card of cards) {
+                insertCard(card, listInsertFirst);
+            }
+            clearSearch(event);
+        });
     }
 
     function clearSearch(event) {
@@ -360,6 +373,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let listHasGetLastItem = 0;
     document.querySelector(".list-container").onscroll = function(ev) {
         const listContainer = ev.target;
+        console.log(listContainer.scrollHeight, listContainer.offsetHeight, listContainer.scrollTop)
         const totalHeight = listContainer.scrollHeight - listContainer.offsetHeight;
         if (totalHeight - listContainer.scrollTop < 2) {
             let lastCallList = JSON.parse(localStorage.getItem("list_call"));
@@ -376,6 +390,18 @@ document.addEventListener("DOMContentLoaded", () => {
             fn(...args).then(function(cards) {
                 for (let card of cards) {
                     insertCard(card, listInsertFirst);
+                }
+                if (cards.length < limitItems) {
+                    listHasGetLastItem = 1;
+                }
+            });
+        }else if(listContainer.scrollTop == 0){
+            let lastCallList = JSON.parse(localStorage.getItem("list_call"));
+            let fn = db[lastCallList.funcName];
+            let args = lastCallList.args;
+            fn(...args).then(function(cards) {
+                for (let card of cards) {
+                    insertCard(card, listInsertLast);
                 }
                 if (cards.length < limitItems) {
                     listHasGetLastItem = 1;

@@ -116,6 +116,10 @@
             </article>
         </div>
     </template>
+    <template id="suggestionOptionTemplate">
+        <div x-data="{cardID: 0}" @click="searchOptionClick" @keyup.enter="searchOptionClick">
+        </div>
+    </template>
 </body>
 <script  src="./codemirror.js"></script>
 <script  src="./codemirror_markdown.js"></script>

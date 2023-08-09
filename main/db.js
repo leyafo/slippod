@@ -68,7 +68,21 @@ function initializeMemoryDB(extPath, dictPath){
 //the newest card is order in first
 function getCards(offset, limit){
     return db.prepare(`select * from cards order by id desc limit ?, ?`).all(Math.floor(Number(offset)), 
-                    Math.floor(Number(limit)))
+                    Math.floor(Number(limit)));
+}
+
+function getCardsByMiddleID(middleID, upOffset, downOffset, limit){
+    if(limit > 0){
+        //going down
+        return db.prepare(`select * from cards where id > ? order by id desc limit ?, ?`).all(middleID, Math.floor(downOffset), 
+            Math.floor(Number(limit)));
+    }else if(limit < 0){
+        //going up
+        return db.prepare(`select * from cards order id < ? by id asc limit ?, ?`).all(middleID, Math.floor(upOffset), 
+            Math.floor(Number(limit)));
+    }else{//limit == 0 //first list call
+        return db.prepare(`select * from cards where id >= ? AND id <= ?`).all(Math.floor(upOffset), Math.floor(Number(downOffset)))
+    }
 }
 
 function getTrashCards(offset, limit){
@@ -233,4 +247,5 @@ module.exports = {
   searchCards,
   getNoTagCards,
   cardIsExisted,
+  getCardsByMiddleID,
 };
