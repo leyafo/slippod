@@ -65,28 +65,35 @@ function initializeMemoryDB(extPath, dictPath){
     configs.isInitlized = true
 }
 
+function getMaxCardID(){
+    return db.prepare(`select max(id) as max_id from cards`).get();
+}
+
 //the newest card is order in first
 function getCards(offset, limit){
     return db.prepare(`select * from cards order by id desc limit ?, ?`).all(Math.floor(Number(offset)), 
                     Math.floor(Number(limit)));
 }
 
-function getCardsByMiddleID(middleID, upOffset, downOffset, limit){
-    if(limit > 0){
-        //going down
-        return db.prepare(`select * from cards where id > ? order by id desc limit ?, ?`).all(middleID, Math.floor(downOffset), 
-            Math.floor(Number(limit)));
+function getCardsByMiddleID(middleID, upLimit, downLimit, limit){
+    if (upLimit == 0 && downLimit == 0){
+        const upCards = db.prepare(`select * from cards where id >= ? order by id asc limit 0, ?  `).all(Number(middleID), Number(limit));
+        const downCards = db.prepare(`select * from cards where id < ? order by id desc limit 0, ?`).all(Number(middleID), Number(limit)); 
+        this.maxLimit = db.prepare(`select max(id) from cards`)
+        return downCards.reverse().concat(upCards);
+    }
+    if(limit > 0){ //going down
+        let downCards =  db.prepare(`select * from cards where id < ? order by id desc limit ?, ?`).all(Number(middleID), Number(downLimit), Number(limit)); 
+        return downCards.reverse();
     }else if(limit < 0){
         //going up
-        return db.prepare(`select * from cards order id < ? by id asc limit ?, ?`).all(middleID, Math.floor(upOffset), 
-            Math.floor(Number(limit)));
-    }else{//limit == 0 //first list call
-        return db.prepare(`select * from cards where id >= ? AND id <= ?`).all(Math.floor(upOffset), Math.floor(Number(downOffset)))
+        console.log(middleID, upLimit, downLimit, limit);
+        return db.prepare(`select * from cards where id >= ? order by id asc limit ?, ?`).all(Number(middleID), Number(upLimit), Math.abs(limit));
     }
 }
 
 function getTrashCards(offset, limit){
-    const trashCards =  db.prepare(`select * from trash order by id desc limit ?, ?`).all(Math.floor(Number(offset)), 
+    const trashCards =  db.prepare(`select * from trash order by card_id desc limit ?, ?`).all(Math.floor(Number(offset)), 
                     Math.floor(Number(limit)));
     let cards = [];
     for (tc of trashCards){
@@ -154,12 +161,12 @@ function getAllTags(){
 }
 
 function getNoTagCards(offset, limit){
-   const cards = db.prepare("SELECT cards.* FROM cards LEFT JOIN tags ON cards.id = tags.card_id WHERE tags.card_id IS NULL limit ?, ?;").all(offset, limit)
+   const cards = db.prepare("SELECT cards.* FROM cards LEFT JOIN tags ON cards.id = tags.card_id WHERE tags.card_id IS NULL order by cards.id desc limit ?, ?;").all(offset, limit)
    return cards
 }
 
 function getCardsByTag(tag, offset, limit){
-    const sql = `SELECT cards.* FROM cards JOIN tags ON cards.id = tags.card_id WHERE tags.tag = ? limit ?,?;`
+    const sql = `SELECT cards.* FROM cards JOIN tags ON cards.id = tags.card_id WHERE tags.tag = ? order by cards.id desc limit ?,?;`
     const cards = db.prepare(sql).all(tag, offset, limit)
     return cards
 }
@@ -248,4 +255,5 @@ module.exports = {
   getNoTagCards,
   cardIsExisted,
   getCardsByMiddleID,
+  getMaxCardID
 };

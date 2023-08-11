@@ -1,5 +1,6 @@
 import * as marked from "marked";
 import Alpine from 'alpinejs'
+import { list } from "postcss";
 
 function unixTimeFormat(unixTime) {
     const d = new Date(unixTime * 1000);
@@ -77,9 +78,9 @@ document.addEventListener("DOMContentLoaded", () => {
             "Updated At: " + unixTimeFormat(card.updated_at);
 
         if (order == listInsertLast) {
-            listView.insertBefore(listItem, listView.firstChild);
-        } else if (order == listInsertFirst) {
             listView.insertBefore(listItem, null);
+        } else if (order == listInsertFirst) {
+            listView.insertBefore(listItem, listView.firstChild);
         }
     }
 
@@ -87,7 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
     (async () => {
         db.getCards(0, limitItems).then(function(cards) {
             for (let card of cards) {
-                insertCard(card, listInsertFirst);
+                insertCard(card, listInsertLast);
             }
         });
     })();
@@ -190,14 +191,14 @@ document.addEventListener("DOMContentLoaded", () => {
             db.getTrashCards(0, limitItems).then(function(cards){
                 listView.innerHTML = "";
                 for (let card of cards) {
-                    insertCard(card, listInsertFirst);
+                    insertCard(card, listInsertLast);
                 }
             })
         }else if ( href == "/notag"){
             db.getNoTagCards(0, limitItems).then(function(cards){
                 listView.innerHTML = "";
                 for (let card of cards) {
-                    insertCard(card, listInsertFirst);
+                    insertCard(card, listInsertLast);
                 }
             })
         } else{
@@ -205,7 +206,7 @@ document.addEventListener("DOMContentLoaded", () => {
             db.getCardsByTag(tag, 0, limitItems).then(function(cards) {
                 listView.innerHTML = "";
                 for (let card of cards) {
-                    insertCard(card, listInsertFirst);
+                    insertCard(card, listInsertLast);
                 }
             });
         }
@@ -223,23 +224,26 @@ document.addEventListener("DOMContentLoaded", () => {
             highlightNote(event, highlightDown);
         } else if (event.key === 'ArrowUp') {
             highlightNote(event, highlightUp);
-
         } else if (event.key === 'Enter') {
+            if (event.ctrlKey){
+                const searchTerm = searchBox.value;
+                db.createNewCard(searchTerm).then((newCardID) => {
+                    db.getCardByID(newCardID).then((card) => {
+                        insertCard(card, listInsertFirst);
+                        clearSearch(event);
+                    });
+                });
+                event.stopPropagation();
+                return
+            }
+
             const highlightedSuggestion = document.querySelector('#suggestionResults .highlighted');
             if (highlightedSuggestion) {
                 handleOptionSelect(highlightedSuggestion.dataset.id);
                 clearSearch(event);
                 event.stopPropagation();
             }
-        } else if (event.key == "Enter" && event.ctrlKey){
-            const searchTerm = searchBox.value;
-            db.createNewCard(searchTerm).then((newCardID) => {
-                db.getCardByID(newCardID).then((card) => {
-                    insertCard(card, listInsertLast);
-                    clearSearch(event);
-                });
-            });
-        } else if (event.key == "Escape"){
+        }  else if (event.key == "Escape"){
             clearSearch(event);
         }
     });
@@ -345,9 +349,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function handleOptionSelect(cardID){
-        const upoffset = Number(cardID) - Math.floor(Number(limitItems / 2));
-        const downoffset = Number(cardID) + Math.floor(Number(limitItems /2));
-        db.getCardsByMiddleID(cardID, upoffset, downoffset, 0 ).then(function(cards){
+        db.getCardsByMiddleID(Number(cardID), 0, 0, limitItems).then(function(cards){
             listView.innerHTML = "";
             for (let card of cards) {
                 insertCard(card, listInsertFirst);
@@ -383,7 +385,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
-    let listHasGetLastItem = 0;
+    let listHasGetLastItemDown = 0;
+    let listHasGetLastItemUp = 0;
     document.querySelector(".list-container").onscroll = function(ev) {
         const listContainer = ev.target;
         const totalHeight = listContainer.scrollHeight - listContainer.offsetHeight;
@@ -392,31 +395,49 @@ document.addEventListener("DOMContentLoaded", () => {
             let fn = db[lastCallList.funcName];
             let args = lastCallList.args;
             const offsetArgsIndex = args.length - 2;
-            if (args[offsetArgsIndex] == 0) {
-                listHasGetLastItem = 0;
+            if (args[offsetArgsIndex] == 0){
+                listHasGetLastItemDown = 0
             }
-            if (listHasGetLastItem == 1) {
-                return;
+            if (listHasGetLastItemDown == 1){
+                return
             }
+            if (Number(args[offsetArgsIndex]) > this.maxID){
+                return
+            } 
             args[offsetArgsIndex] += limitItems;
-            fn(...args).then(function(cards) {
-                for (let card of cards) {
-                    insertCard(card, listInsertFirst);
-                }
-                if (cards.length < limitItems) {
-                    listHasGetLastItem = 1;
-                }
-            });
-        }else if(listContainer.scrollTop == 0){
-            let lastCallList = JSON.parse(localStorage.getItem("list_call"));
-            let fn = db[lastCallList.funcName];
-            let args = lastCallList.args;
+            args[args.length-1] = limitItems;
             fn(...args).then(function(cards) {
                 for (let card of cards) {
                     insertCard(card, listInsertLast);
                 }
                 if (cards.length < limitItems) {
-                    listHasGetLastItem = 1;
+                listHasGetLastItemDown = 1;
+                }
+            });
+            listHasGetLastItemDown = 1
+        }else if(listContainer.scrollTop == 0){
+            let lastCallList = JSON.parse(localStorage.getItem("list_call"));
+            if(lastCallList.funcName !== "getCardsByMiddleID"){
+                //其他list操作不需要向上滚动
+                return
+            }
+            let fn = db[lastCallList.funcName];
+            let args = lastCallList.args;
+            const offsetArgsIndex = args.length - 3;
+            if (args[offsetArgsIndex] == 0){
+                listHasGetLastItemUp = 0
+            }
+            if (listHasGetLastItemUp == 1){
+                return
+            }
+            args[offsetArgsIndex] += limitItems;
+            args[args.length-1] = -limitItems;
+            fn(...args).then(function(cards) {
+                for (let card of cards) {
+                    insertCard(card, listInsertFirst);
+                }
+                if(cards.length<limitItems){
+                    listHasGetLastItemUp = 1;
                 }
             });
         }

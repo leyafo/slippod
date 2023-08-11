@@ -24,6 +24,7 @@ contextBridge.exposeInMainWorld('utils', {
     "editCardByID",
     "getCardDetails",
     "cardIsExisted",
+    "getMaxCardID"
   ]
   let backendFunctions = {};
   listDBFunctions.forEach((funcName) =>{
