@@ -21,7 +21,7 @@ contextBridge.exposeInMainWorld('utils', {
     "getAllTags",
     "getCardByID",
     "deleteCardByID",
-    "editCardByID",
+    "updateCardEntryByID",
     "getCardDetails",
     "cardIsExisted",
     "getMaxCardID"

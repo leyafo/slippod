@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./style.css" />
     <link rel="stylesheet" href="./codemirror.css" />
+    <link rel="stylesheet" href="./show-hint.css" />
     <title>slippod</title>
 </head>
 <body>
@@ -37,7 +38,7 @@
     </div>
 
     <template id="listItemTemplate">
-        <div class="list-item " x-data="{cardID: 0}">
+        <div class="list-item " x-data="{cardID: 0, editor: 0}">
             <div class="top-row">
                 <span class="card-id font-bold"></span>
                 <span class="card-created-at text-gray-63 dark:text-gray-94 px-8"></span>
@@ -104,6 +105,8 @@
                 </div>
             </div>
             <div class="content markdown-body"></div>
+            <div class="hidden bottom-row">
+                <button @click="updateCard">Update</button>
             </div>
         </div>
     </template>
@@ -123,6 +126,7 @@
 </body>
 <script  src="./codemirror.js"></script>
 <script  src="./codemirror_markdown.js"></script>
+<script  src="./show-hint.js"></script>
 <script  src="./emacs.js"></script>
 <script type="module" src="./index.js"></script>
 </html>

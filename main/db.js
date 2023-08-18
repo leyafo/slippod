@@ -216,7 +216,7 @@ function cardIsExisted(id){
     return db.prepare(`select id from cards where id=?`).get(id);
 }
 
-function editCardByID(id, cardEntry){
+function updateCardEntryByID(id, cardEntry){
     db.prepare("update cards set entry = ?, updated_at=strftime('%s', 'now') where id = ?").run(cardEntry, id)
     return id;
 }
@@ -246,7 +246,7 @@ module.exports = {
   getCardsByTag,
   getCardByID,
   deleteCardByID,
-  editCardByID,
+  updateCardEntryByID,
   initialize,
   initializeMemoryDB,
   getCardDetails,

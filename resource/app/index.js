@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setInterval(() => {
         updatingCardsContainer.forEach(function(entry, cardID, map){
-            db.editCardByID(cardID, entry).then(function(cardID){
+            db.updateCardEntryByID(cardID, entry).then(function(cardID){
                 db.getCardByID(cardID).then(function(card){
                     const editingID = cardDetailContainer.getAttribute("card-id");
                     if(editingID == cardID){
@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const idSpan = listItem.querySelector(".card-id");
         idSpan.textContent = card.id;
         //没法直接设置属性
-        listItem.querySelector(".list-item").setAttribute("x-data", `{cardID: ${card.id}}`);
+        listItem.querySelector(".list-item").setAttribute("x-data", `{cardID: ${card.id}, editor: 0}`);
         listItem
             .querySelector(".list-item")
             .setAttribute("id", `list-item-${card.id}`);
@@ -114,14 +114,6 @@ document.addEventListener("DOMContentLoaded", () => {
         lastHighLightItem = cardID;
     }
 
-    // clickHandle(".list-item", function(event) {
-    //     const listItem = event.target.closest(".list-item");
-    //     const cardID = listItem.getAttribute("card-id");
-    //     console.log(cardID);
-    //     highlightListItem(cardID);
-    //     // showCardInEditor(cardID);
-    // });
-
     function displayCreatedAtTime(createAt){
         let cardCreatedAt = editorView.querySelector("span.card-created-at");
         cardCreatedAt.textContent =
@@ -134,45 +126,87 @@ document.addEventListener("DOMContentLoaded", () => {
             "Updated At: " + unixTimeFormat(updateAt);
     }
 
-    function synonyms(cm, option) {
+    function autocompleteHints(cm, option) {
+      cm.on("shown", function () {
+        console.log("hhhhkdjfls");
+      });
       return new Promise(function (accept) {
-        console.log(accept);
-        setTimeout(function () {
-          var cursor = cm.getCursor(),
-            line = cm.getLine(cursor.line);
-          var start = cursor.ch,
-            end = cursor.ch;
-          while (start && /\w/.test(line.charAt(start - 1))) --start;
-          while (end < line.length && /\w/.test(line.charAt(end))) ++end;
-          var word = line.slice(start, end).toLowerCase();
-          for (var i = 0; i < comp.length; i++)
-            if (comp[i].indexOf(word) != -1)
-              return accept({
-                list: comp[i],
-                from: CodeMirror.Pos(cursor.line, start),
-                to: CodeMirror.Pos(cursor.line, end),
+        let cursor = cm.getCursor(),
+          lineContent = cm.getLine(cursor.line),
+          token = cm.getTokenAt(cursor);
+        let signalCh = lineContent[cursor.ch - 1];
+        console.log(token, signalCh);
+        if (signalCh == "#") {
+          db.getAllTags().then(function (tags) {
+            let hints = [];
+            for (let t of tags) {
+              hints.push({
+                text: `[${t.tag}](/tag/${t.tag})`,
+                displayText: t.tag,
               });
-          return accept(null);
-        }, 100);
+            }
+            return accept({
+              list: hints,
+              from: { line: cursor.line, ch: cursor.ch - 1 },
+              to: cursor,
+            });
+          });
+        } else if (signalCh == "@") {
+        }
       });
     }
+
+
     window.editCard=function(e){
         const itemThis = this
-        itemThis.close();
         const listItem = e.target.closest(".list-item");
         const mdContent = listItem.querySelector(".markdown-body");
+        const bottomRow = listItem.querySelector(".bottom-row");
+        bottomRow.classList.remove("hidden");
+
         mdContent.innerHTML="";
         let editor = CodeMirror(mdContent, {
           theme: "default",
           mode: "markdown",
           keyMap: "emacs",
           pollInterval: 1000,
-          hintOptions: { hint: synonyms },
+          hintOptions: { hint: autocompleteHints, shown: function(){console.log(hello)} },
           lineWrapping: false,
+        });
+        editor.on("change", function (cm, change) {
+            // console.log(change.origin, change);
+            if ( change.text[0] === "@" || change.text[0] == "#") {
+            //     console.log(change.origin)
+                let hintMenu = cm.showHint(); // Show hints when the user types, but not on whitespace
+                cm.on('shown', function(){
+                    console.log('fuck')
+                })
+                console.log(hintMenu);
+                // Attach the close event
+                
+
+            }
         });
         db.getCardByID(itemThis.cardID).then(function(card){
             editor.setValue(card.entry);
         });
+        editor.on("endCompletion", function () {
+          console.log("Autocomplete menu is being closed programmatically");
+        });
+        itemThis.editor=editor;
+    }
+
+    window.updateCard=function(e){
+        const itemThis = this
+        const row = e.target.closest(".bottom-row");
+        const listItem = e.target.closest(".list-item");
+        const editorValue = itemThis.editor.getValue();
+        row.classList.add("hidden");
+        db.updateCardEntryByID(itemThis.cardID, itemThis.editor.getValue()).then(function(){
+            itemThis.editor = null;
+            const content = listItem.querySelector(".content")
+            content.innerHTML = marked.parse(editorValue);
+        })
     }
 
     window.deleteCard=function(e){
