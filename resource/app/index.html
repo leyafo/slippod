@@ -48,8 +48,7 @@
                         x-data="{
                             open: false,
                             toggle() {
-                                if (this.open) {
-                                    return this.close()
+                                if (this.open) { return this.close()
                                 }
 
                                 this.$refs.button.focus()
@@ -126,6 +125,7 @@
 </body>
 <script  src="./codemirror.js"></script>
 <script  src="./codemirror_markdown.js"></script>
+<script  src="./overlay.js"></script>
 <script  src="./show-hint.js"></script>
 <script  src="./emacs.js"></script>
 <script type="module" src="./index.js"></script>
