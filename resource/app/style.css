@@ -236,3 +236,9 @@ textarea#longTextInput:focus {
 #noResults {
     /* display: none; */
 }
+
+
+.cm-hashtag {
+  color: blue;
+  text-decoration: underline;
+}

@@ -154,6 +154,25 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
+    CodeMirror.defineMode("hashtags", function (config, parserConfig) {
+      var hashtagOverlay = {
+        token: function (stream, state) {
+          if (stream.match(/#[a-zA-Z0-9_]+/)) {
+            return "hashtag";
+          }
+          while (
+            stream.next() != null &&
+            !stream.match(/#[a-zA-Z0-9_]+/, false)
+          ) {}
+          return null;
+        },
+      };
+      return CodeMirror.overlayMode(
+        CodeMirror.getMode(config, parserConfig.backdrop || "markdown"),
+        hashtagOverlay
+      );
+    });
+
 
     window.editCard=function(e){
         const itemThis = this
@@ -165,7 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
         mdContent.innerHTML="";
         let editor = CodeMirror(mdContent, {
           theme: "default",
-          mode: "markdown",
+          mode: "hashtags",
           keyMap: "emacs",
           pollInterval: 1000,
           hintOptions: { hint: autocompleteHints, shown: function(){console.log(hello)} },
@@ -175,14 +194,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // console.log(change.origin, change);
             if ( change.text[0] === "@" || change.text[0] == "#") {
             //     console.log(change.origin)
-                let hintMenu = cm.showHint(); // Show hints when the user types, but not on whitespace
-                cm.on('shown', function(){
-                    console.log('fuck')
-                })
-                console.log(hintMenu);
-                // Attach the close event
-                
-
+                cm.showHint(); // Show hints when the user types, but not on whitespace
             }
         });
         db.getCardByID(itemThis.cardID).then(function(card){
@@ -433,9 +445,6 @@ document.addEventListener("DOMContentLoaded", () => {
             if (listHasGetLastItemDown == 1){
                 return
             }
-            if (Number(args[offsetArgsIndex]) > this.maxID){
-                return
-            } 
             args[offsetArgsIndex] += limitItems;
             args[args.length-1] = limitItems;
             fn(...args).then(function(cards) {
@@ -443,7 +452,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     insertCard(card, listInsertLast);
                 }
                 if (cards.length < limitItems) {
-                listHasGetLastItemDown = 1;
+                    listHasGetLastItemDown = 1;
                 }
             });
             listHasGetLastItemDown = 1
