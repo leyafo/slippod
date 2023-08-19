@@ -4,241 +4,83 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  box-sizing: border-box;
-}
-
-*,
-::before,
-::after {
-  box-sizing: inherit;
-}
-
-body, html{
-  height: 100%;
-}
-
 body {
-  background-color: #eee;
-  font-family: Helvetica, Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  overflow-y: hidden;
+  @apply antialiased;
 }
 
-.container {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+#sideNav {
+  @apply py-6 px-4 bg-slate-50;
 }
 
-textarea#longTextInput {
-  width: 100%;
-  resize: vertical;
-  padding: 10px;
-  font-size: 14px;
-  border: 1px solid #ccc;
+#sideNavUl {
+  @apply w-56;
 }
 
-textarea#longTextInput:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+#allCards::before {
+  content: url('data:image/svg+xml,%3Csvg xmlns="http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg" width="24" height="24" viewBox="0 0 24 24"%3E%3Cpath fill="currentColor" fill-rule="evenodd" d="M2 12c0-4.714 0-7.071 1.464-8.536C4.93 2 7.286 2 12 2c4.714 0 7.071 0 8.535 1.464C22 4.93 22 7.286 22 12c0 4.714 0 7.071-1.465 8.535C19.072 22 16.714 22 12 22s-7.071 0-8.536-1.465C2 19.072 2 16.714 2 12Zm3-3.5v-1A1.5 1.5 0 0 1 6.5 6h11A1.5 1.5 0 0 1 19 7.5v1a2.489 2.489 0 0 0-1.5-.5h-11c-.563 0-1.082.186-1.5.5Zm0 2v1a2.49 2.49 0 0 1 1.5-.5h11a2.49 2.49 0 0 1 1.5.5v-1A1.5 1.5 0 0 0 17.5 9h-11A1.5 1.5 0 0 0 5 10.5Zm15 3.75a.75.75 0 1 1 0 1.5h-2.343c-.879 0-1.11.013-1.307.095c-.198.082-.37.236-.991.857l-.305.305c-.432.432-.773.774-1.207.98a2.808 2.808 0 0 1-.248.102c-.453.162-.936.162-1.547.161h-.218c-.646 0-1.157.001-1.63-.178a2.74 2.74 0 0 1-.26-.114c-.452-.227-.797-.603-1.235-1.079l-.11-.121c-.59-.64-.753-.799-.944-.889c-.02-.01-.04-.018-.061-.027c-.195-.079-.424-.092-1.293-.092H4a.75.75 0 0 1 0-1.5h1.02v-1A1.5 1.5 0 0 1 6.5 12h11a1.5 1.5 0 0 1 1.48 1.25v1H20Z" clip-rule="evenodd"%2F%3E%3C%2Fsvg%3E');
+  margin-right: 5px;
 }
 
-.list-container {
-    margin-top: 0.5em;
-    margin-bottom: 15px;
-    scroll-padding-bottom: 15px;
-    /* min-height: 0; */
-    /* height: calc(100vh - 100px); */
+#noTag::before {
+  content: url('data:image/svg+xml,%3Csvg xmlns="http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg" width="24" height="24" viewBox="0 0 24 24"%3E%3Cg fill="currentColor"%3E%3Cpath d="M1.75 10v4c0 2.829 0 4.243.879 5.122c.217.217.467.38.763.504a8.48 8.48 0 0 1-.019-.134c-.123-.918-.123-2.063-.123-3.393V7.902c0-1.33 0-2.476.123-3.393l.02-.134a2.309 2.309 0 0 0-.764.504C1.75 5.758 1.75 7.172 1.75 10Zm20 0v4c0 2.829 0 4.243-.879 5.122c-.217.217-.467.38-.763.504l.019-.134c.123-.918.123-2.063.123-3.393V7.902c0-1.33 0-2.476-.123-3.393a8.452 8.452 0 0 0-.02-.134c.297.123.547.287.764.504c.879.879.879 2.293.879 5.121Z"%2F%3E%3Cpath fill-rule="evenodd" d="M5.629 2.879C4.75 3.757 4.75 5.172 4.75 8v8c0 2.828 0 4.243.879 5.121C6.507 22 7.922 22 10.75 22h2c2.828 0 4.243 0 5.121-.879c.879-.878.879-2.293.879-5.121V8c0-2.828 0-4.243-.879-5.121C16.993 2 15.578 2 12.75 2h-2c-2.828 0-4.243 0-5.121.879ZM8 17a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 0 1.5h-3A.75.75 0 0 1 8 17Zm.75-4.75a.75.75 0 0 0 0 1.5h6a.75.75 0 0 0 0-1.5h-6ZM8 9a.75.75 0 0 1 .75-.75h6a.75.75 0 0 1 0 1.5h-6A.75.75 0 0 1 8 9Z" clip-rule="evenodd"%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E');
+  margin-right: 5px;    
 }
 
-.list-item {
-  padding: 10px !important;
-  background-color: #f8f9fa;
-  border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  margin-bottom: 15px !important;
-  border: 1px solid rgba(0, 0, 0, 0.1); /* Add weak border */
-  transition: all 0.3s;
-  /* min-height: 0; */
+#tagsList {
+  @apply w-56 pt-4;
+}
+#tagsList li::before {
+  content: url('data:image/svg+xml,%3Csvg xmlns="http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg" width="24" height="24" viewBox="0 0 24 24"%3E%3Cpath fill="currentColor" fill-rule="evenodd" d="M10.723 3.2a.75.75 0 1 0-1.446-.4L7.763 8.25H4a.75.75 0 1 0 0 1.5h3.347l-1.528 5.5H2a.75.75 0 0 0 0 1.5h3.402L4.277 20.8a.75.75 0 0 0 1.446.4l1.236-4.45h7.443l-1.125 4.05a.75.75 0 0 0 1.446.4l1.236-4.45H20a.75.75 0 1 0 0-1.5h-3.624l1.527-5.5H22a.75.75 0 0 0 0-1.5h-3.68l1.403-5.05a.75.75 0 1 0-1.446-.4l-1.514 5.45H9.32l1.403-5.05Zm4.096 12.05l1.528-5.5H8.903l-1.527 5.5h7.443Z" clip-rule="evenodd"%2F%3E%3C%2Fsvg%3E');
+  margin-right: 5px;
+}
+#tagsList li, #sideNavUl li {
+  @apply px-2 py-1 rounded;
 }
 
-.list-item .card-id {
-  color: grey;
-  font-size: 14px;
+#tagsList li:hover, #sideNavUl li:hover {
+  @apply bg-slate-300;
 }
 
-.list-item .content {
-  white-space: pre-wrap;
-  font-size: 16px;
+#overlay {
+  @apply  bg-black opacity-20;
 }
 
-.list-item:hover {
-  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
-  border: 1px solid rgba(0, 0, 0, 0.3); /* Add stronger border on hover */
+#mainNav {
+  @apply bg-white py-2;
 }
 
-.list-item .top-row {
-  display: flex;
-  align-items: center;
+#sideNavButton::before {
+  content: url('data:image/svg+xml,%3Csvg xmlns="http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg" width="24" height="24" viewBox="0 0 24 24"%3E%3Cpath fill="currentColor" fill-rule="evenodd" d="M20.75 7a.75.75 0 0 1-.75.75H4a.75.75 0 0 1 0-1.5h16a.75.75 0 0 1 .75.75Zm0 5a.75.75 0 0 1-.75.75H4a.75.75 0 0 1 0-1.5h16a.75.75 0 0 1 .75.75Zm0 5a.75.75 0 0 1-.75.75H4a.75.75 0 0 1 0-1.5h16a.75.75 0 0 1 .75.75Z" clip-rule="evenodd"%2F%3E%3C%2Fsvg%3E');
 }
 
-.list-item .top-row .edit-button,
-.list-item .top-row .delete-button {
-  margin-left: auto;
-  margin-right: 8px;
+#omniSearchButton {
+  @apply h-10 px-4 bg-slate-200 ml-8;
 }
 
-.bottom-row {
+#cardsList .selected, #suggestionResults .highlighted {
+  @apply bg-slate-300;
 }
 
-.input-text {
-  display: block;
-  width: 100%;
+#cardsList {
+  @apply overflow-scroll;
 }
 
-.notes {
-  display: flex;
-  flex-direction: column;
+#cardsList li {
+  @apply mx-2 my-1 px-4 py-2 rounded;
 }
 
-.search-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+#cardContainer {
+  @apply pt-12;
 }
 
-.search-container input[type=text] {
-  flex: 1;
-  padding: 10px;
-  width: 100%;
-  border: none;
-  border-radius: 5px 0 0 5px;
-  font-size: 16px;
+#cardsHeader {
+  @apply text-2xl mx-2 my-1 px-4 py-2;
 }
 
-.search-results {
-  position: relative;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  background-color: white;
-  border: 1px solid #ddd;
-  border-top: none;
+#omniSearchContainer {
+  @apply pt-12;
 }
 
-.search-results li {
-  position: relative;
-  margin-top: 0.5em;
-  cursor: pointer;
-}
-
-.search-results li:hover {
-  background-color: #ddd;
-}
-
-.tags-container {
-  display: flex;
-  flex-direction: column;
-}
-
-.tags-container a {
-  display: block;
-  text-align: right;
-  margin-top: 0.5em;
-}
-
-.content p {
-  @apply truncate;
-}
-
-.markdown-body{
-  background: none;
-}
-
-.hl-list-item{
-  border-radius: 4px;
-  background: #59667224;
-}
-
-
-/**************************************/
-#suggestion {
-    color: grey;
-    font-style: italic;
-}
-#notesList {
-    overflow: auto;
-    list-style-type: none;
-    padding: 0;
-}
-#notesList li {
-    min-height: 16px; /* Adjust as needed */
-}
-.selected {
-    background-color: #ddd; /* Adjust as needed */
-}
-.noteInput {
-    width: 80%;
-}
-
-.saveButton {
-    margin-left: 10px;
-}
-#searchContainer {
-    box-sizing: border-box;
-    position: fixed;
-    /* top: 0;
-    left: 0; */
-    width: 70%;
-    background-color: white;
-    z-index: 100;
-    padding: 8px;
-}
-#noteContainer {
-    margin-top: 50px;
-}
-#searchBox {
-    box-sizing: border-box;
-    width: 100%;
-    padding: 5px;
-    font-size: 16px;
-}
 #suggestionBox {
-    position: absolute;
-    width: 100%;
-    top: 100%;
-    left: 0;
-    /* display: none; */
-    border: 1px solid #ccc;
-    max-height: 200px;
-    overflow-y: auto;
-    background-color: white;
-}
-#suggestionResults {
-    /* display: none; */
-}
-#suggestionResults div {
-    padding: 5px;
-    border-bottom: 1px solid #ccc;
-}
-#suggestionResults div:last-child {
-    border-bottom: none;
-}
-#suggestionResults .highlighted {
-    background-color: #e0e0e0; /* You can adjust this color as needed */
-}
-#noResults {
-    /* display: none; */
-}
-
-
-.cm-hashtag {
-  color: blue;
-  text-decoration: underline;
+  @apply bg-slate-100;
 }

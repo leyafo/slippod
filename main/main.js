@@ -38,7 +38,7 @@ function createWindow() {
     },
   });
 
-  const url = getResourceURL("resource", "app-sandbox", "index.html");
+  const url = getResourceURL("resource", "app", "index.html");
   mainWindow.loadURL(url);
   if (process.env.NODE_ENV == "development") {
     const contextMenu = require("electron-context-menu");
