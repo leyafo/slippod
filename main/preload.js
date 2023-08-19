@@ -8,7 +8,7 @@ contextBridge.exposeInMainWorld('utils', {
 
 
 (function(){
-  const listDBFunctions = [
+  const paginatedDFFunc = [
     "getCards",
     "searchCards",
     "getCardsByTag",
@@ -16,7 +16,7 @@ contextBridge.exposeInMainWorld('utils', {
     "getNoTagCards",
     "getCardsByMiddleID",
   ]
-  const otherDBFunctions = [
+  const fullsetDBFunc = [
     "createNewCard", 
     "getAllTags",
     "getCardByID",
@@ -24,10 +24,11 @@ contextBridge.exposeInMainWorld('utils', {
     "updateCardEntryByID",
     "getCardDetails",
     "cardIsExisted",
-    "getMaxCardID"
+    "getMaxCardID",
+    "getAllCards"
   ]
   let backendFunctions = {};
-  listDBFunctions.forEach((funcName) =>{
+  paginatedDFFunc.forEach((funcName) =>{
     backendFunctions[funcName] = (...args) => {
       localStorage.setItem('list_call', JSON.stringify({
         'funcName': funcName,
@@ -37,7 +38,7 @@ contextBridge.exposeInMainWorld('utils', {
       return ipcRenderer.invoke(funcName, ...args)
     };
   })
-  otherDBFunctions.forEach((funcName)=>{
+  fullsetDBFunc.forEach((funcName)=>{
     backendFunctions[funcName] = (...args) => ipcRenderer.invoke(funcName, ...args);
   })
   contextBridge.exposeInMainWorld('db', backendFunctions);

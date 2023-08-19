@@ -32,12 +32,13 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    titleBarStyle: "hidden",
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
     },
   });
 
-  const url = getResourceURL("resource", "app", "index.html");
+  const url = getResourceURL("resource", "app-sandbox", "index.html");
   mainWindow.loadURL(url);
   if (process.env.NODE_ENV == "development") {
     const contextMenu = require("electron-context-menu");

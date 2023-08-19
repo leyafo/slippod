@@ -69,6 +69,11 @@ function getMaxCardID(){
     return db.prepare(`select max(id) as max_id from cards`).get();
 }
 
+// get all cards
+function getAllCards() {
+    return db.prepare(`select * from cards order by id desc`).all();
+}
+
 //the newest card is order in first
 function getCards(offset, limit){
     return db.prepare(`select * from cards order by id desc limit ?, ?`).all(Math.floor(Number(offset)), 
@@ -241,6 +246,7 @@ module.exports = {
   updateSchema,
   reloadDB,
   getAllTags,
+  getAllCards,
   getCards,
   createNewCard,
   getCardsByTag,
