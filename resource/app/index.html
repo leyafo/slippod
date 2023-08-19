@@ -6,127 +6,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./style.css" />
     <link rel="stylesheet" href="./codemirror.css" />
-    <link rel="stylesheet" href="./show-hint.css" />
-    <title>slippod</title>
+    <title>Slippod Sandbox</title>
 </head>
 <body>
-    <div class="container m-auto ">
-        <div class="flex w-full">
-            <div class="sidebar w-1/5 bg-gray-200 p-4">
-                <div class="tags-container" x-data="{ tags: [] }" x-init=" tags = await db.getAllTags()" >
-                    <a @click="tagClick" class="text-blue-600 visited:text-purple-600 a-tag" href="/all" tag="#">ALL</a>
-                    <a @click="tagClick" class="text-blue-600 visited:text-purple-600 a-tag" href="/notag" tag="#">No Tag</a>
-                    <template x-for="tag in tags">
-                        <a @click="tagClick" class="text-blue-600 visited:text-purple-600 a-tag" x-text="tag.tag" x-bind:tag="tag.tag" x-bind:href="'/tag/' + tag.tag"></a>
-                    </template>
-                    <a @click="tagClick" class="text-blue-600 visited:text-purple-600 a-tag" href="/trash" tag="#">Trash</a>
-                </div>
-            </div>
-            <div class="w-full bg-gray-300 p-4 flex flex-col h-screen">
-                <div id="searchContainer">
-                    <input type="text" id="searchBox" placeholder="Cmd / Ctrl + K">
-                    <div id="suggestionBox" class="hidden">
-                        <div id="suggestionResults" class="hidden"></div>
-                        <div id="noResults" class="hidden">No matched notes</div>
-                    </div>
-                </div>
-                <div class="list-container overflow-y-scroll flex-grow">
-                    <div id="listView" ></div>
-                </div>
+    <div id="sideNav" class="hidden md:block h-screen select-none fixed z-30" x-data="{ tags: [] }" x-init=" tags = await db.getAllTags()">
+        <ul id="sideNavUl">
+            <li @click="tagClick" href="/tag_all" id="allCards">All Cards</li>
+            <li @click="tagClick" href="/tag_no" id="noTag">Untagged</li>
+            <li @click="tagClick" href="/tag_trash" id="allCards">Trash</li>
+        </ul>
+        <ul id="tagsList">
+        <template x-for="tag in tags">
+            <li @click="tagClick" x-text="tag.tag" x-bind:tag="tag.tag" x-bind:href="'/tag/' + tag.tag"></li>
+        </template>
+        </ul>
+    </div>
+    <div id="overlay" class="fixed inset-0 z-20 hidden"></div>
+    <div id="main" class="md:pl-64">
+        <div id="mainNav" class="fixed w-full md:ml-64 inset-x-0 z-10">
+            <button id="sideNavButton" class="md:hidden"></button>
+            <button id="omniSearchButton">Search cards...</button>
+        </div>
+        <div id="cardContainer">
+            <div id="cardsListContainer" class="container lg:w-2/3 mx-auto">
+                <h1 id="cardsHeader"></h1>
+                <div id="loadingIndicator" class="hidden">Loading...</div>
+                <ul id="cardsList"></ul>
+                <div id="creationTip" class="hidden">Press Cmd / Ctrl + N to create a new card</div>
+                <div id="endTip" class="hidden">You have reached the end of it all!</div>
             </div>
         </div>
     </div>
-
-    <template id="listItemTemplate">
-        <div class="list-item " x-data="{cardID: 0, editor: 0}">
-            <div class="top-row">
-                <span class="card-id font-bold"></span>
-                <span class="card-created-at text-gray-63 dark:text-gray-94 px-8"></span>
-                <span class="card-updated-at text-gray-63 dark:text-gray-94"></span>
-                <div class="flex justify-left">
-                    <div
-                        x-data="{
-                            open: false,
-                            toggle() {
-                                if (this.open) { return this.close()
-                                }
-
-                                this.$refs.button.focus()
-
-                                this.open = true
-                            },
-                            close(focusAfter) {
-                                if (! this.open) return
-
-                                this.open = false
-
-                                focusAfter && focusAfter.focus()
-                            }
-                        }"
-                        x-on:keydown.escape.prevent.stop="close($refs.button)"
-                        x-on:focusin.window="! $refs.panel.contains($event.target) && close()"
-                        x-id="['dropdown-button']"
-                        class="relative"
-                    >
-                        <!-- Button -->
-                        <button
-                            x-ref="button"
-                            x-on:click="toggle()"
-                            :aria-expanded="open"
-                            :aria-controls="$id('dropdown-button')"
-                            type="button"
-                            class="flex items-right gap-2 px-5 py-2.5 rounded-md"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                            </svg>
-                        </button>
-
-                        <!-- Panel -->
-                        <div
-                            x-ref="panel"
-                            x-show="open"
-                            x-transition.origin.top.left
-                            x-on:click.outside="close($refs.button)"
-                            :id="$id('dropdown-button')"
-                            style="display: none;"
-                            class="absolute left-0 mt-2 w-40 rounded-md bg-white shadow-md "
-                        >
-                            <a @click="editCard" href="#" class="flex items-center gap-2 w-full first-of-type:rounded-t-md last-of-type:rounded-b-md px-4 py-2.5 text-left text-sm hover:bg-gray-50 disabled:text-gray-500">
-                                Edit
-                            </a>
-
-                            <a @click="deleteCard" href="#" class="flex items-center gap-2 w-full first-of-type:rounded-t-md last-of-type:rounded-b-md px-4 py-2.5 text-left text-sm hover:bg-gray-50 disabled:text-gray-500">
-                                <span class="text-red-600">Delete</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="content markdown-body"></div>
-            <div class="hidden bottom-row">
-                <button @click="updateCard">Update</button>
+    <div id="omniSearch" class="hidden fixed w-full h-screen inset-0 z-40">
+        <div id="omniSearchContainer" class="container mx-auto w-9/12 md:w-96">
+            <input type="text" id="searchBox" class="w-full" placeholder="Search cards...">
+            <div id="suggestionBox" class="hidden">
+                <div id="suggestionResults"></div>
+                <div id="noResults">No matched cards</div>
             </div>
         </div>
-    </template>
-    <template id="articleTemplate">
-        <div class="row-span-3 bg-white">
-            <div class="top-row">
-                <span class="card-id font-bold"></span>
-            </div>
-            <article class="content markdown-body py-10 sm:py-12">
-            </article>
-        </div>
-    </template>
-    <template id="suggestionOptionTemplate">
-        <div x-data="{cardID: 0}" @click="searchOptionClick" @keyup.enter="searchOptionClick">
-        </div>
-    </template>
+    </div>
 </body>
-<script  src="./codemirror.js"></script>
-<script  src="./codemirror_markdown.js"></script>
-<script  src="./overlay.js"></script>
-<script  src="./show-hint.js"></script>
-<script  src="./emacs.js"></script>
+<script src="./codemirror.js"></script>
+<script src="./codemirror_markdown.js"></script>
+<script src="./emacs.js"></script>
 <script type="module" src="./index.js"></script>
 </html>
