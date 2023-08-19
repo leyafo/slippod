@@ -5,12 +5,10 @@ import { list } from "postcss";
 function unixTimeFormat(unixTime) {
     const d = new Date(unixTime * 1000);
     let minute = d.getMinutes();
-    minute = minute < 10 ? '0'+minute:minute; 
+    minute = minute < 10 ? '0'+ minute : minute; 
     let second = d.getSeconds()
-    second = second < 10 ? '0'+second:second;
-    return `${d.getFullYear()}-${
-      d.getMonth() + 1
-    }-${d.getUTCDate()} ${d.getHours()}:${minute}:${second}`;
+    second = second < 10 ? '0'+second : second;
+    return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getUTCDate()} ${d.getHours()}:${minute}:${second}`;
 }
 
 function clickHandle(selector, handle) {

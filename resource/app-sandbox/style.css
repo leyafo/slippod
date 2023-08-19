@@ -1,0 +1,86 @@
+@charset "UTF-8";
+@import "./github-markdown-light.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply antialiased;
+}
+
+#sideNav {
+  @apply py-6 px-4 bg-slate-50;
+}
+
+#sideNavUl {
+  @apply w-56;
+}
+
+#allCards::before {
+  content: url('data:image/svg+xml,%3Csvg xmlns="http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg" width="24" height="24" viewBox="0 0 24 24"%3E%3Cpath fill="currentColor" fill-rule="evenodd" d="M2 12c0-4.714 0-7.071 1.464-8.536C4.93 2 7.286 2 12 2c4.714 0 7.071 0 8.535 1.464C22 4.93 22 7.286 22 12c0 4.714 0 7.071-1.465 8.535C19.072 22 16.714 22 12 22s-7.071 0-8.536-1.465C2 19.072 2 16.714 2 12Zm3-3.5v-1A1.5 1.5 0 0 1 6.5 6h11A1.5 1.5 0 0 1 19 7.5v1a2.489 2.489 0 0 0-1.5-.5h-11c-.563 0-1.082.186-1.5.5Zm0 2v1a2.49 2.49 0 0 1 1.5-.5h11a2.49 2.49 0 0 1 1.5.5v-1A1.5 1.5 0 0 0 17.5 9h-11A1.5 1.5 0 0 0 5 10.5Zm15 3.75a.75.75 0 1 1 0 1.5h-2.343c-.879 0-1.11.013-1.307.095c-.198.082-.37.236-.991.857l-.305.305c-.432.432-.773.774-1.207.98a2.808 2.808 0 0 1-.248.102c-.453.162-.936.162-1.547.161h-.218c-.646 0-1.157.001-1.63-.178a2.74 2.74 0 0 1-.26-.114c-.452-.227-.797-.603-1.235-1.079l-.11-.121c-.59-.64-.753-.799-.944-.889c-.02-.01-.04-.018-.061-.027c-.195-.079-.424-.092-1.293-.092H4a.75.75 0 0 1 0-1.5h1.02v-1A1.5 1.5 0 0 1 6.5 12h11a1.5 1.5 0 0 1 1.48 1.25v1H20Z" clip-rule="evenodd"%2F%3E%3C%2Fsvg%3E');
+  margin-right: 5px;
+}
+
+#noTag::before {
+  content: url('data:image/svg+xml,%3Csvg xmlns="http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg" width="24" height="24" viewBox="0 0 24 24"%3E%3Cg fill="currentColor"%3E%3Cpath d="M1.75 10v4c0 2.829 0 4.243.879 5.122c.217.217.467.38.763.504a8.48 8.48 0 0 1-.019-.134c-.123-.918-.123-2.063-.123-3.393V7.902c0-1.33 0-2.476.123-3.393l.02-.134a2.309 2.309 0 0 0-.764.504C1.75 5.758 1.75 7.172 1.75 10Zm20 0v4c0 2.829 0 4.243-.879 5.122c-.217.217-.467.38-.763.504l.019-.134c.123-.918.123-2.063.123-3.393V7.902c0-1.33 0-2.476-.123-3.393a8.452 8.452 0 0 0-.02-.134c.297.123.547.287.764.504c.879.879.879 2.293.879 5.121Z"%2F%3E%3Cpath fill-rule="evenodd" d="M5.629 2.879C4.75 3.757 4.75 5.172 4.75 8v8c0 2.828 0 4.243.879 5.121C6.507 22 7.922 22 10.75 22h2c2.828 0 4.243 0 5.121-.879c.879-.878.879-2.293.879-5.121V8c0-2.828 0-4.243-.879-5.121C16.993 2 15.578 2 12.75 2h-2c-2.828 0-4.243 0-5.121.879ZM8 17a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 0 1.5h-3A.75.75 0 0 1 8 17Zm.75-4.75a.75.75 0 0 0 0 1.5h6a.75.75 0 0 0 0-1.5h-6ZM8 9a.75.75 0 0 1 .75-.75h6a.75.75 0 0 1 0 1.5h-6A.75.75 0 0 1 8 9Z" clip-rule="evenodd"%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E');
+  margin-right: 5px;    
+}
+
+#tagsList {
+  @apply w-56 pt-4;
+}
+#tagsList li::before {
+  content: url('data:image/svg+xml,%3Csvg xmlns="http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg" width="24" height="24" viewBox="0 0 24 24"%3E%3Cpath fill="currentColor" fill-rule="evenodd" d="M10.723 3.2a.75.75 0 1 0-1.446-.4L7.763 8.25H4a.75.75 0 1 0 0 1.5h3.347l-1.528 5.5H2a.75.75 0 0 0 0 1.5h3.402L4.277 20.8a.75.75 0 0 0 1.446.4l1.236-4.45h7.443l-1.125 4.05a.75.75 0 0 0 1.446.4l1.236-4.45H20a.75.75 0 1 0 0-1.5h-3.624l1.527-5.5H22a.75.75 0 0 0 0-1.5h-3.68l1.403-5.05a.75.75 0 1 0-1.446-.4l-1.514 5.45H9.32l1.403-5.05Zm4.096 12.05l1.528-5.5H8.903l-1.527 5.5h7.443Z" clip-rule="evenodd"%2F%3E%3C%2Fsvg%3E');
+  margin-right: 5px;
+}
+#tagsList li, #sideNavUl li {
+  @apply px-2 py-1 rounded;
+}
+
+#tagsList li:hover, #sideNavUl li:hover {
+  @apply bg-slate-300;
+}
+
+#overlay {
+  @apply  bg-black opacity-20;
+}
+
+#mainNav {
+  @apply bg-white py-2;
+}
+
+#sideNavButton::before {
+  content: url('data:image/svg+xml,%3Csvg xmlns="http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg" width="24" height="24" viewBox="0 0 24 24"%3E%3Cpath fill="currentColor" fill-rule="evenodd" d="M20.75 7a.75.75 0 0 1-.75.75H4a.75.75 0 0 1 0-1.5h16a.75.75 0 0 1 .75.75Zm0 5a.75.75 0 0 1-.75.75H4a.75.75 0 0 1 0-1.5h16a.75.75 0 0 1 .75.75Zm0 5a.75.75 0 0 1-.75.75H4a.75.75 0 0 1 0-1.5h16a.75.75 0 0 1 .75.75Z" clip-rule="evenodd"%2F%3E%3C%2Fsvg%3E');
+}
+
+#omniSearchButton {
+  @apply h-10 px-4 bg-slate-200 ml-8;
+}
+
+#cardsList .selected, #suggestionResults .highlighted {
+  @apply bg-slate-300;
+}
+
+#cardsList {
+  @apply overflow-scroll;
+}
+
+#cardsList li {
+  @apply mx-2 my-1 px-4 py-2 rounded;
+}
+
+#cardContainer {
+  @apply pt-12;
+}
+
+#cardsHeader {
+  @apply text-2xl mx-2 my-1 px-4 py-2;
+}
+
+#omniSearchContainer {
+  @apply pt-12;
+}
+
+#suggestionBox {
+  @apply bg-slate-100;
+}
