@@ -10,13 +10,13 @@ contextBridge.exposeInMainWorld('utils', {
 (function(){
   const paginatedDFFunc = [
     "getCards",
-    "searchCards",
     "getCardsByTag",
     "getTrashCards",
     "getNoTagCards",
     "getCardsByMiddleID",
   ]
   const fullsetDBFunc = [
+    "searchCards",
     "createNewCard", 
     "getAllTags",
     "getCardByID",

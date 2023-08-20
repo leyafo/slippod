@@ -656,6 +656,7 @@ function showOmniSearchAndFocus() {
     document.body.classList.add('overflow-hidden');
 }
 
+
 omniSearchButton.addEventListener('click', function(event) {
     if (omniSearch.classList.contains('hidden')) {
         showOmniSearchAndFocus()
