@@ -84,7 +84,6 @@ function getCardsByMiddleID(middleID, upLimit, downLimit, limit){
     if (upLimit == 0 && downLimit == 0){
         const upCards = db.prepare(`select * from cards where id >= ? order by id asc limit 0, ?  `).all(Number(middleID), Number(limit));
         const downCards = db.prepare(`select * from cards where id < ? order by id desc limit 0, ?`).all(Number(middleID), Number(limit)); 
-        this.maxLimit = db.prepare(`select max(id) from cards`)
         return downCards.reverse().concat(upCards);
     }
     if(limit > 0){ //going down
@@ -222,7 +221,27 @@ function cardIsExisted(id){
 }
 
 function updateCardEntryByID(id, cardEntry){
-    db.prepare("update cards set entry = ?, updated_at=strftime('%s', 'now') where id = ?").run(cardEntry, id)
+    const tagsLinks = parseTagsLinks(cardEntry);
+    const existedTags = db.prepare("select tag from tags where card_id = ?").pluck().all(id)
+    const existedTagsSet = new Set(existedTags);
+    db.transaction(function(cardID, entry, newTags, oldTags){
+        db.prepare("update cards set entry = ?, updated_at=strftime('%s', 'now') where id = ?").run(entry, cardID)
+
+        //delete removed tags
+        oldTags.forEach(function(tag){
+            if (!newTags.has(tag)){
+                db.prepare(`delete from tags where card_id = ? and tag = ?`).run(cardID, tag)
+            }
+        })
+        //insert new tags
+        newTags.forEach(function(tag){
+            if (!oldTags.has(tag)){
+                db.prepare(`insert into tags(card_id, tag)values(?, ?)`).run(cardID, tag)
+            }
+        })
+
+    })(id, cardEntry, tagsLinks[0], existedTagsSet);
+    return id;
     return id;
 }
 

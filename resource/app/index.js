@@ -4,68 +4,21 @@ import Alpine from 'alpinejs'
 let currentInput = null;
 let currentLi = null;
 let selectedCard = null;
+const sideNav = document.getElementById('sideNav');
+const sideNavButton = document.getElementById('sideNavButton');
+const overlay = document.getElementById('overlay');
 const limitItems = 20;
-const listInsertFirst = 1;
-const listInsertLast = 2;
+const listInsertBeforeFirst = 1;
+const listInsertAfterLast = 2;
 const loadingIndicator = document.getElementById('loadingIndicator');
 const cardsHeader = document.getElementById('cardsHeader');
 const cardsList = document.getElementById('cardsList');
 const creationTip = document.getElementById('creationTip');
 
-function createCardInput() {
-    saveCurrentCard();
-
-    const li = createCardElement();
-    const textarea = createTextarea();
-    const saveButton = createSaveButton(li, textarea);
-
-    li.appendChild(textarea);
-    li.appendChild(saveButton);
-
-    insertNewCard(li);
-    hideSuggestion();
-    focusTextarea(textarea);
-
-    deselectCurrentCard();
-    updateCurrents(textarea, li);
-}
-
-function saveCurrentCard() {
-    if (currentInput) {
-        saveCard(currentInput.value, currentLi);
-    }
-}
 
 function createCardElement() {
     const li = document.createElement('li');
     return li;
-}
-
-function createTextarea() {
-    const textarea = document.createElement('textarea');
-    textarea.className = 'cardInput';
-    textarea.placeholder = 'New Card';
-    addTextareaKeydownListener(textarea);
-    return textarea;
-}
-
-function createSaveButton(li, textarea) {
-    const saveButton = document.createElement('button');
-    saveButton.className = 'saveButton';
-    saveButton.textContent = 'Save';
-    saveButton.addEventListener('click', function() {
-        saveCardAndResetCurrents(textarea.value, li);
-    });
-    return saveButton;
-}
-
-function insertNewCard(li) {
-    // if (selectedCard) {
-    //     cardsList.insertBefore(li, selectedCard.nextSibling);
-    // } else {
-    //     cardsList.insertBefore(li, cardsList.firstChild);
-    // }
-    cardsList.insertBefore(li, cardsList.firstChild);
 }
 
 function hideSuggestion() {
@@ -76,86 +29,9 @@ function showSuggestion() {
     creationTip.classList.remove('hidden');
 }
 
-function focusTextarea(textarea) {
-    textarea.focus();
-}
-
 function deselectCurrentCard() {
-    if (selectedCard) {
-        selectedCard.classList.remove('selected');
-        selectedCard = null;
-    }
-}
-
-function updateCurrents(textarea, li) {
-    currentInput = textarea;
-    currentLi = li;
-}
-
-async function saveCardAndResetCurrents(cardText, li) {
-    try {
-        await saveCard(cardText, li);
-    } catch (error) {
-        console.error("Error saving card:", error);
-        // Handle the error appropriately, maybe show a user-friendly message
-        return; // Exit the function if there was an error
-    }
-    
-    currentInput = null;
-    currentLi = null;
-}
-
-function addTextareaKeydownListener(textarea) {
-    textarea.addEventListener('keydown', function(event) {
-        handleTextareaKeydown(event, textarea);
-    });
-}
-
-function handleTextareaKeydown(event, textarea) {
-    const li = currentLi;
-    if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
-        saveCardAndResetCurrents(textarea.value, li);
-        event.preventDefault();
-        event.stopPropagation();
-    } else if (event.key === 'Escape') {
-        saveCardAndResetCurrents(textarea.value, li);
-        event.stopPropagation();
-    }
-}
-
-async function saveCard(cardText, li) {
-    let cardID;
-
-    if (li.dataset.id && await db.cardIsExisted(li.dataset.id)) {
-        // If the card already has an ID and exists in the database, it's being updated
-        cardID = await db.editCardByID(li.dataset.id, cardText);
-        if (!cardID) {
-            console.error("Error updating card in the database:", li.dataset.id);
-            return; // or handle this case differently based on your requirements
-        }
-    } else {
-        // If the card doesn't have an ID or doesn't exist in the database, it's new
-        cardID = await db.createNewCard(cardText);
-        if (!cardID) {
-            console.error("Error creating new card in the database.");
-            return; // or handle this case differently based on your requirements
-        }
-        li.dataset.id = cardID; // Store the ID in the li element for future reference
-    }
-
-    const card = await db.getCardByID(cardID);
-    if (!card) {
-        console.error("Error fetching card details from the database:", cardID);
-        return;
-    }
-
-    const newLi = createCardElementFromObject(card);
-    li.replaceWith(newLi);
-
-    // Add event listeners to the new card
-    addCardEventListeners(newLi);
-
-    selectCard(newLi);
+    const selectedLi = cardsList.querySelector(".selected")
+    selectedLi.classList.remove("selected");
 }
 
 function addCardEventListeners(li) {
@@ -172,32 +48,99 @@ function addCardEventListeners(li) {
     });
 }
 
-function generateUniqueId() {
-    return 'card-' + Date.now().toString(36) + Math.random().toString(36).substring(2);
+function autocompleteHints(cm, option) {
+  cm.on("shown", function () {
+    console.log("hhhhkdjfls");
+  });
+  return new Promise(function (accept) {
+    let cursor = cm.getCursor(),
+      lineContent = cm.getLine(cursor.line),
+      token = cm.getTokenAt(cursor);
+    let signalCh = lineContent[cursor.ch - 1];
+    console.log(token, signalCh);
+    if (signalCh == "#") {
+      db.getAllTags().then(function (tags) {
+        let hints = [];
+        for (let t of tags) {
+          hints.push({
+            text: `[${t.tag}](/tag/${t.tag})`,
+            displayText: t.tag,
+          });
+        }
+        return accept({
+          list: hints,
+          from: { line: cursor.line, ch: cursor.ch - 1 },
+          to: cursor,
+        });
+      });
+    } else if (signalCh == "@") {
+    }
+  });
+}
+
+CodeMirror.defineMode("hashtags", function (config, parserConfig) {
+    var hashtagOverlay = {
+    token: function (stream, state) {
+        if (stream.match(/#[a-zA-Z0-9_]+/)) {
+        return "hashtag";
+        }
+        while (
+        stream.next() != null &&
+        !stream.match(/#[a-zA-Z0-9_]+/, false)
+        ) {}
+        return null;
+    },
+    };
+    return CodeMirror.overlayMode(
+    CodeMirror.getMode(config, parserConfig.backdrop || "markdown"),
+    hashtagOverlay
+    );
+});
+
+function handleUpdateCardButton(ev){
+    const li = ev.target.closest("li")
+    li.dataset.editing = false
+    const content = li.querySelector(".content")
+    const cardID = li.dataset.id;
+    const entry = content.firstChild.CodeMirror.getValue();
+    db.updateCardEntryByID(cardID, entry).then(function(){
+        content.innerHTML = marked.parse(entry);
+        const updateButton = li.querySelector(".updateCardButton");
+        updateButton.classList.add("hidden");
+    })
 }
 
 function editCard(li) {
-    saveCurrentCard();
-
-    console.log(li.dataset.id);
-
     let getEditingCardPromise = db.getCardByID(li.dataset.id);
 
     getEditingCardPromise.then(function(card) {
         const cardEntry = card.entry;
-        li.innerHTML = '';
+        const content = li.querySelector(".content") 
+        content.innerHTML = '';
+        const updateButton = li.querySelector(".updateCardButton");
+        updateButton.classList.remove("hidden");
+        updateButton.onclick=handleUpdateCardButton;
         li.dataset.editing = 'true';
+        let editor = CodeMirror(content, {
+          theme: "default",
+          mode: "hashtags",
+          keyMap: "emacs",
+          pollInterval: 1000,
+          hintOptions: { hint: autocompleteHints, shown: function(){console.log(hello)} },
+          lineWrapping: false,
+        });
 
-        const textarea = createTextarea();
-        textarea.value = cardEntry;
-        const saveButton = createSaveButton(li, textarea);
-
-        li.appendChild(textarea);
-        li.appendChild(saveButton);
-        focusTextarea(textarea);
+        editor.on("change", function (cm, change) {
+            if ( change.text[0] === "@" || change.text[0] == "#") {
+                cm.showHint(); 
+            }
+        });
+        editor.setValue(cardEntry);
+        editor.on("endCompletion", function () {
+          console.log("Autocomplete menu is being closed programmatically");
+        });
 
         deselectCurrentCard();
-        updateCurrents(textarea, li);
     });
 }
 
@@ -211,16 +154,8 @@ function selectCard(li) {
 }
 
 document.addEventListener('keydown', function(event) {
-    handleDocumentKeydown(event);
+    // handleDocumentKeydown(event);
 });
-
-// document.getElementById('allCards').addEventListener('click', function() {
-//     loadCards(); // Display all cards
-// });
-
-// document.getElementById('noTag').addEventListener('click', function() {
-//     loadCards('noTag', 'Untagged Cards'); // Display cards with no tag
-// });
 
 window.tagClick = function(e){
     e.preventDefault();
@@ -229,40 +164,32 @@ window.tagClick = function(e){
         utils.reloadAll();
     }else if (href == "/tag_trash"){
         db.getTrashCards(0, limitItems).then(function(cards){
-            listView.innerHTML = "";
-            for (let card of cards) {
-                insertCard(card, listInsertLast);
-            }
+            reloadCardList(cards, "Trash")
         })
     }else if ( href == "/tag_no"){
         db.getNoTagCards(0, limitItems).then(function(cards){
-            listView.innerHTML = "";
-            for (let card of cards) {
-                insertCard(card, listInsertLast);
-            }
+            reloadCardList(cards, "No Tag")
         })
     } else{
         const tag = e.target.getAttribute("tag")
         db.getCardsByTag(tag, 0, limitItems).then(function(cards) {
-            listView.innerHTML = "";
-            for (let card of cards) {
-                insertCard(card, listInsertLast);
-            }
+            reloadCardList(cards, tag)
         });
     }
 }
 
-function reloadCardList(cards, headerTitle = 'All Cards') {
+function reloadCardList(cards, headerTitle = 'All Cards', order=listInsertBeforeFirst) {
     loadingIndicator.classList.remove('hidden'); // Show the loading indicator
     cardsHeader.textContent = headerTitle; // Update the cards header
 
     document.documentElement.scrollTop = 0; // Reset the scroll position to the top
-    endTip.classList.add('hidden'); // Ensure the end tip is hidden by default
+    // endTip.classList.add('hidden'); // Ensure the end tip is hidden by default
 
     // Display the cards
     cardsList.innerHTML = '';  // Clear the current cards
     cards.forEach(card => {
-        insertCardToList(card, listInsertFirst)
+        console.log(card.id);
+        insertCardToList(card, order)
     });
 
     if (cardsList.children.length > 0) {
@@ -276,27 +203,26 @@ function insertCardToList(card, order){
     const fragment = document.createDocumentFragment();
     const li = createCardElementFromObject(card);
     fragment.appendChild(li);
-    cardsList.appendChild(fragment);
-    if (order == listInsertLast) {
+    if (order == listInsertAfterLast) {
         cardsList.insertBefore(fragment, null);
-    } else if (order == listInsertFirst) {
+    } else if (order == listInsertBeforeFirst) {
         cardsList.insertBefore(fragment, cardsList.firstChild);
     }
+    return li
 }
 
 function createCardElementFromObject(card) {
     const li = createCardElement();
+    const cardItemTemplate = document.getElementById("cardItemTemplate")
+    const listItem = cardItemTemplate.content.cloneNode(true);
+    const content = listItem.querySelector(".content");
+    content.innerHTML = marked.parse(card.entry);
 
-    const timeSpan = document.createElement('span');
+    const createTimeSapn = listItem.querySelector("span.createTime")
     const createdTate = unixTimeFormat(card.created_at);
-    timeSpan.textContent = createdTate;
+    createTimeSapn.textContent = createdTate;
 
-    li.appendChild(timeSpan);
-    li.appendChild(document.createElement('br'));
-    li.appendChild(document.createTextNode(card.id));
-    li.appendChild(document.createElement('br'));
-    const entryHTML = marked.parse(card.entry);
-    li.append(entryHTML);
+    li.appendChild(listItem);
 
     li.dataset.id = card.id;
     li.dataset.editing = 'false';
@@ -306,312 +232,250 @@ function createCardElementFromObject(card) {
     return li;
 }
 
-function handleDocumentKeydown(event) {
-    const cards = Array.from(cardsList.children);
-    const selectedCardIndex = cards.indexOf(selectedCard);
+// function handleDocumentKeydown(event) {
+//     const cards = Array.from(cardsList.children);
+//     const selectedCardIndex = cards.indexOf(selectedCard);
 
-    if (isSideNavOpen) {
-        // If the side navigation is open, prevent certain shortcuts
-        if ((event.ctrlKey || event.metaKey) && (event.key === 'n' || event.key === 'k')) {
-            event.preventDefault();
-            return;
-        }
-        if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-            event.preventDefault();
-            return;
-        }
-        if (event.key === 'Escape') {
-            closeSideNav();
-            event.preventDefault();
-            return;
-        }
-    }
+//     if (isSideNavOpen) {
+//         // If the side navigation is open, prevent certain shortcuts
+//         if ((event.ctrlKey || event.metaKey) && (event.key === 'n' || event.key === 'k')) {
+//             event.preventDefault();
+//             return;
+//         }
+//         if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+//             event.preventDefault();
+//             return;
+//         }
+//         if (event.key === 'Escape') {
+//             closeSideNav();
+//             event.preventDefault();
+//             return;
+//         }
+//     }
 
-    if (event.key === 'ArrowDown') {
-        if (!suggestionBox.classList.contains('hidden')) {
-            highlightNextCard(event);
-        } else {
-            selectNextCard(event, cards, selectedCardIndex);
-        }
-    } else if (event.key === 'ArrowUp') {
-        if (!suggestionBox.classList.contains('hidden')) {
-            highlightPreviousCard(event);
-        } else {
-            selectPreviousCard(event, cards, selectedCardIndex);
-        }
-    } else if ((event.ctrlKey || event.metaKey) && event.key === 'n') {
-        createCardInput();
-        event.preventDefault();
-    } else if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
-        showOmniSearchAndFocus();
-        event.preventDefault();
-    } else if (event.key === 'Enter') {
-        initiateCardEditing(event);
-    } else if (event.key === 'Escape') {
-        if (searchBox === document.activeElement) {
-            clearSearch(event);
-        } else {
-            deselectActiveCard(event);
-        }
-    }
-}
-
-function selectNextCard(event, cards, selectedCardIndex) {
-    if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') {
-        return;
-    }
-
-    event.preventDefault();
-
-    if (selectedCard) {
-        selectedCard.classList.remove('selected');
-    }
-
-    if (selectedCardIndex === cards.length - 1 || selectedCardIndex === -1) {
-        selectedCard = cards[0];
-        // If the first card is selected, scroll to the top
-        window.scrollTo(0, 0);
-    } else {
-        selectedCard = cards[selectedCardIndex + 1];
-    }
-
-    selectedCard.classList.add('selected');
-    selectedCard.scrollIntoView({ block: 'nearest' });
-}
-
-function selectPreviousCard(event, cards, selectedCardIndex) {
-    if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') {
-        console.log('222');
-        return;
-    }
-    event.preventDefault();
-
-    if (selectedCard) {
-        selectedCard.classList.remove('selected');
-    }
-
-    if (selectedCardIndex <= 0) {
-        selectedCard = cards[cards.length - 1];
-    } else {
-        selectedCard = cards[selectedCardIndex - 1];
-        // If after moving up, the first card becomes selected, scroll to the top
-        if (selectedCard === cards[0]) {
-            window.scrollTo(0, 0);
-        }
-    }
-
-    selectedCard.classList.add('selected');
-
-    window.scrollBy(0, -100);  // Adjust by desired offset
-    selectedCard.scrollIntoView({ block: 'nearest' });
-}
-
-function initiateCardEditing(event) {
-    if (selectedCard && selectedCard.dataset.editing === 'false') {
-        editCard(selectedCard);
-        event.preventDefault();
-    }
-}
-
-function deselectActiveCard(event) {
-    if (selectedCard) {
-        selectedCard.classList.remove('selected');
-        selectedCard = null;
-    }
-    event.preventDefault();
-}
+//     if (event.key === 'ArrowDown') {
+//         if (!suggestionBox.classList.contains('hidden')) {
+//             highlightNextCard(event);
+//         } else {
+//             selectNextCard(event, cards, selectedCardIndex);
+//         }
+//     } else if (event.key === 'ArrowUp') {
+//         if (!suggestionBox.classList.contains('hidden')) {
+//             highlightPreviousCard(event);
+//         } else {
+//             selectPreviousCard(event, cards, selectedCardIndex);
+//         }
+//     } else if ((event.ctrlKey || event.metaKey) && event.key === 'n') {
+//         createCardInput();
+//         event.preventDefault();
+//     } else if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
+//         showOmniSearchAndFocus();
+//         event.preventDefault();
+//     } else if (event.key === 'Enter') {
+//         initiateCardEditing(event);
+//     } else if (event.key === 'Escape') {
+//         if (searchBox === document.activeElement) {
+//             clearSearch(event);
+//         } else {
+//             deselectActiveCard(event);
+//         }
+//     }
+// }
 
 // Get the search box and suggestion box elements
+const searchBox = document.getElementById("searchBox");
+const suggestionBox = document.getElementById("suggestionBox");
+const suggestionResults = document.getElementById("suggestionResults");
+const noResults = document.getElementById("noResults");
 const omniSearch = document.getElementById('omniSearch');
-const searchBox = document.getElementById('searchBox');
-const suggestionBox = document.getElementById('suggestionBox');
-const suggestionResults = document.getElementById('suggestionResults');
-const noResults = document.getElementById('noResults');
-let isComposing = false;
+const highlightUp = 1;
+const highlightDown = 2;
 
-searchBox.addEventListener('compositionstart', function(event) {
-    isComposing = true;
-});
-
-searchBox.addEventListener('compositionend', function(event) {
-    isComposing = false;
-    performSearch(event.target.value);
-});
-
-searchBox.addEventListener('input', function(event) {
-    if (!isComposing) {
-        performSearch(event.target.value);
+//全局快捷键盘
+document.addEventListener('keydown', function(event) {
+    if (event.key == "k" &&event.ctrlKey){
+        showOmniSearchAndFocus();
+        searchBox.focus();
+        event.preventDefault();
     }
+});
+
+searchBox.addEventListener("keydown", function (event) {
+  if (event.key === "ArrowDown") {
+    highlightNote(event, highlightDown);
+  } else if (event.key === "ArrowUp") {
+    highlightNote(event, highlightUp);
+  } else if (event.key === "Enter") {
+    if (event.ctrlKey) {
+      event.stopPropagation();
+      return;
+    }
+
+    const highlightedSuggestion = document.querySelector(
+      "#suggestionResults .highlighted"
+    );
+    if (highlightedSuggestion) {
+        console.log(highlightedSuggestion.dataset.id);
+        handleOptionSelect(highlightedSuggestion.dataset.id);
+        clearSearch(event);
+        event.stopPropagation();
+    }
+  }else if (event.key == "n" && event.ctrlKey){
+        const searchTerm = searchBox.value;
+        db.createNewCard(searchTerm).then((newCardID) => {
+            db.getCardByID(newCardID).then((card) => {
+                const li = insertCardToList(card, listInsertBeforeFirst);
+                editCard(li);
+                clearSearch(event);
+            });
+        });
+        clearSearch(event);
+        event.stopPropagation();
+  } else if (event.key == "Escape") {
+        clearSearch(event);
+  }
+});
+
+function highlightNote(event, arrowDirection) {
+  if (suggestionBox.classList.contains("hidden")) {
+    return;
+  }
+  //处理没有搜索结果的情况
+  if (!noResults.classList.contains("hidden")) {
+    return;
+  }
+  const highlightedNote = document.querySelector(
+    "#suggestionResults .highlighted"
+  );
+
+  let highlightNextNote = null;
+  if (arrowDirection === highlightUp) {
+    highlightNextNote =
+      highlightedNote.previousElementSibling || suggestionResults.lastChild;
+  } else if (arrowDirection === highlightDown) {
+    highlightNextNote =
+      highlightedNote.nextElementSibling || suggestionResults.firstChild;
+  }
+  if (highlightNextNote !== null) {
+    highlightedNote.classList.remove("highlighted");
+    highlightNextNote.classList.add("highlighted");
+    highlightNextNote.scrollIntoView({ block: "nearest" });
+  }
+  event.preventDefault();
+}
+
+let isComposing = false;
+searchBox.addEventListener("compositionstart", function (event) {
+  isComposing = true;
+});
+
+searchBox.addEventListener("compositionend", function (event) {
+  isComposing = false;
+  performSearch(event.target.value);
+});
+
+searchBox.addEventListener("input", function (event) {
+  if (!isComposing) {
+    performSearch(event.target.value);
+  }
 });
 
 function performSearch(searchTerm) {
-    // If the search term is empty, hide the suggestion box and exit the function
-    if (searchTerm === '') {
-        suggestionResults.innerHTML = '';
-        suggestionBox.classList.add('hidden');
-        noResults.classList.remove('hidden');
-        return;
-    }
+  // If the search term is empty, hide the suggestion box and exit the function
+  if (searchTerm === "") {
+    suggestionBox.classList.add("hidden");
+    return;
+  }
 
-    // Get all cards
-    const cards = getAllCards();
-
-    // Filter the cards based on the search term
-    const matchingCards = cards.filter(card => card.content.includes(searchTerm));
-
-    // Update the suggestion box
-    updateSuggestionBox(matchingCards);
+  db.searchCards(searchTerm, 0, limitItems).then(function (cards) {
+    updateSuggestionBox(cards);
+  });
 }
 
 function updateSuggestionBox(cards) {
-    // Show the suggestion box
-    suggestionBox.classList.remove('hidden');
+  // Show the suggestion box
+  suggestionBox.classList.remove("hidden");
 
-    // Clear suggestion results
-    suggestionResults.innerHTML = '';
+  // Clear suggestion results
+  suggestionResults.innerHTML = "";
 
-    if (cards.length === 0) {
-        // If there are no matching cards, show the "No matched cards" message
-        noResults.classList.remove('hidden');
-        suggestionResults.classList.add('hidden');
-    } else {
-        // If there are matching cards, hide the "No matched cards" message
-        noResults.classList.add('hidden');
+  if (cards.length === 0) {
+    // If there are no matching notes, show the "No matched notes" message
+    noResults.classList.remove("hidden");
+  } else {
+    // If there are matching notes, hide the "No matched notes" message
+    noResults.classList.add("hidden");
 
-        // Create a div for each matching card and add it to the suggestion box
-        for (let card of cards) {
-            const div = document.createElement('div');
-            div.textContent = card.content;
-            div.dataset.id = card.id;  // Attach the card's ID
+    // Create a div for each matching note and add it to the suggestion box
+    for (let card of cards) {
+      const div = document.createElement("div");
+      div.textContent = card.entry.trim();
+      div.dataset.id = card.id; // Attach the note's ID
+      div.onclick = searchOptionClick;
 
-            // Mouseover event for highlighting
-            div.addEventListener('mouseover', function() {
-                const currentlyHighlighted = document.querySelector('#suggestionResults .highlighted');
-                if (currentlyHighlighted) {
-                    currentlyHighlighted.classList.remove('highlighted');
-                }
-                div.classList.add('highlighted');
-            });
-
-            suggestionResults.appendChild(div);
-
-            // Auto-highlight the first card
-            if (div === suggestionResults.firstChild) {
-                div.classList.add('highlighted');
-            }
+      // Mouseover event for highlighting
+      div.addEventListener("mouseover", function () {
+        const currentlyHighlighted = document.querySelector(
+          "#suggestionResults .highlighted"
+        );
+        if (currentlyHighlighted) {
+          currentlyHighlighted.classList.remove("highlighted");
         }
-        // Show suggestion reuslts
-        suggestionResults.classList.remove('hidden');
+        div.classList.add("highlighted");
+      });
+
+      suggestionResults.appendChild(div);
+
+      // Auto-highlight the first note
+      if (div === suggestionResults.firstChild) {
+        div.classList.add("highlighted");
+      }
     }
+    // Show suggestion reuslts
+    suggestionResults.classList.remove("hidden");
+  }
 }
 
-function highlightNextCard(event) {
-    if (suggestionBox.classList.contains('hidden')) {
-        return;
-    }
-
-    const highlightedCard = document.querySelector('#suggestionResults .highlighted');
-
-    if (!highlightedCard) {
-        return; 
-    }
-
-    const nextCard = highlightedCard.nextElementSibling || suggestionResults.firstChild;
-
-    if (nextCard) {
-        highlightedCard.classList.remove('highlighted');
-        nextCard.classList.add('highlighted');
-        nextCard.scrollIntoView({block: 'nearest'});
-    }
-
-    event.preventDefault();
-    event.stopPropagation();
+function searchOptionClick(event) {
+  const cardID = event.target.dataset.id;
+  handleOptionSelect(cardID);
+  clearSearch(event);
 }
 
-function highlightPreviousCard(event) {
-    if (suggestionBox.classList.contains('hidden')) {
-        return;
-    }
-
-    const highlightedCard = document.querySelector('#suggestionResults .highlighted');
-
-    if (!highlightedCard) { 
-        return; 
-    }
-
-    const previousCard = highlightedCard.previousElementSibling || suggestionResults.lastChild;
-
-    if (previousCard) {
-        highlightedCard.classList.remove('highlighted');
-        previousCard.classList.add('highlighted');
-        previousCard.scrollIntoView({block: 'nearest'});
-    }
-
-    event.preventDefault();
-    event.stopPropagation();
+function handleOptionSelect(cardID) {
+  db.getCardsByMiddleID(Number(cardID), 0, 0, limitItems).then(function (cards) {
+    reloadCardList(cards, "All Cards");
+    hideOmniSearchAndUnfocus()
+  });
 }
 
 function clearSearch(event) {
-    searchBox.blur();
-    searchBox.value = '';
-    suggestionResults.innerHTML = '';
-    suggestionResults.classList.remove('hidden');
-    noResults.classList.remove('hidden');
-    suggestionBox.classList.add('hidden');
-    omniSearch.classList.add('hidden');
+  // Defocus the search box
+  searchBox.blur();
 
-    document.body.classList.remove('overflow-hidden');
+  // Clear the search term
+  searchBox.value = "";
 
-    // prevent default behavior or stop propagation
-    // event.preventDefault();
-    // event.stopPropagation();
-}
+  // Clear the suggested notes
+  suggestionResults.innerHTML = "";
 
-// For the Enter key
-searchBox.addEventListener('keydown', function(event) {
-    if (event.key === 'Enter') {
-        const highlightedSuggestion = document.querySelector('#suggestionResults .highlighted');
-        if (highlightedSuggestion) {
-            selectCardFromMainList(highlightedSuggestion.dataset.id);
-            event.stopPropagation();
-        }
-    }
-});
+  // Hide the noResults message
+  noResults.classList.add("hidden");
 
-// For mouse click
-suggestionResults.addEventListener('click', function(event) {
-    if (event.target.dataset.id) {
-        selectCardFromMainList(event.target.dataset.id);
-    }
-});
+  // Hide the suggestionResults
+  suggestionResults.classList.add("hidden");
 
-function selectCardFromMainList(cardId) {
-    document.getElementById('allCards').click(); // Trigger the "All Cards" tab
-
-    // Once the cards are loaded, select the desired card
-    reloadCardList().then(() => {
-        const targetCard = cardsList.querySelector(`[data-id="${cardId}"]`);
-
-        if (targetCard) {
-            // Deselect any previously selected card
-            deselectCurrentCard();
-
-            // Select the target card
-            selectCard(targetCard);
-
-            // Scroll to make sure the selected card is visible
-            targetCard.scrollIntoView({ block: 'nearest' });
-
-            // Optionally, clear the search and hide suggestions
-            clearSearch();
-        }
-
-        // Hide the loading indicator
-        loadingIndicator.classList.add('hidden');
-    });
+  // Hide the entire suggestion box
+  suggestionBox.classList.add("hidden");
 }
 
 const omniSearchButton = document.getElementById('omniSearchButton');
+
+function hideOmniSearchAndUnfocus() {
+    omniSearch.classList.add('hidden'); 
+    searchBox.blur();
+    document.body.classList.remove('overflow-hidden');
+}
 
 function showOmniSearchAndFocus() {
     omniSearch.classList.remove('hidden'); 
@@ -635,10 +499,7 @@ omniSearch.addEventListener('click', function(event) {
     }
 });
 
-const sideNav = document.getElementById('sideNav');
-const sideNavButton = document.getElementById('sideNavButton');
-const overlay = document.getElementById('overlay');
-let isSideNavOpen = false;
+
 
 sideNavButton.addEventListener('click', function() {
     if (sideNav.classList.contains('hidden')) {
@@ -660,6 +521,7 @@ overlay.addEventListener('click', function() {
     closeSideNav();
 });
 
+let isSideNavOpen = false;
 function openSideNav() {
     sideNav.classList.remove('hidden');
     overlay.classList.remove('hidden');
@@ -684,45 +546,6 @@ function unixTimeFormat(unixTime) {
     return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getUTCDate()} ${d.getHours()}:${minute}:${second}`;
 }
 
-// async function loadMoreCards() {
-//     document.removeEventListener('scroll', handleScroll);
-
-//     const lastCall = JSON.parse(localStorage.getItem('list_call'));
-//     if (lastCall) {
-//         const { funcName, args } = lastCall;
-//         const offset = args[0] + limitItems; // Assuming 20 is the limit
-
-//         try {
-//             const newCards = await db[funcName](offset, limitItems);
-//             appendCards(newCards);
-
-//             // Check if there are no more cards to load and display the end tip
-//             if (newCards.length < limitItems) {
-//                 endTip.classList.remove('hidden'); // Show the end tip
-//             }
-
-//             // Only re-add the scroll listener if the fetched cards equal the limit
-//             if (newCards.length === limitItems) {
-//                 document.addEventListener('scroll', handleScroll);
-//             } else {
-//                 // No more cards to load, you can show a message or handle this case
-//             }
-//         } catch (error) {
-//             console.error("Error loading more cards:", error);
-//         }
-//     }
-// }
-
-// function appendCards(cards) {
-//     const fragment = document.createDocumentFragment();
-//     cards.forEach(card => {
-//         const li = createCardElementFromObject(card);
-//         fragment.appendChild(li);
-//     });
-//     cardsList.appendChild(fragment);
-// }
-
-
 let listHasGetLastItemDown = 0;
 let listHasGetLastItemUp = 0;
 function handleScroll(event) {
@@ -742,13 +565,12 @@ function handleScroll(event) {
         args[args.length-1] = limitItems;
         fn(...args).then(function(cards) {
             for (let card of cards) {
-                insertCardToList(card, listInsertLast);
+                insertCardToList(card, listInsertAfterLast);
             }
             if (cards.length < limitItems) {
                 listHasGetLastItemDown = 1;
             }
         });
-        listHasGetLastItemDown = 1
     //向上滚动
     }else if(scrollTop == 0){
         let lastCallList = JSON.parse(localStorage.getItem("list_call"));
@@ -769,7 +591,7 @@ function handleScroll(event) {
         args[args.length-1] = -limitItems;
         fn(...args).then(function(cards) {
             for (let card of cards) {
-                insertCardToList(card, listInsertFirst);
+                insertCardToList(card, listInsertBeforeFirst);
             }
             if(cards.length<limitItems){
                 listHasGetLastItemUp = 1;
@@ -794,6 +616,6 @@ window.addEventListener('DOMContentLoaded', function() {
 
     //load cards
     db.getCards(0, limitItems).then(function(cards) {
-        reloadCardList(cards, "All Cards")
+        reloadCardList(cards, "All Cards", listInsertAfterLast)
     });
 });

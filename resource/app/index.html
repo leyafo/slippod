@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./style.css" />
     <link rel="stylesheet" href="./codemirror.css" />
+    <link rel="stylesheet" href="./show-hint.css" />
     <title>Slippod Sandbox</title>
 </head>
 <body>
@@ -46,9 +47,18 @@
             </div>
         </div>
     </div>
+    <template id="cardItemTemplate">
+        <span class="id"></span>
+        <span class="createTime"></span>
+        <div class="content markdown-body"></div>
+        <button class="updateCardButton" class="hidden">Save</button>
+    </template>
 </body>
-<script src="./codemirror.js"></script>
-<script src="./codemirror_markdown.js"></script>
-<script src="./emacs.js"></script>
+<script  src="./codemirror.js"></script>
+<script  src="./codemirror_markdown.js"></script>
+<script  src="./overlay.js"></script>
+<script  src="./show-hint.js"></script>
+<script  src="./emacs.js"></script>
 <script type="module" src="./index.js"></script>
+
 </html>
