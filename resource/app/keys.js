@@ -1,9 +1,10 @@
 import * as CM from "./common.js"
+import * as UI from "./ui.js"
 
 //全局快捷键盘
 document.addEventListener('keydown', function(event) {
     if (event.key == "k" &&event.ctrlKey){
-        showOmniSearchAndFocus();
+        CM.showOmniSearchAndFocus();
         CM.searchBox.focus();
         event.preventDefault();
     }
@@ -12,9 +13,9 @@ document.addEventListener('keydown', function(event) {
 //搜索框快捷键
 CM.searchBox.addEventListener("keydown", function (event) {
   if (event.key === "ArrowDown") {
-    highlightNote(event, CM.highlightDown);
+    UI.highlightNote(event, CM.highlightDown);
   } else if (event.key === "ArrowUp") {
-    highlightNote(event, CM.highlightUp);
+    UI.highlightNote(event, CM.highlightUp);
   } else if (event.key === "Enter") {
     if (event.ctrlKey) {
       event.stopPropagation();
@@ -26,22 +27,22 @@ CM.searchBox.addEventListener("keydown", function (event) {
     );
     if (highlightedSuggestion) {
         console.log(highlightedSuggestion.dataset.id);
-        handleOptionSelect(highlightedSuggestion.dataset.id);
-        clearSearch(event);
+        UI.handleOptionSelect(highlightedSuggestion.dataset.id);
+        UI.clearSearch(event);
         event.stopPropagation();
     }
   }else if (event.key == "n" && event.ctrlKey){
         const searchTerm = CM.searchBox.value;
         db.createNewCard(searchTerm).then((newCardID) => {
             db.getCardByID(newCardID).then((card) => {
-                const li = insertCardToList(card, CM.listInsertBeforeFirst);
-                editCard(li);
-                clearSearch(event);
+                const li = UI.insertCardToList(card, CM.listInsertBeforeFirst);
+                UI.editCard(li);
+                UI.clearSearch(event);
             });
         });
-        clearSearch(event);
+        UI.clearSearch(event);
         event.stopPropagation();
   } else if (event.key == "Escape") {
-        clearSearch(event);
+        UI.clearSearch(event);
   }
 });
