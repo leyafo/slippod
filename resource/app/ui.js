@@ -259,7 +259,7 @@ function searchOptionClick(event) {
 function handleOptionSelect(cardID) {
   db.getCardsByMiddleID(Number(cardID), 0, 0, CM.limitItems).then(function (cards) {
     reloadCardList(cards, "All Cards");
-    hideOmniSearchAndUnfocus()
+    CM.hideOmniSearchAndUnfocus()
   });
 }
 
@@ -282,26 +282,15 @@ function clearSearch(event) {
   // Hide the entire suggestion box
   CM.suggestionBox.classList.add("hidden");
 
-  hideOmniSearchAndUnfocus()
+  CM.hideOmniSearchAndUnfocus()
 }
 
 const omniSearchButton = document.getElementById('omniSearchButton');
 
-function hideOmniSearchAndUnfocus() {
-    CM.toggleElementHidden(CM.omniSearch)
-    CM.searchBox.blur();
-    document.body.classList.remove('overflow-hidden');
-}
-
-function showOmniSearchAndFocus() {
-    CM.toggleElementShown(CM.omniSearch)
-    CM.searchBox.focus();
-    document.body.classList.add('overflow-hidden');
-}
 
 omniSearchButton.addEventListener('click', function(event) {
     if (CM.omniSearch.classList.contains('hidden')) {
-        showOmniSearchAndFocus()
+        CM.showOmniSearchAndFocus()
     }
 
     event.preventDefault();
@@ -434,3 +423,11 @@ window.addEventListener('DOMContentLoaded', function() {
     })
 
 });
+
+
+export {
+    highlightNote,
+    handleOptionSelect,
+    clearSearch,
+    insertCardToList,
+}

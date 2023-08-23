@@ -44,3 +44,14 @@ export function unixTimeFormat(unixTime) {
     second = second < 10 ? '0'+second : second;
     return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getUTCDate()} ${d.getHours()}:${minute}:${second}`;
 }
+export function hideOmniSearchAndUnfocus() {
+    toggleElementHidden(omniSearch)
+    searchBox.blur();
+    document.body.classList.remove('overflow-hidden');
+}
+
+export function showOmniSearchAndFocus() {
+    toggleElementShown(omniSearch)
+    searchBox.focus();
+    document.body.classList.add('overflow-hidden');
+}
