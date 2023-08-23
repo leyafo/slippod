@@ -12,15 +12,11 @@
 <body>
     <div id="sideNav" class="hidden md:block h-screen select-none fixed z-30" x-data="{ tags: [] }" x-init=" tags = await db.getAllTags()">
         <ul id="sideNavUl">
-            <li @click="tagClick" href="/tag_all" id="allCards">All Cards</li>
-            <li @click="tagClick" href="/tag_no" id="noTag">Untagged</li>
-            <li @click="tagClick" href="/tag_trash" id="allCards">Trash</li>
+            <li class="tagClick"  href="/tag_all" id="allCards">All Cards</li>
+            <li class="tagClick" href="/tag_no" id="noTag">Untagged</li>
+            <li class="tagClick" href="/tag_trash" id="allCards">Trash</li>
         </ul>
-        <ul id="tagsList">
-        <template x-for="tag in tags">
-            <li @click="tagClick" x-text="tag.tag" x-bind:tag="tag.tag" x-bind:href="'/tag/' + tag.tag"></li>
-        </template>
-        </ul>
+        <ul id="tagsList"></ul>
     </div>
     <div id="overlay" class="fixed inset-0 z-20 hidden"></div>
     <div id="main" class="md:pl-64">

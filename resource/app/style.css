@@ -84,3 +84,10 @@ body {
 #suggestionBox {
   @apply bg-slate-100;
 }
+
+.custom-menu {
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    z-index: 1000;
+    /* ... additional styles ... */
+}

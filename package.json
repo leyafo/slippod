@@ -33,7 +33,6 @@
     "vite": "^4.3.9"
   },
   "dependencies": {
-    "alpinejs": "^3.12.3",
     "better-sqlite3": "^8.5.0",
     "codemirror": "5.65.13",
     "marked": "^5.0.2"
