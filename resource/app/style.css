@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@import "./github-markdown-light.css";
+@import "./codemirror/github-markdown-light.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
