@@ -72,3 +72,7 @@ CodeMirror.defineMode("hashtags", function (config, parserConfig) {
     hashtagOverlay
     );
 });
+
+export {
+    autocompleteHints,
+}

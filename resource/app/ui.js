@@ -1,5 +1,6 @@
 import * as CM from './common.js';
 import * as marked from "marked";
+import * as autoComplete from "./autocomplete.js"
 
 function deselectCurrentCard() {
     const selectedLi = CM.cardsList.querySelector(".selected");
@@ -24,7 +25,7 @@ function editCard(li) {
           mode: "hashtags",
           keyMap: "emacs",
           pollInterval: 1000,
-          hintOptions: { hint: autocompleteHints, shown: function(){console.log(hello)} },
+          hintOptions: { hint: autoComplete.autocompleteHints, shown: function(){console.log(hello)} },
           lineWrapping: false,
         });
 
