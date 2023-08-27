@@ -99,10 +99,7 @@ function handleUpdateCardButton(ev){
     li.dataset.editing = 'false';
 }
 
-
-
 function reloadCardList(cards, headerTitle = 'All Cards', order=CM.listInsertBeforeFirst) {
-    CM.toggleElementShown(CM.loadingIndicator)// Show the loading indicator
     CM.cardsHeader.textContent = headerTitle; // Update the cards header
 
     document.documentElement.scrollTop = 0; // Reset the scroll position to the top
@@ -150,34 +147,6 @@ function createCardElementFromObject(card) {
     addCardEventListeners(li);
 
     return li;
-}
-
-function highlightNote(event, arrowDirection) {
-  if (CM.suggestionBox.classList.contains("hidden")) {
-    return;
-  }
-  //处理没有搜索结果的情况
-  if (!CM.noResults.classList.contains("hidden")) {
-    return;
-  }
-  const highlightedNote = document.querySelector(
-    "#suggestionResults .highlighted"
-  );
-
-  let highlightNextNote = null;
-  if (arrowDirection === CM.highlightUp) {
-    highlightNextNote =
-      highlightedNote.previousElementSibling || CM.suggestionResults.lastChild;
-  } else if (arrowDirection === CM.highlightDown) {
-    highlightNextNote =
-      highlightedNote.nextElementSibling || CM.suggestionResults.firstChild;
-  }
-  if (highlightNextNote !== null) {
-    highlightedNote.classList.remove("highlighted");
-    highlightNextNote.classList.add("highlighted");
-    highlightNextNote.scrollIntoView({ block: "nearest" });
-  }
-  event.preventDefault();
 }
 
 let isComposing = false;
@@ -414,6 +383,7 @@ window.addEventListener('DOMContentLoaded', function() {
         reloadCardList(cards, "All Cards", CM.listInsertAfterLast)
     });
 
+    //load tags
     db.getAllTags().then(function(tags){
         for(let t of tags){
             const li = document.createElement("li")
@@ -428,7 +398,6 @@ window.addEventListener('DOMContentLoaded', function() {
 
 
 export {
-    highlightNote,
     handleOptionSelect,
     clearSearch,
     insertCardToList,

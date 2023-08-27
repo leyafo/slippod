@@ -101,40 +101,16 @@ function closeAtMenu(menu){
 
 // Navigation function
 function navigateMenu(event, menu) {
-    const items = Array.from(menu.querySelectorAll('div'));  // Replace 'div' with the actual item selector if different
-    const highlighted = menu.querySelector('.highlighted');
-    let index = items.indexOf(highlighted);
-
     // Up Arrow
     if (event.key === 'ArrowUp') {
         event.preventDefault();  // Prevent default to stop any side behavior (like scrolling)
-        if (index > 0) {
-            index--;
-        } else {
-            index = items.length - 1;  // Cycle to the bottom
-        }
-    }
-    // Down Arrow
-    else if (event.key === 'ArrowDown') {
-        event.preventDefault();
-        if (index < items.length - 1) {
-            index++;
-        } else {
-            index = 0;  // Cycle to the top
-        }
-    }
-    // Not an arrow key
-    else {
+        CM.highlightItem(CM.highlightUp, "highlighted", menu)
+    } else if (event.key === 'ArrowDown') {
+        event.preventDefault();  // Prevent default to stop any side behavior (like scrolling)
+        CM.highlightItem(CM.highlightDown, "highlighted", menu)
+    } else {
         return;
     }
-
-    // Remove old highlight
-    if (highlighted) {
-        highlighted.classList.remove('highlighted');
-    }
-
-    // Add new highlight
-    items[index].classList.add('highlighted');
 }
 
 function autocompleteHints(cm, option) {
