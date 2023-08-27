@@ -3,23 +3,50 @@ import * as UI from "./ui.js";
 
 //全局快捷键盘
 document.addEventListener("keydown", function (event) {
+    //编辑状态下不捕获全局快捷键
+    if (CM.cardsList.querySelector("[data-editing='true']") !== null){
+        return
+    }
+    //input 状态下不捕获全局快捷键
+    if(document.activeElement === CM.searchBox){
+        return
+    }
+
     if (event.key == "k" && event.ctrlKey) {
-        //check the editing status
-        if (CM.cardsList.querySelector("[data-editing='true']") !== null){
-            return
-        }
         CM.showOmniSearchAndFocus();
         CM.searchBox.focus();
         event.preventDefault();
+        return
+    }
+    if (event.key === "ArrowUp" || (event.key == "p" && event.ctrlKey)){
+        CM.highlightItem(CM.highlightUp, "selected", CM.cardsList)
+        event.preventDefault();
+        return
+    }else if (event.key === "ArrowDown" || (event.key == "n" && event.ctrlKey)){
+        CM.highlightItem(CM.highlightDown, "selected", CM.cardsList)
+        event.preventDefault();
+        return
+    }else if (event.key === "Escape"){
+        CM.UnHighlighItem("selected", CM.cardsList);
     }
 });
 
 //搜索框快捷键
 CM.searchBox.addEventListener("keydown", function (event) {
+    if (CM.suggestionBox.classList.contains("hidden")) {
+        return;
+    }
+    //处理没有搜索结果的情况
+    if (!CM.noResults.classList.contains("hidden")) {
+        return;
+    }
+
     if (event.key === "ArrowDown") {
-        UI.highlightNote(event, CM.highlightDown);
+        CM.highlightItem(CM.highlightDown, "highlighted", CM.suggestionResults)
+        event.preventDefault();
     } else if (event.key === "ArrowUp") {
-        UI.highlightNote(event, CM.highlightUp);
+        CM.highlightItem(CM.highlightUp, "highlighted", CM.suggestionResults)
+        event.preventDefault();
     } else if (event.key === "Enter") {
         if (event.ctrlKey) {
             event.stopPropagation();

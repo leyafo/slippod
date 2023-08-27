@@ -2,7 +2,6 @@
 export const sideNav = document.getElementById('sideNav')
 export const sideNavButton = document.getElementById('sideNavButton')
 export const overlay= document.getElementById('overlay')
-export const loadingIndicator= document.getElementById('loadingIndicator')
 export const cardsHeader= document.getElementById('cardsHeader')
 export const cardsList= document.getElementById('cardsList')
 export const creationTip= document.getElementById('creationTip')
@@ -54,4 +53,29 @@ export function showOmniSearchAndFocus() {
     toggleElementShown(omniSearch)
     searchBox.focus();
     document.body.classList.add('overflow-hidden');
+}
+
+export function highlightItem(arrowDirection, highlightedClass, parentElement){
+    const selector = `.${highlightedClass}`
+    let highLightedItem = parentElement.querySelector(selector)
+    if(!highLightedItem){
+        parentElement.firstChild.classList.add(highlightedClass);
+        return
+    }
+    highLightedItem.classList.remove(highlightedClass)
+    if(arrowDirection == highlightUp){
+        highLightedItem = highLightedItem.previousElementSibling || parentElement.lastChild 
+    }else if(arrowDirection === highlightDown){
+        highLightedItem = highLightedItem.nextElementSibling || parentElement.firstChild 
+    }
+    highLightedItem.classList.add(highlightedClass)
+    highLightedItem.scrollIntoView({ block: "nearest" });
+    return highLightedItem
+}
+
+export function UnHighlighItem(highlightedClass, parentElement){
+    const items = parentElement.querySelectorAll(`.${highlightedClass}`)
+    for(let item of items){
+        item.classList.remove(highlightedClass)
+    }
 }
