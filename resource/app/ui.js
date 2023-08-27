@@ -2,13 +2,6 @@ import * as CM from './common.js';
 import * as marked from "marked";
 import * as autoComplete from "./autocomplete.js"
 
-function deselectCurrentCard() {
-    const selectedLi = CM.cardsList.querySelector(".selected");
-    if (selectedLi) {
-        selectedLi.classList.remove("selected");
-    }
-}
-
 function editCard(li) {
     let getEditingCardPromise = db.getCardByID(li.dataset.id);
 
@@ -41,13 +34,8 @@ function editCard(li) {
           console.log("Autocomplete menu is being closed programmatically");
         });
 
-        deselectCurrentCard();
+        CM.UnHighlightItem("selected", CM.cardsList)
     });
-}
-
-function selectCard(li) {
-    deselectCurrentCard()
-    li.classList.add('selected');
 }
 
 CM.clickHandle(".tagClick", function(e){
@@ -79,11 +67,11 @@ function addCardEventListeners(li) {
 
     li.addEventListener('click', function() {
         if (li.dataset.editing === 'false') {
-            selectCard(li);
+            CM.UnHighlightItem("selected", CM.cardsList)
+            li.classList.add('selected');
         }
     });
 }
-
 
 function handleUpdateCardButton(ev){
     const li = ev.target.closest("li");
@@ -200,12 +188,7 @@ function updateSuggestionBox(cards) {
 
       // Mouseover event for highlighting
       div.addEventListener("mouseover", function () {
-        const currentlyHighlighted = document.querySelector(
-          "#suggestionResults .highlighted"
-        );
-        if (currentlyHighlighted) {
-          currentlyHighlighted.classList.remove("highlighted");
-        }
+        CM.UnHighlightItem("highlighted", CM.suggestionResults)
         div.classList.add("highlighted");
       });
 
@@ -217,7 +200,7 @@ function updateSuggestionBox(cards) {
       }
     }
     // Show suggestion reuslts
-    CM.suggestionResults.classList.remove("hidden");
+    CM.toggleElementShown(CM.suggestionResults)
   }
 }
 
