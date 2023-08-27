@@ -1,4 +1,5 @@
 import * as CM from "./common"
+import fuzzySearch from "./lib/fuzzy"
 const menuTemplate = document.getElementById("completeReferenceMenu")
 
 function createCardSuggestion(card){
@@ -100,7 +101,6 @@ function closeAtMenu(menu){
 
 // Navigation function
 function navigateMenu(event, menu) {
-    console.log('test');
     const items = Array.from(menu.querySelectorAll('div'));  // Replace 'div' with the actual item selector if different
     const highlighted = menu.querySelector('.highlighted');
     let index = items.indexOf(highlighted);
@@ -138,48 +138,64 @@ function navigateMenu(event, menu) {
 }
 
 function autocompleteHints(cm, option) {
+  let allTags = [];
+  db.getAllTags().then(function (tags) {
+    for (let t of tags) {
+        allTags.push(t)
+    }
+  });
   return new Promise(function (accept) {
     let cursor = cm.getCursor(),
       lineContent = cm.getLine(cursor.line),
       token = cm.getTokenAt(cursor);
-    let signalCh = lineContent[cursor.ch - 1];
-    console.log(token, signalCh);
-    if (signalCh == "#") {
-      db.getAllTags().then(function (tags) {
-        let hints = [];
-        for (let t of tags) {
-          hints.push({
-            text: `[${t.tag}](/tag/${t.tag}) `,
-            displayText: t.tag,
-          });
-        }
-        return accept({
-          list: hints,
-          from: { line: cursor.line, ch: cursor.ch - 1 },
-          to: cursor,
-        });
-      });
-    } else if (signalCh == "@") {
+    let lastCharacter = lineContent[cursor.ch - 1];
+    const inputText = token.string.slice(1);
+    if ((inputText.length > 0 && lastCharacter== '#') || lastCharacter == '@'){
+        return accept()
     }
+    
+    db.getAllTags().then(function (tags) {
+    let hints = [];
+    for (let t of allTags) {
+        if(inputText.length > 0){
+            if (fuzzySearch(t.tag, inputText, {})){
+                hints.push({
+                    text: `#${t.tag} `,
+                    displayText: t.tag,
+                });
+            }
+        }else{
+            hints.push({
+                text: `#${t.tag} `,
+                displayText: t.tag,
+            });
+        }
+    }
+    return accept({
+        list: hints,
+        from: { line: cursor.line, ch: cursor.ch - (inputText.length+2)},
+        to: cursor,
+    });
+    });
   });
 }
 
 CodeMirror.defineMode("hashtags", function (config, parserConfig) {
     var hashtagOverlay = {
-    token: function (stream, state) {
-        if (stream.match(/#[a-zA-Z0-9_]+/)) {
-        return "hashtag";
-        }
-        while (
-        stream.next() != null &&
-        !stream.match(/#[a-zA-Z0-9_]+/, false)
-        ) {}
-        return null;
-    },
+        token: function (stream, state) {
+            if (stream.match(/#[a-zA-Z0-9_]+/)) {
+                return "hashtag";
+            }
+            while (
+                stream.next() != null &&
+                !stream.match(/#[a-zA-Z0-9_]+/, false)
+            ) { }
+            return null;
+        },
     };
     return CodeMirror.overlayMode(
-    CodeMirror.getMode(config, parserConfig.backdrop || "markdown"),
-    hashtagOverlay
+        CodeMirror.getMode(config, parserConfig.backdrop || "markdown"),
+        hashtagOverlay
     );
 });
 

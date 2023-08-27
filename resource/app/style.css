@@ -92,3 +92,9 @@ body {
     z-index: 1000;
     /* ... additional styles ... */
 }
+
+
+.cm-hashtag {
+  color: blue;
+  text-decoration: underline;
+}
