@@ -27,7 +27,7 @@ document.addEventListener("keydown", function (event) {
         event.preventDefault();
         return
     }else if (event.key === "Escape"){
-        CM.UnHighlighItem("selected", CM.cardsList);
+        CM.UnHighlightItem("selected", CM.cardsList);
     }
 });
 

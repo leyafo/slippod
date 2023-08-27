@@ -73,7 +73,7 @@ export function highlightItem(arrowDirection, highlightedClass, parentElement){
     return highLightedItem
 }
 
-export function UnHighlighItem(highlightedClass, parentElement){
+export function UnHighlightItem(highlightedClass, parentElement){
     const items = parentElement.querySelectorAll(`.${highlightedClass}`)
     for(let item of items){
         item.classList.remove(highlightedClass)
