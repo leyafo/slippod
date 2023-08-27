@@ -25,13 +25,15 @@ function editCard(li) {
           mode: "hashtags",
           keyMap: "emacs",
           pollInterval: 1000,
-          hintOptions: { hint: autoComplete.autocompleteHints, shown: function(){console.log(hello)} },
+          hintOptions: { hint: autoComplete.autocompleteHints },
           lineWrapping: false,
         });
 
         editor.on("change", function (cm, change) {
-            if ( change.text[0] === "@" || change.text[0] == "#") {
-                cm.showHint(); 
+            if (change.text[0] == "#") {
+                cm.showHint();
+            }else if (change.text[0] === "@"){
+                autoComplete.showCustomMenu(cm, editor)
             }
         });
         editor.setValue(cardEntry);
@@ -108,7 +110,6 @@ function reloadCardList(cards, headerTitle = 'All Cards', order=CM.listInsertBef
     // Display the cards
     CM.cardsList.innerHTML = '';  // Clear the current cards
     cards.forEach(card => {
-        console.log(card.id);
         insertCardToList(card, order)
     });
 
@@ -431,4 +432,5 @@ export {
     handleOptionSelect,
     clearSearch,
     insertCardToList,
+    editCard,
 }
