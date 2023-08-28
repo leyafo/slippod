@@ -14,13 +14,17 @@ contextBridge.exposeInMainWorld('utils', {
     "getTrashCards",
     "getNoTagCards",
     "getCardsByMiddleID",
+
   ]
   const fullsetDBFunc = [
+    "removeCardFromTrash",
+    "removeCardPermanently",
+    "restoreCard",
     "searchCards",
     "createNewCard", 
     "getAllTags",
     "getCardByID",
-    "deleteCardByID",
+    "moveCardToTrash",
     "updateCardEntryByID",
     "getCardDetails",
     "cardIsExisted",

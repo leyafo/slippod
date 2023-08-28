@@ -103,6 +103,8 @@ function getTrashCards(offset, limit){
     for (tc of trashCards){
         cards.push({
             id: tc.card_id,
+            trash_id: tc.id,
+            is_trash: true,
             entry: tc.card_entry,
             created_at: tc.card_created_at,
             updated_at: tc.card_updated_at
@@ -113,8 +115,8 @@ function getTrashCards(offset, limit){
 
 function createNewCard(cardEntry) {
   try {
-    const tagslinks = parseTagsLinks(cardEntry);
-    return db.transaction((entry, tags, links) => {
+    const tags = parseTags(cardEntry);
+    return db.transaction((entry, tags) => {
       const changes = db
         .prepare(`insert into cards(entry) values(?)`)
         .run(entry);
@@ -124,39 +126,26 @@ function createNewCard(cardEntry) {
           tag
         );
       });
-    //   links.forEach((link) => {
-    //     db.prepare(`insert into links(card_id, link_id) values(?, ?)`).run(
-    //       changes.lastInsertRowid,
-    //       link
-    //     );
-    //   });
       return changes.lastInsertRowid;
-    })(cardEntry, tagslinks[0], tagslinks[1]);
+    })(cardEntry, tags);
   } catch (err) {
     if (!db.inTransaction) throw err; // (transaction was forcefully rolled back)
   }
 }
 
 
-function parseTagsLinks(cardEntry){
-    const pattern = /(\[#\w+\])|(\[@\d+\])/g;
-    const links = new Set();
+function parseTags(cardEntry){
+    const pattern = /#\w+/g;
     const tags = new Set();
     const matches = cardEntry.matchAll(pattern);
     for (m of matches){
         let matchedString = m[0].trim()
-        if (matchedString[1] == '@'){
-            const id = parseInt(matchedString.slice(2, matchedString.length-1), 10);
-            if (isNaN(id)){
-                continue;
-            }
-            links.add(id);
-        }else if(matchedString[1] == '#'){
+        if(matchedString[0] == '#'){
             tags.add(matchedString.slice(2, matchedString.length-1));
         }
     }
 
-    return [tags, links]
+    return tags
 }
 
 function getAllTags(){
@@ -204,7 +193,7 @@ function getCardDetails(id){
     return result
 }
 
-function deleteCardByID(id){
+function moveCardToTrash(id){
     const card = getCardByID(id);
     db.transaction(function(cardID){
         db.prepare("delete from tags where card_id = ?").run(cardID);
@@ -216,12 +205,31 @@ function deleteCardByID(id){
     return 
 }
 
+function removeCardPermanently(trashID){
+    db.transaction(function(trashID){
+        db.prepare(`delete from trash where id = ?`).run(trashID);
+    })(trashID);
+}
+
+function removeCardFromTrash(trashID){
+    return removeCardPermanently(trashID);
+}
+
+function restoreCard(trashID){
+    const removedCard = db.prepare(`select * from trash where id = ?`).get(trashID)
+    db.transaction(function(trashID){
+        db.prepare("insert into cards(id, entry, created_at, updated_at) values(?, ?, ?, ?)")
+            .run(removedCard.card_id, removedCard.card_entry, removedCard.card_created_at, removedCard.card_updated_at)
+        db.prepare(`delete from trash where id = ?`).run(trashID);
+    })(trashID);
+}
+
 function cardIsExisted(id){
     return db.prepare(`select id from cards where id=?`).get(id);
 }
 
 function updateCardEntryByID(id, cardEntry){
-    const tagsLinks = parseTagsLinks(cardEntry);
+    const tagsInContent = parseTags(cardEntry);
     const existedTags = db.prepare("select tag from tags where card_id = ?").pluck().all(id)
     const existedTagsSet = new Set(existedTags);
     db.transaction(function(cardID, entry, newTags, oldTags){
@@ -240,7 +248,7 @@ function updateCardEntryByID(id, cardEntry){
             }
         })
 
-    })(id, cardEntry, tagsLinks[0], existedTagsSet);
+    })(id, cardEntry, tagsInContent, existedTagsSet);
     return id;
     return id;
 }
@@ -270,15 +278,20 @@ module.exports = {
   createNewCard,
   getCardsByTag,
   getCardByID,
-  deleteCardByID,
   updateCardEntryByID,
   initialize,
   initializeMemoryDB,
   getCardDetails,
-  getTrashCards,
   searchCards,
   getNoTagCards,
   cardIsExisted,
   getCardsByMiddleID,
-  getMaxCardID
+  getMaxCardID,
+
+  //trash functions
+  getTrashCards,
+  moveCardToTrash,
+  removeCardFromTrash,
+  removeCardPermanently,
+  restoreCard,
 };
