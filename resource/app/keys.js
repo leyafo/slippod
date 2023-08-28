@@ -36,10 +36,6 @@ CM.searchBox.addEventListener("keydown", function (event) {
     if (CM.suggestionBox.classList.contains("hidden")) {
         return;
     }
-    //处理没有搜索结果的情况
-    if (!CM.noResults.classList.contains("hidden")) {
-        return;
-    }
 
     if (event.key === "ArrowDown") {
         CM.highlightItem(CM.highlightDown, "highlighted", CM.suggestionResults)
