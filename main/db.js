@@ -135,15 +135,16 @@ function createNewCard(cardEntry) {
 
 
 function parseTags(cardEntry){
-    const pattern = /#\w+/g;
+    const pattern = /#([a-zA-Z0-9_-]+)/g
     const tags = new Set();
     const matches = cardEntry.matchAll(pattern);
     for (m of matches){
         let matchedString = m[0].trim()
         if(matchedString[0] == '#'){
-            tags.add(matchedString.slice(2, matchedString.length-1));
+            tags.add(matchedString.slice(1));
         }
     }
+    console.log(tags)
 
     return tags
 }
@@ -217,9 +218,16 @@ function removeCardFromTrash(trashID){
 
 function restoreCard(trashID){
     const removedCard = db.prepare(`select * from trash where id = ?`).get(trashID)
+    const tags = parseTags(removedCard.card_entry);
     db.transaction(function(trashID){
         db.prepare("insert into cards(id, entry, created_at, updated_at) values(?, ?, ?, ?)")
             .run(removedCard.card_id, removedCard.card_entry, removedCard.card_created_at, removedCard.card_updated_at)
+
+        tags.forEach((tag) => {
+            db.prepare(`insert into tags(card_id, tag) values(?, ?)`).run(
+                removedCard.card_id,
+                tag)
+        });
         db.prepare(`delete from trash where id = ?`).run(trashID);
     })(trashID);
 }
