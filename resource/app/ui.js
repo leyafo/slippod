@@ -38,6 +38,27 @@ function editCard(li) {
     });
 }
 
+function deleteCard(li){
+    const cardID = li.dataset.id
+    if(li.dataset.is_trash){
+        db.removeCardPermanently(li.dataset.trash_id).then(function(){
+            CM.cardsList.removeChild(li);
+        })
+    }else{
+        db.moveCardToTrash(cardID).then(function(){
+            CM.cardsList.removeChild(li);
+        })
+    }
+}
+
+function restoreCard(li){
+    if(li.dataset.is_trash){
+        db.restoreCard(li.dataset.trash_id).then(function(){
+            CM.cardsList.removeChild(li);
+        })
+    }
+}
+
 CM.clickHandle(".tagClick", function(e){
     e.preventDefault();
     const href = e.target.getAttribute("href");
@@ -71,6 +92,30 @@ function addCardEventListeners(li) {
             li.classList.add('selected');
         }
     });
+    const cardMenu = li.querySelector(".cardMenu")
+    const cardMenuOptions = li.querySelector(".menuOptions");
+    cardMenu.addEventListener('click', function(event){
+        if(cardMenu.classList.contains("hidden")){
+            CM.toggleElementShown(cardMenuOptions)
+        }else{
+            CM.toggleElementHidden(cardMenuOptions)
+        } 
+    })
+    cardMenu.addEventListener('mouseover', function(event){
+        CM.toggleElementShown(cardMenuOptions)
+    })
+    cardMenu.addEventListener('mouseout', function(event){
+        CM.toggleElementHidden(cardMenuOptions)
+    })
+    cardMenuOptions.querySelector("a.editOption").addEventListener('click', function(event){
+        editCard(li)
+    })
+    cardMenuOptions.querySelector("a.deleteOption").addEventListener('click', function(event){
+        deleteCard(li)
+    })
+    cardMenuOptions.querySelector("a.restoreOption").addEventListener('click', function(event){
+        restoreCard(li)
+    })
 }
 
 function handleUpdateCardButton(ev){
@@ -131,6 +176,13 @@ function createCardElementFromObject(card) {
 
     li.dataset.id = card.id;
     li.dataset.editing = 'false';
+    if (card.is_trash){
+        li.dataset.is_trash = true;
+        li.dataset.trash_id = card.trash_id;
+        const cardMenuOptions = li.querySelector(".menuOptions");
+        CM.toggleElementHidden(cardMenuOptions.querySelector(".editOption"))
+        CM.toggleElementShown(cardMenuOptions.querySelector(".restoreOption"))
+    }
 
     addCardEventListeners(li);
 
@@ -378,6 +430,8 @@ window.addEventListener('DOMContentLoaded', function() {
     })
 
 });
+
+
 
 
 export {

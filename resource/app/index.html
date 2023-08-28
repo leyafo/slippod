@@ -45,6 +45,13 @@
     <template id="cardItemTemplate">
         <span class="id"></span>
         <span class="createTime"></span>
+        <span class="cardMenu">...
+            <div class="menuOptions hidden">
+                <a class="editOption" href="#">Edit</a>
+                <a class="deleteOption" href="#">Delete</a>
+                <a class="restoreOption hidden" href="#">Restore</a>
+            </div>
+        </span>
         <div class="content markdown-body"></div>
         <button class="updateCardButton hidden">Save</button>
     </template>
