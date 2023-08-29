@@ -19,15 +19,15 @@ document.addEventListener("keydown", function (event) {
         return
     }
     if (event.key === "ArrowUp" || (event.key == "p" && event.ctrlKey)){
-        CM.highlightItem(CM.highlightUp, "selected", CM.cardsList)
+        CM.highlightUpOrDownItem(CM.highlightUp, "selected", CM.cardsList)
         event.preventDefault();
         return
     }else if (event.key === "ArrowDown" || (event.key == "n" && event.ctrlKey)){
-        CM.highlightItem(CM.highlightDown, "selected", CM.cardsList)
+        CM.highlightUpOrDownItem(CM.highlightDown, "selected", CM.cardsList)
         event.preventDefault();
         return
     }else if (event.key === "Escape"){
-        CM.UnHighlightItem("selected", CM.cardsList);
+        CM.unHighlightItem("selected", CM.cardsList);
     }
 });
 
@@ -38,10 +38,10 @@ CM.searchBox.addEventListener("keydown", function (event) {
     }
 
     if (event.key === "ArrowDown") {
-        CM.highlightItem(CM.highlightDown, "highlighted", CM.suggestionResults)
+        CM.highlightUpOrDownItem(CM.highlightDown, "highlighted", CM.suggestionResults)
         event.preventDefault();
     } else if (event.key === "ArrowUp") {
-        CM.highlightItem(CM.highlightUp, "highlighted", CM.suggestionResults)
+        CM.highlightUpOrDownItem(CM.highlightUp, "highlighted", CM.suggestionResults)
         event.preventDefault();
     } else if (event.key === "Enter") {
         if (event.ctrlKey) {
@@ -53,7 +53,6 @@ CM.searchBox.addEventListener("keydown", function (event) {
             "#suggestionResults .highlighted"
         );
         if (highlightedSuggestion) {
-            console.log(highlightedSuggestion.dataset.id);
             UI.handleOptionSelect(highlightedSuggestion.dataset.id);
             UI.clearSearch(event);
             event.stopPropagation();

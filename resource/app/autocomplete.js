@@ -104,10 +104,10 @@ function navigateMenu(event, menu) {
     // Up Arrow
     if (event.key === 'ArrowUp') {
         event.preventDefault();  // Prevent default to stop any side behavior (like scrolling)
-        CM.highlightItem(CM.highlightUp, "highlighted", menu)
+        CM.highlightUpOrDownItem(CM.highlightUp, "highlighted", menu)
     } else if (event.key === 'ArrowDown') {
         event.preventDefault();  // Prevent default to stop any side behavior (like scrolling)
-        CM.highlightItem(CM.highlightDown, "highlighted", menu)
+        CM.highlightUpOrDownItem(CM.highlightDown, "highlighted", menu)
     } else {
         return;
     }
@@ -164,7 +164,7 @@ CodeMirror.defineMode("hashtags", function (config, parserConfig) {
             }
             while (
                 stream.next() != null &&
-                !stream.match(/#[a-zA-Z0-9_]+/, false)
+                !stream.match(/#([a-zA-Z0-9\u4e00-\u9fff/\\_-]+)/, false)
             ) { }
             return null;
         },

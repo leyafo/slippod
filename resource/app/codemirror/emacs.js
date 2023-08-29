@@ -450,6 +450,7 @@
   // Actual keymap
   var keyMap = CodeMirror.keyMap.emacs = CodeMirror.normalizeKeyMap({
     "Ctrl-W": "killRegion",
+    "Ctrl-C": "killRegionSave",
     "Ctrl-K": "killLineEmacs",
     "Alt-W": "killRingSave",
     "Ctrl-Y": "yank",
@@ -479,7 +480,7 @@
     "End": "goLineEnd",
     "Home": "goLineStart",
     "Alt-V": "scrollDownCommand",
-    "Ctrl-V": "scrollUpCommand",
+    "Ctrl-V": "yank",
     "PageUp": "scrollDownCommand",
     "PageDown": "scrollUpCommand",
     "Ctrl-Up": "backwardParagraph",

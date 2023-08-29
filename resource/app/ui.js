@@ -34,7 +34,7 @@ function editCard(li) {
           console.log("Autocomplete menu is being closed programmatically");
         });
 
-        CM.UnHighlightItem("selected", CM.cardsList)
+        CM.unHighlightItem("selected", CM.cardsList)
     });
 }
 
@@ -62,7 +62,7 @@ function restoreCard(li){
 CM.clickHandle(".tagClick", function(e){
     e.preventDefault();
     const href = e.target.getAttribute("href");
-    const tag = e.target.getAttribute("tag");
+    const tag = e.target.dataset.tag
 
     switch (href) {
         case "/tag_all":
@@ -88,7 +88,7 @@ function addCardEventListeners(li) {
 
     li.addEventListener('click', function() {
         if (li.dataset.editing === 'false') {
-            CM.UnHighlightItem("selected", CM.cardsList)
+            CM.unHighlightItem("selected", CM.cardsList)
             li.classList.add('selected');
         }
     });
@@ -240,7 +240,7 @@ function updateSuggestionBox(cards) {
 
       // Mouseover event for highlighting
       div.addEventListener("mouseover", function () {
-        CM.UnHighlightItem("highlighted", CM.suggestionResults)
+        CM.unHighlightItem("highlighted", CM.suggestionResults)
         div.classList.add("highlighted");
       });
 
@@ -407,6 +407,35 @@ export function handleScroll() {
 
 document.addEventListener('scroll', handleScroll());
 
+function buildTagTree(tagList) {
+  const tree = {};
+  tagList.forEach(tagItem => {
+    let node = tree;
+    tagItem.tag.split('/').forEach(part => {
+      if (!node[part]) {
+        node[part] = {};
+      }
+      node = node[part];
+    });
+  });
+  return tree;
+}
+
+function buildTagHtml(tree, prefix = '') {
+  let html = '';
+  for (const [key, value] of Object.entries(tree)) {
+    const fullTag = prefix ? `${prefix}/${key}` : key;
+    html += `<li class="tagClick" href="/tag/${fullTag}" data-tag="${fullTag}">${key}`;
+    if (Object.keys(value).length > 0) {
+      html += '<ul>';
+      html += buildTagHtml(value, fullTag);
+      html += '</ul>';
+    }
+    html += '</li>';
+  }
+  return html;
+}
+
 window.addEventListener('DOMContentLoaded', function() {
     marked.use({
         mangle: false,
@@ -420,16 +449,15 @@ window.addEventListener('DOMContentLoaded', function() {
 
     //load tags
     db.getAllTags().then(function(tags){
-        for(let t of tags){
-            const li = document.createElement("li")
-            li.setAttribute("href", `/tag/${t.tag}`)
-            li.classList.add("tagClick");
-            li.textContent = t.tag;
-            CM.tagList.appendChild(li);
-        }
+        let tree = buildTagTree(tags)
+        let tagListHTML = buildTagHtml(tree)
+        CM.tagList.innerHTML = tagListHTML
     })
 
 });
+
+
+
 
 
 
