@@ -7,7 +7,7 @@
     "dev": "vite",
     "test": "mocha",
     "build": "vite build",
-    "db_init": "node main/db_init.js",
+    "db_init": "node main/du_init.js",
     "dev_start": "NODE_ENV=development electron .",
     "pack": "electron-builder --dir",
     "dist": "electron-builder --config.asar=false",

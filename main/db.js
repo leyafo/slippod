@@ -1,6 +1,7 @@
 const fs = require("fs");
 const schema = require("./schema");
 const sqlite3 = require("better-sqlite3");
+const tagPattern = /#([a-zA-Z0-9\u4e00-\u9fff/\\_-]+)/g;
 let db = null;
 const configs = {
     isInitlized: false,
@@ -135,22 +136,20 @@ function createNewCard(cardEntry) {
 
 
 function parseTags(cardEntry){
-    const pattern = /#([a-zA-Z0-9_-]+)/g
     const tags = new Set();
-    const matches = cardEntry.matchAll(pattern);
+    const matches = cardEntry.matchAll(tagPattern);
     for (m of matches){
         let matchedString = m[0].trim()
         if(matchedString[0] == '#'){
             tags.add(matchedString.slice(1));
         }
     }
-    console.log(tags)
 
     return tags
 }
 
 function getAllTags(){
-    const tags = db.prepare("select distinct(tag) from tags").all();
+    const tags = db.prepare("select distinct(tag) from tags order by tag asc").all();
     return tags
 }
 
@@ -302,4 +301,7 @@ module.exports = {
   removeCardFromTrash,
   removeCardPermanently,
   restoreCard,
+
+  //for test
+  parseTags,
 };

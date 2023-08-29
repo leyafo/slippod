@@ -55,7 +55,7 @@ export function showOmniSearchAndFocus() {
     document.body.classList.add('overflow-hidden');
 }
 
-export function highlightItem(arrowDirection, highlightedClass, parentElement){
+export function highlightUpOrDownItem(arrowDirection, highlightedClass, parentElement){
     const selector = `.${highlightedClass}`
     let highLightedItem = parentElement.querySelector(selector)
     if(!highLightedItem){
@@ -73,7 +73,12 @@ export function highlightItem(arrowDirection, highlightedClass, parentElement){
     return highLightedItem
 }
 
-export function UnHighlightItem(highlightedClass, parentElement){
+export function highlightItem( highlightedClass,item, parentElement){
+    item.classList.add(highlightedClass)
+    unHighlightItem(highlightedClass, parentElement)
+}
+
+export function unHighlightItem(highlightedClass, parentElement){
     const items = parentElement.querySelectorAll(`.${highlightedClass}`)
     for(let item of items){
         item.classList.remove(highlightedClass)
