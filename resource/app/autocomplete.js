@@ -1,6 +1,13 @@
 import * as CM from "./common"
 import fuzzySearch from "./lib/fuzzy"
-const menuTemplate = document.getElementById("completeReferenceMenu")
+import * as marked from 'marked';
+
+const renderer = new marked.Renderer();
+renderer.text = function(text) {
+  return text.replace(window.tagRegex, '<a href="/tag/$1" class="cm-hashtag">#$1</a>');
+};
+marked.setOptions({ renderer });
+
 
 function createCardSuggestion(card){
     const div = document.createElement("div");
@@ -159,12 +166,12 @@ function autocompleteHints(cm, option) {
 CodeMirror.defineMode("hashtags", function (config, parserConfig) {
     var hashtagOverlay = {
         token: function (stream, state) {
-            if (stream.match(/#[a-zA-Z0-9_]+/)) {
+            if (stream.match(window.tagRegex)) {
                 return "hashtag";
             }
             while (
                 stream.next() != null &&
-                !stream.match(/#([a-zA-Z0-9\u4e00-\u9fff/\\_-]+)/, false)
+                !stream.match(window.tagRegex, false)
             ) { }
             return null;
         },

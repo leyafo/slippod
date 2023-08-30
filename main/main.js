@@ -151,7 +151,6 @@ ipcMain.handle("filePicker", async (event, ...args) => {
       config.writeDBPathConfig(dbPath[0]);
       mainWindow.reload();
     } catch (err) {
-      console.error(err);
       dialog.showMessageBoxSync(mainWindow, { message: err.message });
     }
   }

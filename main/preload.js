@@ -17,6 +17,7 @@ contextBridge.exposeInMainWorld('utils', {
 
   ]
   const fullsetDBFunc = [
+    "getTagRegex",
     "removeCardFromTrash",
     "removeCardPermanently",
     "restoreCard",
