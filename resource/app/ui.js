@@ -425,7 +425,7 @@ function buildTagHtml(tree, prefix = '') {
   let html = '';
   for (const [key, value] of Object.entries(tree)) {
     const fullTag = prefix ? `${prefix}/${key}` : key;
-    html += `<li class="tagClick" href="/tag/${fullTag}" data-tag="${fullTag}">${key}`;
+    html += `<li><a class="tagClick" href="/tag/${fullTag}" data-tag="${fullTag}">${key}</a>`;
     if (Object.keys(value).length > 0) {
       html += '<ul>';
       html += buildTagHtml(value, fullTag);
@@ -442,6 +442,10 @@ window.addEventListener('DOMContentLoaded', function() {
         headerIds: false
     });
 
+    db.getTagRegex().then(function(regex){
+        window.tagRegex = regex
+    });
+    
     //load cards
     db.getCards(0, CM.limitItems).then(function(cards) {
         reloadCardList(cards, "All Cards", CM.listInsertAfterLast)
@@ -455,12 +459,6 @@ window.addEventListener('DOMContentLoaded', function() {
     })
 
 });
-
-
-
-
-
-
 
 export {
     handleOptionSelect,

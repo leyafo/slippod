@@ -42,7 +42,7 @@ body {
 
 #tagsList li:hover,
 #sideNavUl li:hover {
-    @apply bg-slate-300;
+    /* @apply bg-slate-300; */
 }
 
 #overlay {
@@ -100,11 +100,6 @@ body {
 }
 
 
-.cm-hashtag {
-    color: blue;
-    text-decoration: underline;
-}
-
 .cardMenu {
     float: right;
 }
@@ -131,4 +126,10 @@ body {
 
 a.hidden{
     display: none;
+}
+
+.cm-hashtag {
+    color: blue;
+    background: #CBE2FE !important;
+    text-decoration: underline;
 }

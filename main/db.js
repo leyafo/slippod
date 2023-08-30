@@ -9,6 +9,10 @@ const configs = {
     dictPath: "",
 }
 
+function getTagRegex(){
+    return tagPattern
+}
+
 function checkDBSchema(checkDB){
     const tables = checkDB.prepare(`SELECT name FROM sqlite_master WHERE type='table'`).pluck().all()
     const setTables = new Set(tables)
@@ -277,31 +281,32 @@ function searchCards(keyWord, offset, limit){
 }
 
 module.exports = {
-  updateSchema,
-  reloadDB,
-  getAllTags,
-  getAllCards,
-  getCards,
-  createNewCard,
-  getCardsByTag,
-  getCardByID,
-  updateCardEntryByID,
-  initialize,
-  initializeMemoryDB,
-  getCardDetails,
-  searchCards,
-  getNoTagCards,
-  cardIsExisted,
-  getCardsByMiddleID,
-  getMaxCardID,
+    updateSchema,
+    reloadDB,
+    getAllTags,
+    getAllCards,
+    getCards,
+    createNewCard,
+    getCardsByTag,
+    getCardByID,
+    updateCardEntryByID,
+    initialize,
+    initializeMemoryDB,
+    getCardDetails,
+    searchCards,
+    getNoTagCards,
+    cardIsExisted,
+    getCardsByMiddleID,
+    getMaxCardID,
 
-  //trash functions
-  getTrashCards,
-  moveCardToTrash,
-  removeCardFromTrash,
-  removeCardPermanently,
-  restoreCard,
+    //trash functions
+    getTrashCards,
+    moveCardToTrash,
+    removeCardFromTrash,
+    removeCardPermanently,
+    restoreCard,
 
-  //for test
-  parseTags,
+    //for test
+    parseTags,
+    getTagRegex,
 };
