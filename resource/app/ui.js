@@ -9,9 +9,8 @@ function editCard(li) {
         const cardEntry = card.entry;
         const content = li.querySelector(".content") 
         content.innerHTML = '';
-        const updateButton = li.querySelector(".updateCardButton");
-        CM.toggleElementShown(updateButton)
-        updateButton.onclick=handleUpdateCardButton;
+        const controlPanel = li.querySelector(".controlPanel");
+        CM.toggleElementShown(controlPanel)
         li.dataset.editing = 'true';
         let editor = CodeMirror(content, {
           theme: "default",
@@ -118,7 +117,7 @@ function addCardEventListeners(li) {
     })
 }
 
-function handleUpdateCardButton(ev){
+CM.clickHandle(".updateCardButton", function(ev){
     const li = ev.target.closest("li");
     const content = li.querySelector(".content");
     const cardID = li.dataset.id;
@@ -126,11 +125,23 @@ function handleUpdateCardButton(ev){
 
     db.updateCardEntryByID(cardID, entry).then(() => {
         content.innerHTML = marked.parse(entry);
-        const updateButton = li.querySelector(".updateCardButton");
-        CM.toggleElementHidden(updateButton);
+        const controlPanel = li.querySelector(".controlPanel");
+        CM.toggleElementHidden(controlPanel)
     });
     li.dataset.editing = 'false';
-}
+})
+
+CM.clickHandle(".cancelCardButton", function(ev){
+    const li = ev.target.closest("li");
+    const content = li.querySelector(".content");
+    const cardID = li.dataset.id;
+    db.getCardByID(cardID).then(function(card){
+        content.innerHTML = marked.parse(card.entry);
+        const controlPanel = li.querySelector(".controlPanel");
+        CM.toggleElementHidden(controlPanel)
+    })
+    li.dataset.editing = 'false';
+})
 
 function reloadCardList(cards, headerTitle = 'All Cards', order=CM.listInsertBeforeFirst) {
     CM.cardsHeader.textContent = headerTitle; // Update the cards header
@@ -168,9 +179,15 @@ function createCardElementFromObject(card) {
     const content = listItem.querySelector(".content");
     content.innerHTML = marked.parse(card.entry);
 
-    const createTimeSapn = listItem.querySelector("span.createTime")
+    const createTimeSapn = listItem.querySelector("span.createTime");
     const createdTate = CM.unixTimeFormat(card.created_at);
     createTimeSapn.textContent = createdTate;
+
+    const idSpan = listItem.querySelector("span.id");
+    idSpan.textContent = card.id
+
+    const updateTimeSpan = listItem.querySelector("span.updateTime");
+    updateTimeSpan.textContent = "updated: "+ CM.timeAgo(card.updated_at);
 
     li.appendChild(listItem);
 
