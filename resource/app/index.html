@@ -45,6 +45,7 @@
     <template id="cardItemTemplate">
         <span class="id"></span>
         <span class="createTime"></span>
+        <span class="updateTime"></span>
         <span class="cardMenu">...
             <div class="menuOptions hidden">
                 <a class="editOption" href="#">Edit</a>
@@ -53,7 +54,10 @@
             </div>
         </span>
         <div class="content markdown-body"></div>
-        <button class="updateCardButton hidden">Save</button>
+        <div class="controlPanel hidden"> 
+            <button class="updateCardButton">Save</button>
+            <button class="cancelCardButton">Cancel</button>
+        </div>
     </template>
 </body>
 <script  src="./codemirror/codemirror.js"></script>

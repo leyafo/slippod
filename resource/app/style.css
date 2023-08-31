@@ -67,10 +67,6 @@ body {
     @apply bg-slate-300;
 }
 
-#cardsList {
-    @apply overflow-scroll;
-}
-
 #cardsList li {
     @apply mx-2 my-1 px-4 py-2 rounded;
 }
