@@ -78,6 +78,26 @@ CM.clickHandle(".tagClick", function(e){
     }
 });
 
+CM.clickHandle(".tagIcon", function(e){
+    e.preventDefault()
+    const span = e.target
+    const li = span.parentNode;
+    const ul = li.querySelector("ul")
+    if(ul !== null){
+        //fold
+        if(ul.classList.contains("hidden")){
+            span.classList.remove("parentTagIconUp")
+            span.classList.add("parentTagIconDown")
+            CM.toggleElementShown(ul);
+        }else{
+            //unfold
+            span.classList.remove("parentTagIconDown")
+            span.classList.add("parentTagIconUp")
+            CM.toggleElementHidden(ul);
+        }
+    }
+})
+
 function addCardEventListeners(li) {
     li.addEventListener('dblclick', function() {
         if (li.dataset.editing === 'false') {
@@ -442,7 +462,18 @@ function buildTagHtml(tree, prefix = '') {
   let html = '';
   for (const [key, value] of Object.entries(tree)) {
     const fullTag = prefix ? `${prefix}/${key}` : key;
-    html += `<li><a class="tagClick" href="/tag/${fullTag}" data-tag="${fullTag}">${key}</a>`;
+    //folder
+    if(Object.keys(value).length > 0){
+        html += `<li>
+                <span class="tagIcon parentTagIconDown"></span>
+                <a class="tagClick" href="/tag/${fullTag}" data-tag="${fullTag}">${key}</a>`;
+    }else{
+        // file
+        html += `<li>
+                <span class="tagIcon tagIconBg"></span>
+                <a class="tagClick" href="/tag/${fullTag}" data-tag="${fullTag}">${key}</a>`;
+    }
+
     if (Object.keys(value).length > 0) {
       html += '<ul>';
       html += buildTagHtml(value, fullTag);
