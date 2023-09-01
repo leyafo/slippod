@@ -2,6 +2,31 @@ import * as CM from './common.js';
 import * as marked from "marked";
 import * as autoComplete from "./autocomplete.js"
 
+
+function updateCard(li){
+    const content = li.querySelector(".content");
+    const cardID = li.dataset.id;
+    const entry = content.firstChild.CodeMirror.getValue();
+
+    db.updateCardEntryByID(cardID, entry).then(() => {
+        content.innerHTML = marked.parse(entry);
+        const controlPanel = li.querySelector(".controlPanel");
+        CM.toggleElementHidden(controlPanel)
+    });
+    li.dataset.editing = 'false';
+}
+
+function cancelUpdate(li){
+    const content = li.querySelector(".content");
+    const cardID = li.dataset.id;
+    db.getCardByID(cardID).then(function(card){
+        content.innerHTML = marked.parse(card.entry);
+        const controlPanel = li.querySelector(".controlPanel");
+        CM.toggleElementHidden(controlPanel)
+    })
+    li.dataset.editing = 'false';
+}
+
 function editCard(li) {
     let getEditingCardPromise = db.getCardByID(li.dataset.id);
 
@@ -27,10 +52,22 @@ function editCard(li) {
             }else if (change.text[0] === "@"){
                 autoComplete.showCustomMenu(cm, editor)
             }
+
+            //set height as the same of content
+            let lineCount = editor.lineCount();
+            let totalHeight = lineCount * editor.defaultTextHeight();
+            editor.setSize(null, totalHeight);
         });
         editor.setValue(cardEntry);
         editor.on("endCompletion", function () {
           console.log("Autocomplete menu is being closed programmatically");
+        });
+        editor.on('keydown', function (cm, event) {
+            if (event.ctrlKey && event.key === "Enter") {  
+                updateCard(li);
+            }else if(event.key == 'Escape'){
+                cancelUpdate(li);
+            }
         });
 
         CM.unHighlightItem("selected", CM.cardsList)
@@ -86,13 +123,13 @@ CM.clickHandle(".tagIcon", function(e){
     if(ul !== null){
         //fold
         if(ul.classList.contains("hidden")){
-            span.classList.remove("parentTagIconUp")
+            span.classList.remove("parentTagIconLeft")
             span.classList.add("parentTagIconDown")
             CM.toggleElementShown(ul);
         }else{
             //unfold
             span.classList.remove("parentTagIconDown")
-            span.classList.add("parentTagIconUp")
+            span.classList.add("parentTagIconLeft")
             CM.toggleElementHidden(ul);
         }
     }
@@ -139,28 +176,12 @@ function addCardEventListeners(li) {
 
 CM.clickHandle(".updateCardButton", function(ev){
     const li = ev.target.closest("li");
-    const content = li.querySelector(".content");
-    const cardID = li.dataset.id;
-    const entry = content.firstChild.CodeMirror.getValue();
-
-    db.updateCardEntryByID(cardID, entry).then(() => {
-        content.innerHTML = marked.parse(entry);
-        const controlPanel = li.querySelector(".controlPanel");
-        CM.toggleElementHidden(controlPanel)
-    });
-    li.dataset.editing = 'false';
+    updateCard(li);
 })
 
 CM.clickHandle(".cancelCardButton", function(ev){
     const li = ev.target.closest("li");
-    const content = li.querySelector(".content");
-    const cardID = li.dataset.id;
-    db.getCardByID(cardID).then(function(card){
-        content.innerHTML = marked.parse(card.entry);
-        const controlPanel = li.querySelector(".controlPanel");
-        CM.toggleElementHidden(controlPanel)
-    })
-    li.dataset.editing = 'false';
+    cancelUpdate(li);
 })
 
 function reloadCardList(cards, headerTitle = 'All Cards', order=CM.listInsertBeforeFirst) {
