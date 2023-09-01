@@ -13,8 +13,9 @@
     <div id="sideNav" class="hidden md:block h-screen select-none fixed z-30" x-data="{ tags: [] }" x-init=" tags = await db.getAllTags()">
         <ul id="sideNavUl">
             <li class="tagClick"  href="/tag_all" id="allCards">All Cards</li>
+            <li></li>
             <li class="tagClick" href="/tag_no" id="noTag">Untagged</li>
-            <li class="tagClick" href="/tag_trash" id="allCards">Trash</li>
+            <li class="tagClick" href="/tag_trash" id="trashCards">Trash</li>
         </ul>
         <ul id="tagsList"></ul>
     </div>
