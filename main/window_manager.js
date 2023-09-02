@@ -8,6 +8,14 @@ class WindowManager{
         this.settingsWindow = null
     }
 
+    getMainWindow(){
+        return this.mainWindow;
+    }
+
+    getSettingsWindow(){
+        return this.settingsWindow;
+    }
+
     getResourceURL(...pathes) {
         if (process.env.NODE_ENV === "development") {
             const urlPath = new URL(
@@ -79,6 +87,29 @@ class WindowManager{
         this.settingsWindow.setMenuBarVisibility(false);
 
         return this.settingsWindow;
+    }
+
+    createDetailWindow(cardID) {
+        if (this.mainWindow === null) {
+            throw new Error("Main window must be initialized before settings window");
+        }
+        let detailWindow = new BrowserWindow({
+            width: 800,
+            height: 600,
+            titleBarStyle: "hidden",
+            webPreferences: {
+                preload: path.join(__dirname, "preload.js"),
+            },
+        });
+
+        const url = this.getResourceURL("resource", "app", "detail.html");
+        detailWindow.loadURL(`${url}?cardID=${cardID}`);
+
+        this.mainWindow.once("ready-to-show", () => {
+            detailWindow.show();
+        });
+
+        return detailWindow
     }
 
     createMenu() {
