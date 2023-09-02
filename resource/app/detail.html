@@ -8,6 +8,12 @@
     <title>Hello World</title>
 </head>
 <body>
+    <h1> </h1>
     
 </body>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('cardID');
+    console.log(`hello : ${id}`, window.location);
+</script>
 </html>

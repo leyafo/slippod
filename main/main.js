@@ -5,16 +5,16 @@ const {
 } = require("electron");
 const WindowManager = require('./window_manager');
 const ipcHandler = require("./ipc_handlers")
-const windowManager = new WindowManager();
+const windowMgr = new WindowManager();
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-    let mainWindow = windowManager.createMainWindow();
-    windowManager.createMenu();
+    windowMgr.createMainWindow();
+    windowMgr.createMenu();
     ipcHandler.registerDBFunctions();
-    ipcHandler.registerWindowHandlers(mainWindow);
+    ipcHandler.registerWindowHandlers(windowMgr);
 
     app.on("activate", () => {
         // On macOS it's common to re-create a window in the app when the
