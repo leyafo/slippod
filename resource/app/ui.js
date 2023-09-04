@@ -10,7 +10,7 @@ function updateCard(li){
 
     db.updateCardEntryByID(cardID, entry).then(() => {
         content.innerHTML = marked.parse(entry);
-        const controlPanel = li.querySelector(".controlPanel");
+        const controlPanel = li.querySelector(".itemControlPanel");
         CM.toggleElementHidden(controlPanel)
     });
     li.dataset.editing = 'false';
@@ -21,7 +21,7 @@ function cancelUpdate(li){
     const cardID = li.dataset.id;
     db.getCardByID(cardID).then(function(card){
         content.innerHTML = marked.parse(card.entry);
-        const controlPanel = li.querySelector(".controlPanel");
+        const controlPanel = li.querySelector(".itemControlPanel");
         CM.toggleElementHidden(controlPanel)
     })
     li.dataset.editing = 'false';
@@ -34,7 +34,7 @@ function editCard(li) {
         const cardEntry = card.entry;
         const content = li.querySelector(".content") 
         content.innerHTML = '';
-        const controlPanel = li.querySelector(".controlPanel");
+        const controlPanel = li.querySelector(".itemControlPanel");
         CM.toggleElementShown(controlPanel)
         li.dataset.editing = 'true';
         let editor = CodeMirror(content, {
@@ -148,8 +148,8 @@ function addCardEventListeners(li) {
             li.classList.add('selected');
         }
     });
-    const cardMenu = li.querySelector(".cardMenu")
-    const cardMenuOptions = li.querySelector(".menuOptions");
+    const cardMenu = li.querySelector(".itemMenu")
+    const cardMenuOptions = li.querySelector(".itemMenuOptions");
     cardMenu.addEventListener('click', function(event){
         if(cardMenu.classList.contains("hidden")){
             CM.toggleElementShown(cardMenuOptions)
@@ -174,12 +174,12 @@ function addCardEventListeners(li) {
     })
 }
 
-CM.clickHandle(".updateCardButton", function(ev){
+CM.clickHandle(".btnUpdateCard", function(ev){
     const li = ev.target.closest("li");
     updateCard(li);
 })
 
-CM.clickHandle(".cancelCardButton", function(ev){
+CM.clickHandle(".btnCancelCard", function(ev){
     const li = ev.target.closest("li");
     cancelUpdate(li);
 })
@@ -216,22 +216,22 @@ function insertCardToList(card, order){
 
 function createCardElementFromObject(card) {
     const li = document.createElement('li');
-    const listItem = CM.cardItemTemplate.content.cloneNode(true);
+    const listItem = CM.itemTemplate.content.cloneNode(true);
     const content = listItem.querySelector(".content");
     content.innerHTML = marked.parse(card.entry);
 
-    const createTimeSapn = listItem.querySelector("span.createTime");
-    const createdTate = CM.unixTimeFormat(card.created_at);
-    createTimeSapn.textContent = createdTate;
+    const createTimeSapn = listItem.querySelector("span.itemCreateTime");
+    const createdTime = CM.unixTimeFormat(card.created_at);
+    createTimeSapn.textContent = createdTime;
 
-    const idSpan = listItem.querySelector("span.id");
+    const idSpan = listItem.querySelector("span.itemId");
     const aElement = document.createElement('a');
-    aElement.textContent = card.id;
+    aElement.textContent = "@" + card.id;
     aElement.setAttribute('href', `/links/${card.id}`);
     idSpan.appendChild(aElement);
 
-    const updateTimeSpan = listItem.querySelector("span.updateTime");
-    updateTimeSpan.textContent = "updated: "+ CM.timeAgo(card.updated_at);
+    const updateTimeSpan = listItem.querySelector("span.itemUpdateTime");
+    updateTimeSpan.textContent = "Updated: "+ CM.timeAgo(card.updated_at);
 
     li.appendChild(listItem);
 
@@ -371,7 +371,7 @@ CM.omniSearch.addEventListener('click', function(event) {
     }
 });
 
-CM.sideNavButton.addEventListener('click', function() {
+CM.btnSideNav.addEventListener('click', function() {
     if (CM.sideNav.classList.contains('hidden')) {
         openSideNav();
     } else {
@@ -402,7 +402,7 @@ function openSideNav() {
 function closeSideNav() {
     CM.sideNav.classList.add('hidden');
     CM.overlay.classList.add('hidden');
-    CM.sideNavButton.blur();
+    CM.btnSideNav.blur();
     document.body.classList.remove('overflow-hidden');
     isSideNavOpen = false;
 }
