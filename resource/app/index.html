@@ -7,13 +7,12 @@
     <link rel="stylesheet" href="./style.css" />
     <link rel="stylesheet" href="./codemirror/codemirror.css" />
     <link rel="stylesheet" href="./codemirror/show-hint.css" />
-    <title>Slippod Sandbox</title>
+    <title>Slippod</title>
 </head>
 <body>
-    <div id="sideNav" class="hidden md:block h-screen select-none fixed z-30" x-data="{ tags: [] }" x-init=" tags = await db.getAllTags()">
+    <div id="sideNav" class="hidden md:block h-screen select-none fixed z-30">
         <ul id="sideNavUl">
             <li class="tagClick"  href="/tag_all" id="allCards">All Cards</li>
-            <li></li>
             <li class="tagClick" href="/tag_no" id="noTag">Untagged</li>
             <li class="tagClick" href="/tag_trash" id="trashCards">Trash</li>
         </ul>
@@ -22,8 +21,9 @@
     <div id="overlay" class="fixed inset-0 z-20 hidden"></div>
     <div id="main" class="md:pl-64">
         <div id="mainNav" class="fixed w-full md:ml-64 inset-x-0 z-10">
-            <button id="sideNavButton" class="md:hidden"></button>
-            <button id="omniSearchButton">Search cards...</button>
+            <button id="btnSideNav" class="md:hidden"></button>
+            <button id="omniSearchButton">Quickly find notes, search for tags...</button>
+            <button id="btnDuplicateWindow"></button>
         </div>
         <div id="cardContainer">
             <div id="cardsListContainer" class="container lg:w-2/3 mx-auto">
@@ -43,21 +43,28 @@
             </div>
         </div>
     </div>
-    <template id="cardItemTemplate">
-        <span class="id"></span>
-        <span class="createTime"></span>
-        <span class="updateTime"></span>
-        <span class="cardMenu">...
-            <div class="menuOptions hidden">
+    <template id="itemTemplate">
+        <div class="itemHeader">
+            <div class="itemHeaderBar">
+                <div class="itemMetaInfo">
+                    <span class="itemId"></span> · 
+                    <span class="itemCreateTime"></span> · 
+                    <span class="itemUpdateTime"></span>
+                </div>
+                <span class="itemMenu">...</span>
+            </div>
+            <div class="itemMenuOptions hidden">
                 <a class="editOption" href="#">Edit</a>
                 <a class="deleteOption" href="#">Delete</a>
                 <a class="restoreOption hidden" href="#">Restore</a>
             </div>
-        </span>
-        <div class="content markdown-body"></div>
-        <div class="controlPanel hidden"> 
-            <button class="updateCardButton">Save</button>
-            <button class="cancelCardButton">Cancel</button>
+        </div>
+        <div class="itemBody">
+            <div class="content markdown-body"></div>
+            <div class="itemControlPanel hidden"> 
+                <button class="btnUpdateCard">Save</button>
+                <button class="btnCancelCard">Cancel</button>
+            </div>
         </div>
     </template>
 </body>

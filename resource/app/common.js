@@ -1,11 +1,11 @@
 //all existed elements
 export const sideNav = document.getElementById('sideNav')
-export const sideNavButton = document.getElementById('sideNavButton')
+export const btnSideNav = document.getElementById('btnSideNav')
 export const overlay= document.getElementById('overlay')
 export const cardsHeader= document.getElementById('cardsHeader')
 export const cardsList= document.getElementById('cardsList')
 export const creationTip= document.getElementById('creationTip')
-export const cardItemTemplate= document.getElementById("cardItemTemplate")
+export const itemTemplate= document.getElementById("itemTemplate")
 export const searchBox= document.getElementById("searchBox")
 export const suggestionBox= document.getElementById("suggestionBox")
 export const suggestionResults= document.getElementById("suggestionResults")
