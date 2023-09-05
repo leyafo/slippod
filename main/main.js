@@ -10,8 +10,9 @@ const windowMgr = new WindowManager();
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
+let mainWindow = null;
 app.whenReady().then(() => {
-    windowMgr.createMainWindow();
+    mainWindow = windowMgr.createMainWindow();
     windowMgr.createMenu();
     ipcHandler.registerDBFunctions();
     ipcHandler.registerWindowHandlers(windowMgr);
