@@ -33,6 +33,7 @@ class WindowManager{
         this.mainWindow = new BrowserWindow({
             width: 800,
             height: 600,
+            minWidth: 400,
             titleBarStyle: "hidden",
             webPreferences: {
                 preload: path.join(__dirname, "preload.js"),
