@@ -38,9 +38,6 @@ module.exports = {
 
         ipcMain.handle("showCardDetail", async(event, cardID) =>{
             let detailWindow = windowMgr.createDetailWindow(cardID);
-            detailWindow.on("closed", ()=>{
-                detailWindow=null
-            });
         })
 
         ipcMain.handle("getDBPath", async (event, ...args) => {

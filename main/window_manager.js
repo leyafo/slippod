@@ -52,7 +52,6 @@ class WindowManager{
         }
 
         globalShortcut.register("CommandOrControl+R", () => {
-            console.log("CommandOrControl+R is pressed");
             this.mainWindow.reload();
         });
 
@@ -105,8 +104,12 @@ class WindowManager{
         const url = this.getResourceURL("resource", "app", "detail.html");
         detailWindow.loadURL(`${url}?cardID=${cardID}`);
 
-        this.mainWindow.once("ready-to-show", () => {
+        detailWindow.once("ready-to-show", () => {
             detailWindow.show();
+        });
+
+        detailWindow.on("closed", ()=>{
+            detailWindow=null
         });
 
         return detailWindow
