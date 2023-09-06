@@ -1,7 +1,9 @@
 const fs = require("fs");
 const schema = require("./schema");
 const sqlite3 = require("better-sqlite3");
+
 const tagPattern = /#([a-zA-Z0-9\u4e00-\u9fff/\\_-]+)/g;
+const linkAtPattern = /@(\d+)/g;
 let db = null;
 const configs = {
     isInitlized: false,
@@ -11,6 +13,10 @@ const configs = {
 
 function getTagRegex(){
     return tagPattern
+}
+
+function getLinkAtRegex(){
+    return linkAtPattern
 }
 
 function checkDBSchema(checkDB){
@@ -152,6 +158,18 @@ function parseTags(cardEntry){
     return tags
 }
 
+function parseLinks(cardEntry){
+    const links = new Set();
+    const matches = cardEntry.matchAll(linkAtPattern);
+    for (m of matches){
+        let matchedString = m[0].trim()
+        if(matchedString[0] == '@'){
+            links.add(matchedString.slice(1));
+        }
+    }
+    return links
+}
+
 function getAllTags(){
     const tags = db.prepare("select distinct(tag) from tags order by tag asc").all();
     return tags
@@ -176,7 +194,7 @@ function getCardDetails(id){
     var result = {}
     result.card = getCardByID(id)
     result.referencesBy = [] 
-    const keyword = `[${id}]`
+    const keyword = `@${id}`
     const tokenLengh = keyword.length; //limit the token size
     const searchRef = `SELECT rowid, entry, simple_snippet(cards_fts, 0, '', '', '', ${tokenLengh}) as snippet FROM cards_fts WHERE entry MATCH simple_query('${keyword}') ORDER BY rank`;
     const refResult =  db.prepare(searchRef).all()
@@ -193,6 +211,13 @@ function getCardDetails(id){
     result.tags = db.prepare(`
         SELECT tag from tags where card_id = ?
     `).all(id)
+
+    result.references = []
+    const links = parseLinks(result.card.entry);
+    links.forEach((linkID) => {
+        const card = getCardByID(linkID)
+        result.references.push(card);
+    });
 
     return result
 }
@@ -309,4 +334,5 @@ module.exports = {
     //for test
     parseTags,
     getTagRegex,
+    getLinkAtRegex,
 };

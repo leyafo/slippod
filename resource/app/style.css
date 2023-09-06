@@ -184,6 +184,11 @@ a.hidden{
     text-decoration: underline;
 }
 
+.cm-linkref {
+    color: blue;
+    text-decoration: underline;
+}
+
 
 .CodeMirror {
   height: auto;

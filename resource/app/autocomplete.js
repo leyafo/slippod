@@ -4,7 +4,8 @@ import * as marked from 'marked';
 
 const renderer = new marked.Renderer();
 renderer.text = function(text) {
-  return text.replace(window.tagRegex, '<a href="/tag/$1" class="cm-hashtag">#$1</a>');
+  text = text.replace(window.tagRegex, '<a href="/tags/$1" class="cm-hashtag">#$1</a>');
+  return text.replace(window.linkAtRegex,'<a href="/links/$1" class="cm-linkref">@$1</a>');
 };
 marked.setOptions({ renderer });
 
@@ -21,7 +22,7 @@ function createCardSuggestion(card){
     return div
 }
 
-function showCustomMenu(cm, editor) {
+function showAtLinkMenu(cm, editor) {
     const coordsPos = cm.cursorCoords(true, "page");
 
     var menu = document.createElement("div");
@@ -61,8 +62,8 @@ function completeAtKeyHandler(editor, menu, cm){
                     const token = cm.getTokenAt(cursor);
                     inputText = token.string.slice(1)
                     console.log(token, cursor.line, cursor.ch);
-                    editor.replaceRange("", { line: cursor.line, ch: 0 }, { line: cursor.line, ch: cursor.ch }); // Replace line content
-                    editor.replaceRange(`[${token.string}](/links/${item.dataset.id})\n`, cursor); // Insert new text
+                    editor.replaceRange("", { line: cursor.line, ch: cursor.ch-1 }, { line: cursor.line, ch: cursor.ch }); // Replace line content
+                    editor.replaceRange(`@${item.dataset.id}`, cursor); // Insert new text
                     closeAtMenu(menu);
                     editor.off('keydown', handler);
                 }
@@ -166,12 +167,14 @@ function autocompleteHints(cm, option) {
 CodeMirror.defineMode("hashtags", function (config, parserConfig) {
     var hashtagOverlay = {
         token: function (stream, state) {
-            if (stream.match(window.tagRegex)) {
+            if (stream.match(window.tagRegex) || stream.match(window.linkAtRegex)) {
                 return "hashtag";
             }
+
             while (
                 stream.next() != null &&
-                !stream.match(window.tagRegex, false)
+                !stream.match(window.tagRegex, false) &&
+                !stream.match(window.linkAtRegex, false)
             ) { }
             return null;
         },
@@ -184,5 +187,5 @@ CodeMirror.defineMode("hashtags", function (config, parserConfig) {
 
 export {
     autocompleteHints,
-    showCustomMenu,
+    showAtLinkMenu,
 }

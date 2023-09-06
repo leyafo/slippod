@@ -23,6 +23,7 @@ contextBridge.exposeInMainWorld('pages', {
 
     ]
     const fullsetDBFunc = [
+        "getLinkAtRegex",
         "getTagRegex",
         "removeCardFromTrash",
         "removeCardPermanently",
