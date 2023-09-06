@@ -50,7 +50,7 @@ function editCard(li) {
             if (change.text[0] == "#") {
                 cm.showHint();
             }else if (change.text[0] === "@"){
-                autoComplete.showCustomMenu(cm, editor)
+                autoComplete.showAtLinkMenu(cm, editor)
             }
 
             //set height as the same of content
@@ -217,21 +217,7 @@ function insertCardToList(card, order){
 function createCardElementFromObject(card) {
     const li = document.createElement('li');
     const listItem = CM.itemTemplate.content.cloneNode(true);
-    const content = listItem.querySelector(".content");
-    content.innerHTML = marked.parse(card.entry);
-
-    const createTimeSapn = listItem.querySelector("span.itemCreateTime");
-    const createdTime = CM.unixTimeFormat(card.created_at);
-    createTimeSapn.textContent = createdTime;
-
-    const idSpan = listItem.querySelector("span.itemId");
-    const aElement = document.createElement('a');
-    aElement.textContent = "@" + card.id;
-    aElement.setAttribute('href', `/links/${card.id}`);
-    idSpan.appendChild(aElement);
-
-    const updateTimeSpan = listItem.querySelector("span.itemUpdateTime");
-    updateTimeSpan.textContent = "Updated: "+ CM.timeAgo(card.updated_at);
+    CM.fillingCardItem(listItem, card);
 
     li.appendChild(listItem);
 
@@ -508,24 +494,7 @@ function buildTagHtml(tree, prefix = '') {
   return html;
 }
 
-document.addEventListener('click', function(event) {
-    // If the clicked element is not an <a>, ignore
-    if (event.target.tagName !== 'A') {
-        return;
-    }
-    const href = event.target.getAttribute('href');
-    if (href.indexOf('/links/') != 0 && href.indexOf('/links/') != 0){
-        return
-    }
-    // Prevent the default action
-    event.preventDefault();
-    const regex = /^\/links\/(\d+)$/;
-    const match = href.match(regex);
-    if (match && match[1]) {
-        const cardID = match[1];
-        pages.showCardDetail(cardID);
-    }
-});
+document.addEventListener('click', CM.linkClick) 
 
 window.addEventListener('DOMContentLoaded', function() {
     marked.use({
@@ -536,6 +505,11 @@ window.addEventListener('DOMContentLoaded', function() {
     db.getTagRegex().then(function(regex){
         window.tagRegex = regex
     });
+
+    db.getLinkAtRegex().then(function(regex){
+        window.linkAtRegex = regex
+    })
+
     
     //load cards
     db.getCards(0, CM.limitItems).then(function(cards) {

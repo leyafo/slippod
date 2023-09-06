@@ -1,3 +1,5 @@
+import * as marked from "marked";
+
 //all existed elements
 export const sideNav = document.getElementById('sideNav')
 export const btnSideNav = document.getElementById('btnSideNav')
@@ -116,3 +118,41 @@ export function timeAgo(unixTimestamp) {
     const years = Math.floor(days / 365);
     return `${years} years ago`;
 }
+
+export function fillingCardItem(parentItem, card){
+    const content = parentItem.querySelector(".content");
+    content.innerHTML = marked.parse(card.entry);
+
+    const createTimeSapn = parentItem.querySelector("span.itemCreateTime");
+    const createdTime = unixTimeFormat(card.created_at);
+    createTimeSapn.textContent = createdTime;
+
+    const idSpan = parentItem.querySelector("span.itemId");
+    const aElement = document.createElement('a');
+    aElement.textContent = "@" + card.id;
+    aElement.setAttribute('href', `/links/${card.id}`);
+    aElement.className = "cm-linkref"
+    idSpan.appendChild(aElement);
+
+    const updateTimeSpan = parentItem.querySelector("span.itemUpdateTime");
+    updateTimeSpan.textContent = "Updated: "+ timeAgo(card.updated_at);
+}
+
+export function linkClick(event){
+    // If the clicked element is not an <a>, ignore
+    if (event.target.tagName !== 'A') {
+        return;
+    }
+    const href = event.target.getAttribute('href');
+    if (href.indexOf('/links/') != 0 && href.indexOf('/links/') != 0){
+        return
+    }
+    // Prevent the default action
+    event.preventDefault();
+    const regex = /^\/links\/(\d+)$/;
+    const match = href.match(regex);
+    if (match && match[1]) {
+        const cardID = match[1];
+        pages.showCardDetail(cardID);
+    }
+} 

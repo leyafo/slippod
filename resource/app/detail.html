@@ -5,15 +5,26 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello World</title>
+    <title>Note Details</title>
+    <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
-    <h1> </h1>
-    
+    <template id="cardTemplate">
+        <div class="cardContainer">
+            <div class="itemHeader">
+                <div class="itemHeaderBar">
+                    <div class="itemMetaInfo">
+                        <span class="itemId"></span> · 
+                        <span class="itemCreateTime"></span> · 
+                        <span class="itemUpdateTime"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="itemBody">
+                <div class="content markdown-body"></div>
+            </div>
+        </div>
+    </template>
 </body>
-<script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const id = urlParams.get('cardID');
-    console.log(`hello : ${id}`, window.location);
-</script>
+<script type="module" src="./detail.js"></script>
 </html>
