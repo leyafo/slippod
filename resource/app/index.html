@@ -20,13 +20,15 @@
     </div>
     <div id="overlay" class="fixed inset-0 z-20 hidden"></div>
     <div id="main" class="md:pl-64">
-        <div id="mainNav" class="fixed w-full md:ml-64 inset-x-0 z-10">
-            <button id="btnSideNav" class="md:hidden"></button>
-            <button id="omniSearchButton">Quickly find notes, search for tags...</button>
-            <button id="btnDuplicateWindow"></button>
+        <div id="topBar" class="fixed pt-10 md:ml-64 inset-x-0 z-10">
+            <button id="btnSideNav" class="md:hidden absolute left-2 bottom-0"></button>
+            <div id="topBarContainer" class="w-full max-w-[68rem] mx-auto">
+                <button id="omniSearchButton" class="w-full">Quickly find notes, search for tags...</button>
+            </div>
+            <button id="btnDuplicateWindow" class="absolute right-2 bottom-0"></button>
         </div>
-        <div id="cardContainer">
-            <div id="cardsListContainer" class="container lg:w-2/3 mx-auto">
+        <div id="listArea">
+            <div id="listAreaContainer" class="w-full max-w-[68rem] mx-auto">
                 <h1 id="cardsHeader"></h1>
                 <ul id="cardsList"></ul>
                 <div id="creationTip" class="hidden">Press Cmd / Ctrl + N to create a new card</div>
