@@ -11,12 +11,18 @@
 </head>
 <body>
     <div id="sideNav" class="hidden md:block h-screen select-none fixed z-30">
-        <ul id="sideNavUl">
-            <li class="tagClick"  href="/tag_all" id="allCards">All Cards</li>
-            <li class="tagClick" href="/tag_no" id="noTag">Untagged</li>
-            <li class="tagClick" href="/tag_trash" id="trashCards">Trash</li>
-        </ul>
-        <ul id="tagsList"></ul>
+        <div id="sideNavContainer">
+            <ul id="sideNavUl">
+                <li class="tagClick"  href="/tag_all" id="allCards">All Cards</li>
+                <li class="tagClick" href="/tag_no" id="noTag">Untagged</li>
+                <li class="tagClick" href="/tag_trash" id="trashCards">Trash</li>
+            </ul>
+            <ul id="tagsList"></ul>
+        </div>
+        <div id="featureDock" class="absolute bottom-0">
+            <button id="publisher" class="absolute left-2"></button>
+            <button id="appSettings" class="absolute right-2"></button>
+        </div>
     </div>
     <div id="overlay" class="fixed inset-0 z-20 hidden"></div>
     <div id="main" class="md:pl-64">
