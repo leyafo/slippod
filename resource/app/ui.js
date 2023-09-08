@@ -115,7 +115,7 @@ CM.clickHandle(".tagClick", function(e){
     }
 });
 
-CM.clickHandle(".tagIcon", function(e){
+CM.clickHandle(".foldIcon", function(e){
     e.preventDefault()
     const span = e.target
     const li = span.parentNode;
@@ -123,13 +123,13 @@ CM.clickHandle(".tagIcon", function(e){
     if(ul !== null){
         //fold
         if(ul.classList.contains("hidden")){
-            span.classList.remove("parentTagIconLeft")
-            span.classList.add("parentTagIconDown")
+            span.classList.remove("close")
+            span.classList.add("open")
             CM.toggleElementShown(ul);
         }else{
             //unfold
-            span.classList.remove("parentTagIconDown")
-            span.classList.add("parentTagIconLeft")
+            span.classList.remove("open")
+            span.classList.add("close")
             CM.toggleElementHidden(ul);
         }
     }
@@ -475,12 +475,11 @@ function buildTagHtml(tree, prefix = '') {
     //folder
     if(Object.keys(value).length > 0){
         html += `<li>
-                <span class="tagIcon parentTagIconDown"></span>
+                <span class="foldIcon open"></span>
                 <a class="tagClick" href="/tag/${fullTag}" data-tag="${fullTag}">${key}</a>`;
     }else{
         // file
         html += `<li>
-                <span class="tagIcon tagIconBg"></span>
                 <a class="tagClick" href="/tag/${fullTag}" data-tag="${fullTag}">${key}</a>`;
     }
 
