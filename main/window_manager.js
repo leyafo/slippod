@@ -1,5 +1,6 @@
 const { BrowserWindow, globalShortcut, Menu } = require('electron');
 const path = require('path');
+const menuTemplate = require('./menu');
 
 
 class WindowManager{
@@ -34,6 +35,7 @@ class WindowManager{
             width: 800,
             height: 600,
             minWidth: 400,
+            minHeight: 400,
             titleBarStyle: "hidden",
             webPreferences: {
                 preload: path.join(__dirname, "preload.js"),
@@ -72,8 +74,11 @@ class WindowManager{
         this.settingsWindow = new BrowserWindow({
             width: 400,
             height: 400,
+            minWidth: 400,
+            minHeight: 400,
             webPreferences: {
                 preload: path.join(__dirname, "settings_preload.js"),
+                scrollBounce: true
             },
             parent: this.mainWindow,
             modal: true,
@@ -97,9 +102,12 @@ class WindowManager{
         let detailWindow = new BrowserWindow({
             width: 800,
             height: 600,
+            minWidth: 400,
+            minHeight: 400,
             titleBarStyle: "hidden",
             webPreferences: {
                 preload: path.join(__dirname, "preload.js"),
+                scrollBounce: true
             },
         });
 
@@ -118,27 +126,27 @@ class WindowManager{
     }
 
     createMenu() {
-        const template = [
-            {
-                label: "Application",
-                submenu: [
-                    {
-                        label: "Settings",
-                        click: () => {
-                            if (this.settingsWindow === null) {
-                                this.createSettingsWindow();
-                            } else {
-                                this.settingsWindow.show();
-                            }
-                        },
-                    },
-                    { type: "separator" },
-                    { role: "quit" }, // Add a Quit option if desired
-                ],
-            },
-        ];
+        // const template = [
+        //     {
+        //         label: "Application",
+        //         submenu: [
+        //             {
+        //                 label: "Settings",
+        //                 click: () => {
+        //                     if (this.settingsWindow === null) {
+        //                         this.createSettingsWindow();
+        //                     } else {
+        //                         this.settingsWindow.show();
+        //                     }
+        //                 },
+        //             },
+        //             { type: "separator" },
+        //             { role: "quit" }, // Add a Quit option if desired
+        //         ],
+        //     },
+        // ];
 
-        const menu = Menu.buildFromTemplate(template);
+        const menu = Menu.buildFromTemplate(menuTemplate);
         Menu.setApplicationMenu(menu);
     }
 }
