@@ -307,24 +307,34 @@ function updateSuggestionBox(cards) {
 
     // Create a div for each matching note and add it to the suggestion box
     for (let card of cards) {
-      const div = document.createElement("div");
-      div.textContent = card.entry.trim();
-      div.dataset.id = card.id; // Attach the note's ID
-      div.onclick = searchOptionClick;
-
-      // Mouseover event for highlighting
-      div.addEventListener("mouseover", function () {
-        CM.unHighlightItem("highlighted", CM.suggestionResults)
-        div.classList.add("highlighted");
-      });
-
-      CM.suggestionResults.appendChild(div);
-
-      // Auto-highlight the first note
-      if (div === CM.suggestionResults.firstChild) {
-        div.classList.add("highlighted");
+        const div = document.createElement("div");
+        const spanEntry = document.createElement("span");
+        const spanIcon = document.createElement("span");
+      
+        spanEntry.textContent = card.entry.trim();
+        spanEntry.classList.add("entry");
+      
+        spanIcon.classList.add("icon");
+      
+        div.dataset.id = card.id;
+        div.onclick = searchOptionClick;
+        div.classList.add("suggestedItem");
+      
+        div.addEventListener("mouseover", function () {
+          CM.unHighlightItem("highlighted", CM.suggestionResults);
+          div.classList.add("highlighted");
+        });
+      
+        div.appendChild(spanIcon);
+        div.appendChild(spanEntry);
+      
+        CM.suggestionResults.appendChild(div);
+      
+        if (div === CM.suggestionResults.firstChild) {
+          div.classList.add("highlighted");
+        }
       }
-    }
+
     // Show suggestion reuslts
     CM.toggleElementShown(CM.suggestionResults)
   }

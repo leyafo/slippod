@@ -177,6 +177,7 @@ body {
 
 #topBarContainer {
     @apply px-12;
+    position: relative;
 }
 
 #topBarContainer #omniSearchButton {
@@ -333,12 +334,55 @@ body {
     line-height: 24px;
 }
 
+#omniSearch {
+    position: absolute;
+    top: 0;
+    left: 0;
+    @apply px-10;
+}
+
 #omniSearchContainer {
-    @apply pt-12;
+    @apply px-2 py-2;
+    background-color: #F2F3F5;
+    box-shadow: 0px 2px 20px 0px rgba(0, 0, 0, 0.25);
+    border: 1px solid #D5D5D5;
+    border-radius: 0.26667rem;
+}
+
+#searchBox {
+    @apply h-[1.73333333rem];
+    border-radius: 0.26667rem;
+    background: #DADEE3;
+    padding-left: 0.5rem;
+    -webkit-app-region: no-drag;
+}
+
+#searchBox:focus {
+    outline: none;
 }
 
 #suggestionBox {
-    @apply bg-slate-100;
+    @apply bg-slate-100 mt-2;
+}
+
+#suggestionResults .suggestedItem {
+    @apply h-[1.86666667rem] px-2;
+    line-height: 1.86666667rem;
+    border-radius: 0.26667rem;
+    background-color: #F2F3F5;
+}
+
+#suggestionResults .suggestedItem .icon::before {
+    /* to do later */
+}
+
+#suggestionResults .suggestedItem.highlighted {
+    background: #66A1F9;
+    color: #FFFFFF;
+}
+
+#suggestionResults .suggestedItem.highlighted .icon::before {
+    /* to do later */
 }
 
 .custom-menu {
@@ -346,7 +390,6 @@ body {
     border: 1px solid #ccc;
     background-color: #f9f9f9;
     z-index: 1000;
-    /* ... additional styles ... */
 }
 
 .cardMenu {
