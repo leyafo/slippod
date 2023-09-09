@@ -97,8 +97,8 @@ function restoreCard(li){
 
 CM.clickHandle(".tagClick", function(e){
     e.preventDefault();
-    const href = e.target.getAttribute("href");
-    const tag = e.target.dataset.tag
+    const href = e.target.parentNode.getAttribute("href");
+    const tag = e.target.parentNode.dataset.tag
 
     switch (href) {
         case "/tag_all":
@@ -117,9 +117,9 @@ CM.clickHandle(".tagClick", function(e){
 
 CM.clickHandle(".foldIcon", function(e){
     e.preventDefault()
-    const span = e.target
-    const li = span.parentNode;
-    const ul = li.querySelector("ul")
+    const span = e.target;
+    const li = span.closest('li');
+    const ul = li.querySelector("ul");
     if(ul !== null){
         //fold
         if(ul.classList.contains("hidden")){
@@ -473,14 +473,18 @@ function buildTagHtml(tree, prefix = '') {
   for (const [key, value] of Object.entries(tree)) {
     const fullTag = prefix ? `${prefix}/${key}` : key;
     //folder
-    if(Object.keys(value).length > 0){
+    if(Object.keys(value).length > 0) {
         html += `<li>
+                <div class="tag">
                 <span class="foldIcon open"></span>
-                <a class="tagClick" href="/tag/${fullTag}" data-tag="${fullTag}">${key}</a>`;
+                <div class="tagClick" href="/tag/${fullTag}" data-tag="${fullTag}"><span class="tagIcon"></span><span class="label">${key}</span></div>
+                </div>`;
     }else{
         // file
         html += `<li>
-                <a class="tagClick" href="/tag/${fullTag}" data-tag="${fullTag}">${key}</a>`;
+                <div class="tag">
+                <div class="tagClick" href="/tag/${fullTag}" data-tag="${fullTag}"><span class="tagIcon"></span><span class="label">${key}</span></div>
+                </div>`;
     }
 
     if (Object.keys(value).length > 0) {
