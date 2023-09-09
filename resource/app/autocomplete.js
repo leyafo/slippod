@@ -1,14 +1,5 @@
 import * as CM from "./common"
 import fuzzySearch from "./lib/fuzzy"
-import * as marked from 'marked';
-
-const renderer = new marked.Renderer();
-renderer.text = function(text) {
-  text = text.replace(window.tagRegex, '<a href="/tags/$1" class="cm-hashtag">#$1</a>');
-  return text.replace(window.linkAtRegex,'<a href="/links/$1" class="cm-linkref">@$1</a>');
-};
-marked.setOptions({ renderer });
-
 
 function createCardSuggestion(card){
     const div = document.createElement("div");
@@ -25,7 +16,7 @@ function createCardSuggestion(card){
 function showAtLinkMenu(cm, editor) {
     const coordsPos = cm.cursorCoords(true, "page");
 
-    var menu = document.createElement("div");
+    let menu = document.createElement("div");
     menu.style.position = "absolute"; // Make sure the position is set to 'absolute'
     menu.style.left = `${coordsPos.left}px`;
     menu.style.top = `${coordsPos.bottom}px`;
@@ -45,6 +36,7 @@ function completeAtKeyHandler(editor, menu, cm){
     let inputText = "";
     let handler = function(cm, event){
         switch (event.keyCode) {
+
             case 38: // Arrow Up
                 navigateMenu(event, menu);
                 event.preventDefault(); // Prevent scrolling
@@ -61,15 +53,15 @@ function completeAtKeyHandler(editor, menu, cm){
                     const line = editor.getLine(cursor.line); // Get the content of the current line
                     const token = cm.getTokenAt(cursor);
                     inputText = token.string.slice(1)
-                    console.log(token, cursor.line, cursor.ch);
                     editor.replaceRange("", { line: cursor.line, ch: cursor.ch-1 }, { line: cursor.line, ch: cursor.ch }); // Replace line content
                     editor.replaceRange(`@${item.dataset.id}`, cursor); // Insert new text
                     closeAtMenu(menu);
                     editor.off('keydown', handler);
                 }
-            case 32:
-            case 27:
-            case 51:
+            case 32://space
+            case 27://escape
+            case 51://#
+            case 50://@
                 {
                     closeAtMenu(menu);
                     editor.off('keydown', handler);
@@ -104,6 +96,7 @@ function completeAtKeyHandler(editor, menu, cm){
 function closeAtMenu(menu){
     if(menu != null && menu.parentNode != null){
         menu.parentNode.removeChild(menu)
+        menu = null;
     }
 }
 
@@ -164,26 +157,23 @@ function autocompleteHints(cm, option) {
   });
 }
 
-CodeMirror.defineMode("hashtags", function (config, parserConfig) {
-    var hashtagOverlay = {
-        token: function (stream, state) {
-            if (stream.match(window.tagRegex) || stream.match(window.linkAtRegex)) {
-                return "hashtag";
-            }
+// CodeMirror.defineMode("hashtags", function (config, parserConfig) {
+//     var hashtagOverlay = {
+//         token: function (stream, state) {
+//             // This regex matches a single @ followed by the desired pattern.
+//             if (stream.match(window.tagRegex)) {
+//                 return "hashtag";
+//             }
 
-            while (
-                stream.next() != null &&
-                !stream.match(window.tagRegex, false) &&
-                !stream.match(window.linkAtRegex, false)
-            ) { }
-            return null;
-        },
-    };
-    return CodeMirror.overlayMode(
-        CodeMirror.getMode(config, parserConfig.backdrop || "markdown"),
-        hashtagOverlay
-    );
-});
+//             while (stream.next() != null && !stream.match(window.tagRegex, false)) { }
+
+//             return null;
+//         },
+//     return CodeMirror.overlayMode(
+//         CodeMirror.getMode(config, parserConfig.backdrop || "markdown"),
+//         hashtagOverlay
+//     );
+// });
 
 export {
     autocompleteHints,

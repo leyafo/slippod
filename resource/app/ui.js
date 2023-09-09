@@ -2,7 +2,6 @@ import * as CM from './common.js';
 import * as marked from "marked";
 import * as autoComplete from "./autocomplete.js"
 
-
 function updateCard(li){
     const content = li.querySelector(".content");
     const cardID = li.dataset.id;
@@ -513,20 +512,7 @@ function buildTagHtml(tree, prefix = '') {
 document.addEventListener('click', CM.linkClick) 
 
 window.addEventListener('DOMContentLoaded', function() {
-    marked.use({
-        mangle: false,
-        headerIds: false
-    });
-
-    db.getTagRegex().then(function(regex){
-        window.tagRegex = regex
-    });
-
-    db.getLinkAtRegex().then(function(regex){
-        window.linkAtRegex = regex
-    })
-
-    
+    CM.markedConfig();
     //load cards
     db.getCards(0, CM.limitItems).then(function(cards) {
         reloadCardList(cards, "All Cards", CM.allCardsTagContainer, CM.listInsertAfterLast)
@@ -538,7 +524,6 @@ window.addEventListener('DOMContentLoaded', function() {
         let tagListHTML = buildTagHtml(tree)
         CM.tagList.innerHTML = tagListHTML
     })
-
 });
 
 export {
