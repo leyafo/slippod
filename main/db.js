@@ -306,6 +306,22 @@ function searchCards(keyWord, offset, limit){
     return cards
 }
 
+function searchCardsWithStyle(keyWord, offset, limit){
+    const sql = `SELECT rowid,simple_highlight(cards_fts, 0, '<mark>', '</mark>' ) as result FROM cards_fts WHERE 
+                  entry MATCH simple_query('${keyWord}', '0') ORDER BY rank limit ?, ?;`;
+    const result =  db.prepare(sql).all(offset, limit)
+    let cards = [];
+    for(r of result){
+        cards.push({
+            id: r.rowid,
+            entry: r.result,
+            created_at: 0,
+            updated_at: 0,
+        })
+    }
+    return cards
+}
+
 module.exports = {
     updateSchema,
     reloadDB,
@@ -336,4 +352,5 @@ module.exports = {
     parseTags,
     getTagRegex,
     getLinkAtRegex,
+    searchCardsWithStyle,
 };

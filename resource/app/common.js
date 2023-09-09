@@ -16,7 +16,6 @@ export const omniSearch= document.getElementById('omniSearch')
 export const sideNavContainer = document.getElementById('sideNavContainer')
 export const tagList= document.getElementById("tagsList")
 export const allCardsTag = document.getElementById("allCards")
-export const allCardsTagContainer = allCardsTag.parentNode;
 export const limitItems= 20
 export const listInsertBeforeFirst= 1
 export const listInsertAfterLast= 2
