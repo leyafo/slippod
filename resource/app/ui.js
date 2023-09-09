@@ -195,7 +195,22 @@ CM.clickHandle(".btnCancelCard", function(ev){
 })
 
 function reloadCardList(cards, headerTitle = 'All Cards', tagContainer, order = CM.listInsertBeforeFirst) {
-    CM.cardsHeader.textContent = headerTitle; // Update the cards header
+    CM.listHeader.classList.remove("iconAllCards", "iconNoTag", "iconTrash", "iconTag");
+    switch (headerTitle) {
+        case "All Cards":
+            CM.listHeader.classList.add("iconAllCards");
+            break;
+        case "No Tag":
+            CM.listHeader.classList.add("iconNoTag");
+            break;
+        case "Trash":
+            CM.listHeader.classList.add("iconTrash");
+            break;
+        default:
+            CM.listHeader.classList.add("iconTag");
+            break;
+    }
+    CM.listTitle.textContent = headerTitle; // Update the cards header
 
     document.documentElement.scrollTop = 0; // Reset the scroll position to the top
 
