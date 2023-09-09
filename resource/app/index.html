@@ -52,6 +52,15 @@
             <button id="btnSideNav" class="md:hidden absolute left-2 bottom-0"></button>
             <div id="topBarContainer" class="w-full max-w-[68rem] mx-auto">
                 <button id="omniSearchButton" class="w-full">Quickly find notes, search for tags...</button>
+                <div id="omniSearch" class="w-full max-w-[68rem] z-40 hidden">
+                    <div id="omniSearchContainer">
+                        <input type="text" id="searchBox" class="w-full" placeholder="Quickly find notes, search for tags...">
+                        <div id="suggestionBox" class="hidden">
+                            <div id="suggestionResults"></div>
+                            <div id="noResults">No matched cards</div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <button id="btnDuplicateWindow" class="absolute right-2 bottom-0"></button>
         </div>
@@ -64,15 +73,6 @@
                 <ul id="cardsList"></ul>
                 <div id="creationTip" class="hidden">Press Cmd / Ctrl + N to create a new card</div>
                 <div id="endTip" class="hidden">You have reached the end of it all!</div>
-            </div>
-        </div>
-    </div>
-    <div id="omniSearch" class="hidden fixed w-full h-screen inset-0 z-40">
-        <div id="omniSearchContainer" class="container mx-auto w-9/12 md:w-96">
-            <input type="text" id="searchBox" class="w-full" placeholder="Search cards...">
-            <div id="suggestionBox" class="hidden">
-                <div id="suggestionResults"></div>
-                <div id="noResults">No matched cards</div>
             </div>
         </div>
     </div>
