@@ -141,23 +141,29 @@ export function fillingCardItem(parentItem, card){
     updateTimeSpan.textContent = "Updated: "+ timeAgo(card.updated_at);
 }
 
+export function getSuffix(str, ...prefixes){
+    for(let prefix of prefixes){
+        if(str.indexOf(prefix) != 0){
+            continue;
+        }
+        return str.slice(prefix.length)
+    }
+    return ""
+}
+
 export function linkClick(event){
     // If the clicked element is not an <a>, ignore
     if (event.target.tagName !== 'A') {
         return;
     }
     const href = event.target.getAttribute('href');
-    if (href.indexOf('/links/') != 0 && href.indexOf('/links/') != 0){
-        return
+
+    const cardID = getSuffix(href, "/links/")
+    if (cardID === ""){
+        return;
     }
-    // Prevent the default action
     event.preventDefault();
-    const regex = /^\/links\/(\d+)$/;
-    const match = href.match(regex);
-    if (match && match[1]) {
-        const cardID = match[1];
-        pages.showCardDetail(cardID);
-    }
+    pages.showCardDetail(cardID);
 } 
 
 
