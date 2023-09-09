@@ -177,38 +177,32 @@ function addCardEventListeners(li) {
             li.classList.add('selected');
         }
     });
-    const cardMenu = li.querySelector(".itemMenu")
+    const cardMenuContainer = li.querySelector(".itemMenuContainer")
     const cardMenuOptions = li.querySelector(".itemMenuOptions");
-    cardMenu.addEventListener('click', function(event){
-        if(cardMenu.classList.contains("hidden")){
-            CM.toggleElementShown(cardMenuOptions)
-        }else{
-            CM.toggleElementHidden(cardMenuOptions)
-        } 
-    })
-    cardMenu.addEventListener('mouseover', function(event){
+
+    cardMenuContainer.addEventListener('mouseover', function(event){
         CM.toggleElementShown(cardMenuOptions)
     })
-    cardMenu.addEventListener('mouseout', function(event){
+    cardMenuContainer.addEventListener('mouseout', function(event){
         CM.toggleElementHidden(cardMenuOptions)
     })
-    cardMenuOptions.querySelector("a.editOption").addEventListener('click', function(event){
+    cardMenuOptions.querySelector(".editOption").addEventListener('click', function(event) {
         editCard(li)
     })
-    cardMenuOptions.querySelector("a.deleteOption").addEventListener('click', function(event){
+    cardMenuOptions.querySelector(".deleteOption").addEventListener('click', function(event) {
         deleteCard(li)
     })
-    cardMenuOptions.querySelector("a.restoreOption").addEventListener('click', function(event){
+    cardMenuOptions.querySelector(".restoreOption").addEventListener('click', function(event) {
         restoreCard(li)
     })
 }
 
-CM.clickHandle(".btnUpdateCard", function(ev){
+CM.clickHandle(".btnUpdateCard", function(ev) {
     const li = ev.target.closest("li");
     updateCard(li);
 })
 
-CM.clickHandle(".btnCancelCard", function(ev){
+CM.clickHandle(".btnCancelCard", function(ev) {
     const li = ev.target.closest("li");
     cancelUpdate(li);
 })
@@ -267,7 +261,7 @@ function createCardElementFromObject(card) {
 
     li.dataset.id = card.id;
     li.dataset.editing = 'false';
-    if (card.is_trash){
+    if (card.is_trash) {
         li.dataset.is_trash = true;
         li.dataset.trash_id = card.trash_id;
         const cardMenuOptions = li.querySelector(".itemMenuOptions");
