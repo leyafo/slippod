@@ -2,6 +2,24 @@ import * as CM from './common.js';
 import * as marked from "marked";
 import * as autoComplete from "./autocomplete.js"
 
+const hrefTagAll = "/tag_all"
+const hrefTagTrash = "/tag_trash"
+const hrefTagNo = "/tag_no"
+
+function highlightSidebarLink(href){
+    const className = "selected" 
+    //remove previous highlight
+    const lastHighlightDiv = CM.sideNavContainer.querySelector(`div.${className}`);
+    if(lastHighlightDiv != null && lastHighlightDiv.classList.contains(className)){
+        lastHighlightDiv.classList.remove(className);
+    }
+    console.log(href);
+    const div = CM.sideNavContainer.querySelector(`div[href="${href}"]`);
+    const tagContainer = div.closest(".tagContainer")
+    tagContainer.classList.add(className);
+}
+
+
 function updateCard(li){
     const content = li.querySelector(".content");
     const cardID = li.dataset.id;
@@ -111,18 +129,19 @@ CM.clickHandle(".tagClick", function(e){
     }
     
     switch (href) {
-        case "/tag_all":
+        case hrefTagAll:
             utils.reloadAll();
             break;
-        case "/tag_trash":
-            db.getTrashCards(0, CM.limitItems).then(cards => reloadCardList(cards, "Trash", tagContainer));
+        case hrefTagTrash:
+            db.getTrashCards(0, CM.limitItems).then(cards => reloadCardList(cards, "Trash"));
             break;
-        case "/tag_no":
-            db.getNoTagCards(0, CM.limitItems).then(cards => reloadCardList(cards, "No Tag", tagContainer));
+        case hrefTagNo:
+            db.getNoTagCards(0, CM.limitItems).then(cards => reloadCardList(cards, "No Tag"));
             break;
         default:
-            db.getCardsByTag(tag, 0, CM.limitItems).then(cards => reloadCardList(cards, tag, tagContainer));
+            db.getCardsByTag(tag, 0, CM.limitItems).then(cards => reloadCardList(cards, tag));
     }
+    CM.highlightItem("selected", tagContainer, CM.sideNavContainer);
 });
 
 CM.clickHandle(".foldIcon", function(e){
@@ -194,7 +213,7 @@ CM.clickHandle(".btnCancelCard", function(ev){
     cancelUpdate(li);
 })
 
-function reloadCardList(cards, headerTitle = 'All Cards', tagContainer, order = CM.listInsertBeforeFirst) {
+function reloadCardList(cards, headerTitle = 'All Cards', order = CM.listInsertBeforeFirst) {
     CM.listHeader.classList.remove("iconAllCards", "iconNoTag", "iconTrash", "iconTag");
     switch (headerTitle) {
         case "All Cards":
@@ -225,8 +244,6 @@ function reloadCardList(cards, headerTitle = 'All Cards', tagContainer, order = 
     } else {
         CM.toggleElementShown(CM.creationTip);
     }
-    
-    CM.highlightItem("selected", tagContainer, CM.sideNavContainer);
 }
 
 function insertCardToList(card, order){
@@ -348,7 +365,8 @@ function searchOptionClick(event) {
 
 function handleOptionSelect(cardID) {
   db.getCardsByMiddleID(Number(cardID), 0, 0, CM.limitItems).then(function (cards) {
-    reloadCardList(cards, "All Cards", CM.allCardsTag.parentNode);
+    reloadCardList(cards, "All Cards");
+    highlightSidebarLink(hrefTagAll)
     CM.hideOmniSearchAndUnfocus()
   });
 }
@@ -514,13 +532,13 @@ function buildTagHtml(tree, prefix = '') {
         html += `<li>
                 <div class="tagContainer">
                 <span class="foldIcon open"></span>
-                <div class="tagClick" href="/tag/${fullTag}" data-tag="${fullTag}"><span class="tagIcon"></span><span class="label">${key}</span></div>
+                <div class="tagClick" href="/tags/${fullTag}" data-tag="${fullTag}"><span class="tagIcon"></span><span class="label">${key}</span></div>
                 </div>`;
     }else{
         // file
         html += `<li>
                 <div class="tagContainer">
-                <div class="tagClick" href="/tag/${fullTag}" data-tag="${fullTag}"><span class="tagIcon"></span><span class="label">${key}</span></div>
+                <div class="tagClick" href="/tags/${fullTag}" data-tag="${fullTag}"><span class="tagIcon"></span><span class="label">${key}</span></div>
                 </div>`;
     }
 
@@ -536,11 +554,28 @@ function buildTagHtml(tree, prefix = '') {
 
 document.addEventListener('click', CM.linkClick) 
 
+//tag click
+document.addEventListener('click', function(event){
+    if (event.target.tagName !== 'A') {
+        return;
+    }
+
+    const href = event.target.getAttribute('href');
+    const tag = CM.getSuffix(href, "/tags/")
+    if(tag == ""){
+        return
+    }
+    event.preventDefault();
+    db.getCardsByTag(tag, 0, CM.limitItems).then(cards => reloadCardList(cards, tag));
+    highlightSidebarLink(href)
+})
+
 window.addEventListener('DOMContentLoaded', function() {
     CM.markedConfig();
     //load cards
     db.getCards(0, CM.limitItems).then(function(cards) {
-        reloadCardList(cards, "All Cards", CM.allCardsTag.parentNode, CM.listInsertAfterLast)
+        reloadCardList(cards, "All Cards", CM.listInsertAfterLast)
+        highlightSidebarLink(hrefTagAll)
     });
 
     //load tags
