@@ -62,30 +62,42 @@ body {
 
 #tagsList li .tag {
     position: relative;
+    @apply px-3 py-1 rounded;
+    line-height: 0;
+}
+
+#tagsList li ul .tag {
+    position: relative;
+}
+
+#tagsList li ul  {
+    @apply pl-3;
 }
 
 #tagsList li .foldIcon {
     display: inline-block;
-    width: 25px;
+    width: 15px;
     height: 20px;
     text-align: center;
     line-height: 20px;
     position: absolute;
-    left: -20px;
+    left: 0;
 }
 
 #tagsList li .open::before {
     display: inline-block;
-    content: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI3IiBoZWlnaHQ9IjQiIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCA3IDQiPjxnIGlkPSJHcm91cCI+PHBhdGggaWQ9Imljb24tYXJyb3ctZG93biIgZmlsbD0iIzM3M0EzRSIgZD0iTTMuNjg1MDkgMy45MTc1TDYuOTAwMDkgMC42MDI1QzcuMTAwNTkgMC4zOTUgNi45NzkwOSAtOS4xNDAzNWUtMTAgNi43MTUwOSAtMS4yNDUzOGUtMDhMMC4yODUwODkgLTIuOTM1MThlLTA3QzAuMDIxMDg5IC0zLjA1MDU4ZS0wNyAtMC4xMDA0MSAwLjM5NSAwLjEwMDA5IDAuNjAyNUwzLjMxNTA5IDMuOTE3NUMzLjMzODQ0IDMuOTQzNDIgMy4zNjY5NyAzLjk2NDE0IDMuMzk4ODQgMy45NzgzMkMzLjQzMDcxIDMuOTkyNTEgMy40NjUyMSAzLjk5OTg0IDMuNTAwMDkgMy45OTk4NEMzLjUzNDk3IDMuOTk5ODQgMy41Njk0NyAzLjk5MjUxIDMuNjAxMzQgMy45NzgzMkMzLjYzMzIxIDMuOTY0MTQgMy42NjE3NCAzLjk0MzQyIDMuNjg1MDkgMy45MTc1WiIvPjwvZz48L3N2Zz4=");
-    width: 7px;
-    height: 5px;
+    content: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjQiIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCA4IDQiPjxnIGlkPSJHcm91cCI+PHBhdGggaWQ9ImFsdC1hcnJvdy1yaWdodC1ib2xkIiBmaWxsPSIjMzczQTNFIiBkPSJNNC4yMTE0MyAzLjkxNzY2TDcuODg1ODEgMC42MDI1MjRDOC4xMTQ5NiAwLjM5NTAxNiA3Ljk3NjEgLTEuMDQ0NjRlLTA5IDcuNjc0MzggLTEuNDIzMzNlLTA4TDAuMzI1NjIgLTMuMzU0NThlLTA3QzAuMDIzODk3NSAtMy40ODY0N2UtMDcgLTAuMTE0OTYzIDAuMzk1MDE2IDAuMTE0MTg2IDAuNjAyNTI0TDMuNzg4NTcgMy45MTc2NkMzLjgxNTI1IDMuOTQzNTggMy44NDc4NiAzLjk2NDMgMy44ODQyOCAzLjk3ODQ5QzMuOTIwNzEgMy45OTI2NyAzLjk2MDEzIDQgNCA0QzQuMDM5ODcgNCA0LjA3OTI5IDMuOTkyNjcgNC4xMTU3MSAzLjk3ODQ5QzQuMTUyMTQgMy45NjQzIDQuMTg0NzUgMy45NDM1OCA0LjIxMTQzIDMuOTE3NjZaIi8+PC9nPjwvc3ZnPg==");
+    width: 8px;
+    height: 4px;
+    line-height: 0;
 }
 
 #tagsList li .close::before {
     display: inline-block;
     content: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCA0IDciPjxnIGlkPSJHcm91cCI+PHBhdGggaWQ9Imljb24tYXJyb3ctcmlnaHQiIGZpbGw9IiMzNzNBM0UiIGQ9Ik0zLjkxNzUgMy4zMTQ5MUwwLjYwMjUgMC4wOTk5MTA1QzAuMzk1IC0wLjEwMDU4OSAwIDAuMDIwOTEwNyAwIDAuMjg0OTExVjYuNzE0OTFDMCA2Ljk3ODkxIDAuMzk1IDcuMTAwNDEgMC42MDI1IDYuODk5OTFMMy45MTc1IDMuNjg0OTFDMy45NDM0MiAzLjY2MTU2IDMuOTY0MTQgMy42MzMwMyAzLjk3ODMyIDMuNjAxMTZDMy45OTI1MSAzLjU2OTI5IDMuOTk5ODQgMy41MzQ3OSAzLjk5OTg0IDMuNDk5OTFDMy45OTk4NCAzLjQ2NTAzIDMuOTkyNTEgMy40MzA1MyAzLjk3ODMyIDMuMzk4NjZDMy45NjQxNCAzLjM2Njc5IDMuOTQzNDIgMy4zMzgyNiAzLjkxNzUgMy4zMTQ5MVoiLz48L2c+PC9zdmc+");
     width: 4px;
-    height: 7px;
+    height: 8px;
+    line-height: 0;
 }
 
 #tagsList li .tagIcon {
@@ -108,9 +120,8 @@ body {
     text-decoration: underline;
 }
 
-#tagsList li,
-#sideNavUl li {
-    @apply px-2 py-1 rounded;
+#sideNavUl > li {
+    @apply px-3 py-1 rounded;
     line-height: 0;
 }
 
