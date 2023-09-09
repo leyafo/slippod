@@ -17,11 +17,13 @@ body {
 #sideNav {
     background-color: #FFFFFF;
     box-shadow: 1px 0px 0px 0px rgba(0, 0, 0, 0.05);
+    font-weight: 500;
     @apply text-base;
 }
 
 #sideNavContainer {
     @apply pt-14 px-4;
+    line-height: 0;
 }
 
 #sideNavContainer .icon {
@@ -56,17 +58,25 @@ body {
     @apply align-text-bottom;
 }
 
-#tagsList {
-    @apply w-56 pt-6;
+#sideNavUl .sep {
+    @apply px-3 py-2 rounded;
 }
 
-#tagsList li .tag {
+.tagContainer {
     position: relative;
     @apply px-3 py-1 rounded;
     line-height: 0;
 }
 
-#tagsList li ul .tag {
+.tagContainer.selected {
+    background: #DDE0E6;
+}
+
+#tagsList {
+    @apply w-56 pt-6;
+}
+
+#tagsList li ul .tagContainer {
     position: relative;
 }
 
@@ -116,18 +126,8 @@ body {
     vertical-align: text-bottom;
 }
 
-#tagsList li a:hover{
+#tagsList li a:hover {
     text-decoration: underline;
-}
-
-#sideNavUl > li {
-    @apply px-3 py-1 rounded;
-    line-height: 0;
-}
-
-#tagsList li:hover,
-#sideNavUl li:hover {
-    /* @apply bg-slate-300; */
 }
 
 #featureDock {
@@ -255,6 +255,7 @@ body {
 
 #cardsHeader {
     @apply text-2xl;
+    font-weight: 700;
 }
 
 #omniSearchContainer {

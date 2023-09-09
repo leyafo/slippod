@@ -13,7 +13,10 @@ export const suggestionBox= document.getElementById("suggestionBox")
 export const suggestionResults= document.getElementById("suggestionResults")
 export const noResults= document.getElementById("noResults")
 export const omniSearch= document.getElementById('omniSearch')
+export const sideNavContainer = document.getElementById('sideNavContainer')
 export const tagList= document.getElementById("tagsList")
+export const allCardsTag = document.getElementById("allCards")
+export const allCardsTagContainer = allCardsTag.parentNode;
 export const limitItems= 20
 export const listInsertBeforeFirst= 1
 export const listInsertAfterLast= 2
@@ -75,9 +78,9 @@ export function highlightUpOrDownItem(arrowDirection, highlightedClass, parentEl
     return highLightedItem
 }
 
-export function highlightItem( highlightedClass,item, parentElement){
-    item.classList.add(highlightedClass)
+export function highlightItem( highlightedClass, item, parentElement) {
     unHighlightItem(highlightedClass, parentElement)
+    item.classList.add(highlightedClass)
 }
 
 export function unHighlightItem(highlightedClass, parentElement){
