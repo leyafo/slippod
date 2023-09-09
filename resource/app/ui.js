@@ -100,6 +100,8 @@ CM.clickHandle(".tagClick", function(e){
     const href = e.target.parentNode.getAttribute("href");
     const tag = e.target.parentNode.dataset.tag
 
+    console.log(e.target);
+
     switch (href) {
         case "/tag_all":
             utils.reloadAll();
