@@ -13,18 +13,30 @@
     <div id="sideNav" class="hidden md:block h-screen select-none fixed z-30">
         <div id="sideNavContainer">
             <ul id="sideNavUl">
-                <li class="tagClick"  href="/tag_all" id="allCards">
-                    <span class="icon"></span>
-                    <span class="label">All Cards</span>
+                <li>
+                    <div class="tagContainer">
+                        <div class="tagClick"  href="/tag_all" id="allCards">
+                            <span class="icon"></span>
+                            <span class="label">All Cards</span>    
+                        </div>
+                    </div>
                 </li>
                 <li class="sep"></li>
-                <li class="tagClick" href="/tag_no" id="noTag">
-                    <span class="icon"></span>
-                    <span class="label">Untagged</span>
+                <li>
+                    <div class="tagContainer">
+                        <div class="tagClick"  href="/tag_no" id="noTag">
+                            <span class="icon"></span>
+                            <span class="label">Untagged</span>    
+                        </div>
+                    </div>
                 </li>
-                <li class="tagClick" href="/tag_trash" id="trashCards">
-                    <span class="icon"></span>
-                    <span class="label">Trash</span>
+                <li>
+                    <div class="tagContainer">
+                        <div class="tagClick"  href="/tag_trash" id="trashCards">
+                            <span class="icon"></span>
+                            <span class="label">Trash</span>    
+                        </div>
+                    </div>
                 </li>
             </ul>
             <ul id="tagsList"></ul>

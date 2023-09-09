@@ -74,14 +74,14 @@ function editCard(li) {
     });
 }
 
-function deleteCard(li){
+function deleteCard(li) {
     const cardID = li.dataset.id
-    if(li.dataset.is_trash){
+    if(li.dataset.is_trash) {
         db.removeCardPermanently(li.dataset.trash_id).then(function(){
             CM.cardsList.removeChild(li);
         })
-    }else{
-        db.moveCardToTrash(cardID).then(function(){
+    } else {
+        db.moveCardToTrash(cardID).then(function() {
             CM.cardsList.removeChild(li);
         })
     }
@@ -97,23 +97,32 @@ function restoreCard(li){
 
 CM.clickHandle(".tagClick", function(e){
     e.preventDefault();
-    const href = e.target.parentNode.getAttribute("href");
-    const tag = e.target.parentNode.dataset.tag
 
-    console.log(e.target);
+    var target = e.target;
+    var tagContainer = target.closest(".tagContainer");
 
+    let href;
+    let tag;
+    if (target.tagName !== 'DIV') {
+        href = target.parentNode.getAttribute("href");
+        tag = target.parentNode.dataset.tag;
+    } else {
+        href = target.getAttribute("href");
+        tag = target.dataset.tag;
+    }
+    
     switch (href) {
         case "/tag_all":
             utils.reloadAll();
             break;
         case "/tag_trash":
-            db.getTrashCards(0, CM.limitItems).then(cards => reloadCardList(cards, "Trash"));
+            db.getTrashCards(0, CM.limitItems).then(cards => reloadCardList(cards, "Trash", tagContainer));
             break;
         case "/tag_no":
-            db.getNoTagCards(0, CM.limitItems).then(cards => reloadCardList(cards, "No Tag"));
+            db.getNoTagCards(0, CM.limitItems).then(cards => reloadCardList(cards, "No Tag", tagContainer));
             break;
         default:
-            db.getCardsByTag(tag, 0, CM.limitItems).then(cards => reloadCardList(cards, tag));
+            db.getCardsByTag(tag, 0, CM.limitItems).then(cards => reloadCardList(cards, tag, tagContainer));
     }
 });
 
@@ -186,7 +195,7 @@ CM.clickHandle(".btnCancelCard", function(ev){
     cancelUpdate(li);
 })
 
-function reloadCardList(cards, headerTitle = 'All Cards', order=CM.listInsertBeforeFirst) {
+function reloadCardList(cards, headerTitle = 'All Cards', tagContainer, order = CM.listInsertBeforeFirst) {
     CM.cardsHeader.textContent = headerTitle; // Update the cards header
 
     document.documentElement.scrollTop = 0; // Reset the scroll position to the top
@@ -202,6 +211,8 @@ function reloadCardList(cards, headerTitle = 'All Cards', order=CM.listInsertBef
     } else {
         CM.toggleElementShown(CM.creationTip);
     }
+    
+    CM.highlightItem("selected", tagContainer, CM.sideNavContainer);
 }
 
 function insertCardToList(card, order){
@@ -313,7 +324,7 @@ function searchOptionClick(event) {
 
 function handleOptionSelect(cardID) {
   db.getCardsByMiddleID(Number(cardID), 0, 0, CM.limitItems).then(function (cards) {
-    reloadCardList(cards, "All Cards");
+    reloadCardList(cards, "All Cards", CM.allCardsTagContainer);
     CM.hideOmniSearchAndUnfocus()
   });
 }
@@ -477,14 +488,14 @@ function buildTagHtml(tree, prefix = '') {
     //folder
     if(Object.keys(value).length > 0) {
         html += `<li>
-                <div class="tag">
+                <div class="tagContainer">
                 <span class="foldIcon open"></span>
                 <div class="tagClick" href="/tag/${fullTag}" data-tag="${fullTag}"><span class="tagIcon"></span><span class="label">${key}</span></div>
                 </div>`;
     }else{
         // file
         html += `<li>
-                <div class="tag">
+                <div class="tagContainer">
                 <div class="tagClick" href="/tag/${fullTag}" data-tag="${fullTag}"><span class="tagIcon"></span><span class="label">${key}</span></div>
                 </div>`;
     }
@@ -518,7 +529,7 @@ window.addEventListener('DOMContentLoaded', function() {
     
     //load cards
     db.getCards(0, CM.limitItems).then(function(cards) {
-        reloadCardList(cards, "All Cards", CM.listInsertAfterLast)
+        reloadCardList(cards, "All Cards", CM.allCardsTagContainer, CM.listInsertAfterLast)
     });
 
     //load tags
