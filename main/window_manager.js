@@ -2,7 +2,6 @@ const { BrowserWindow, globalShortcut, Menu } = require('electron');
 const path = require('path');
 const menuTemplate = require('./menu');
 
-
 class WindowManager{
     constructor(){
         this.mainWindow = null

@@ -159,3 +159,18 @@ export function linkClick(event){
         pages.showCardDetail(cardID);
     }
 } 
+
+
+export function markedConfig(){
+    const renderer = new marked.Renderer();
+    renderer.text = function (text) {
+        text = text.replace(window.tagRegex, '<a href="/tags/$1" class="cm-hashtag">#$1</a>');
+        return text.replace(window.linkAtRegex, '<a href="/links/$1" class="cm-linkref">@$1</a>');
+    };
+    marked.setOptions({ renderer });
+
+    marked.use({
+        mangle: false,
+        headerIds: false
+    });
+}
