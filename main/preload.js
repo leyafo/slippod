@@ -37,7 +37,8 @@ contextBridge.exposeInMainWorld('pages', {
         "getCardDetails",
         "cardIsExisted",
         "getMaxCardID",
-        "getAllCards"
+        "getAllCards",
+        "searchCardsWithStyle",
     ]
     let backendFunctions = {};
     paginatedDFFunc.forEach((funcName) => {

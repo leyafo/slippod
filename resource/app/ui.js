@@ -323,7 +323,7 @@ function searchOptionClick(event) {
 
 function handleOptionSelect(cardID) {
   db.getCardsByMiddleID(Number(cardID), 0, 0, CM.limitItems).then(function (cards) {
-    reloadCardList(cards, "All Cards", CM.allCardsTagContainer);
+    reloadCardList(cards, "All Cards", CM.allCardsTag.parentNode);
     CM.hideOmniSearchAndUnfocus()
   });
 }
@@ -515,7 +515,7 @@ window.addEventListener('DOMContentLoaded', function() {
     CM.markedConfig();
     //load cards
     db.getCards(0, CM.limitItems).then(function(cards) {
-        reloadCardList(cards, "All Cards", CM.allCardsTagContainer, CM.listInsertAfterLast)
+        reloadCardList(cards, "All Cards", CM.allCardsTag.parentNode, CM.listInsertAfterLast)
     });
 
     //load tags

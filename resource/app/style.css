@@ -228,8 +228,16 @@ body {
 
 #cardsList .selected,
 #suggestionResults .highlighted,
-.completeAtMenu .highlighted {
+.highlighted {
     @apply bg-slate-300;
+}
+
+.completeAtMenu{
+    @apply text-base;
+    background-color: beige;
+}
+.completeAtMenu div{
+    margin-bottom: 1em;
 }
 
 #cardsList{
