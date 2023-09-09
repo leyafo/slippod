@@ -8,8 +8,19 @@ module.exports = {
       xl: '1rem',
       '2xl': '1.53333333rem',
     },
-    extend: {},
+    extend: {
+      typography: {
+        DEFAULT: {
+          css: {
+            color: '#121417',
+          },
+        },
+      }
+    },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/typography')({
+      className: 'richtext',
+    }),
+  ],
 }
-
