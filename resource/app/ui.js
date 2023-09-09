@@ -238,7 +238,7 @@ function createCardElementFromObject(card) {
     if (card.is_trash){
         li.dataset.is_trash = true;
         li.dataset.trash_id = card.trash_id;
-        const cardMenuOptions = li.querySelector(".menuOptions");
+        const cardMenuOptions = li.querySelector(".itemMenuOptions");
         CM.toggleElementHidden(cardMenuOptions.querySelector(".editOption"))
         CM.toggleElementShown(cardMenuOptions.querySelector(".restoreOption"))
     }
