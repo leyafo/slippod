@@ -1,4 +1,3 @@
-const fs = require("fs");
 const schema = require("./schema");
 const sqlite3 = require("better-sqlite3");
 
@@ -35,6 +34,7 @@ function openDB(extPath, dictPath, dbPath){
     let newDB = null;
     newDB = sqlite3(dbPath, {verbose: console.log})
     newDB.loadExtension(extPath);
+    newDB.pragma("trusted_schema = 1");
     //set jieba dict path
     newDB.prepare("select jieba_dict(?)").run(dictPath);
     return newDB

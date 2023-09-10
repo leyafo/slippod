@@ -164,6 +164,10 @@ CM.clickHandle(".foldIcon", function(e){
     }
 })
 
+CM.clickHandle("#btnDuplicateWindow", function(e){
+    pages.duplicateWindow();
+})
+
 function addCardEventListeners(li) {
     li.addEventListener('dblclick', function() {
         if (li.dataset.editing === 'false') {

@@ -1,5 +1,5 @@
 // preload.js
-const { contextBridge, ipcRenderer } = require('electron')
+const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('utils', {
     reloadAll: (...args) => ipcRenderer.invoke("reloadAll", ...args),
@@ -10,6 +10,9 @@ contextBridge.exposeInMainWorld('pages', {
     showCardDetail: function(cardID) {
         return ipcRenderer.invoke("showCardDetail", cardID)
     },
+    duplicateWindow: function(){
+        return ipcRenderer.invoke("duplicateWindow");
+    }
 });
 
 

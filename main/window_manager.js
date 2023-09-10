@@ -1,6 +1,5 @@
-const { BrowserWindow, globalShortcut, Menu } = require('electron');
+const { BrowserWindow, globalShortcut} = require('electron');
 const path = require('path');
-const menuTemplate = require('./menu');
 
 class WindowManager{
     constructor(){
@@ -13,6 +12,9 @@ class WindowManager{
     }
 
     getSettingsWindow(){
+        if(this.settingsWindow == null){
+            this.settingsWindow = this.createSettingsWindow();
+        }
         return this.settingsWindow;
     }
 
@@ -124,30 +126,6 @@ class WindowManager{
         return detailWindow
     }
 
-    createMenu() {
-        // const template = [
-        //     {
-        //         label: "Application",
-        //         submenu: [
-        //             {
-        //                 label: "Settings",
-        //                 click: () => {
-        //                     if (this.settingsWindow === null) {
-        //                         this.createSettingsWindow();
-        //                     } else {
-        //                         this.settingsWindow.show();
-        //                     }
-        //                 },
-        //             },
-        //             { type: "separator" },
-        //             { role: "quit" }, // Add a Quit option if desired
-        //         ],
-        //     },
-        // ];
-
-        const menu = Menu.buildFromTemplate(menuTemplate);
-        Menu.setApplicationMenu(menu);
-    }
 }
 
 module.exports = WindowManager
