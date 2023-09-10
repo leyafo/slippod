@@ -133,13 +133,13 @@ CM.clickHandle(".tagClick", function(e){
             utils.reloadAll();
             break;
         case hrefTagTrash:
-            db.getTrashCards(0, CM.limitItems).then(cards => reloadCardList(cards, "Trash"));
+            db.getTrashCards(0, CM.limitItems).then(cards => reloadCardList(cards, "Trash", CM.listInsertAfterLast));
             break;
         case hrefTagNo:
-            db.getNoTagCards(0, CM.limitItems).then(cards => reloadCardList(cards, "No Tag"));
+            db.getNoTagCards(0, CM.limitItems).then(cards => reloadCardList(cards, "No Tag", CM.listInsertAfterLast));
             break;
         default:
-            db.getCardsByTag(tag, 0, CM.limitItems).then(cards => reloadCardList(cards, tag));
+            db.getCardsByTag(tag, 0, CM.limitItems).then(cards => reloadCardList(cards, tag, CM.listInsertAfterLast));
     }
     CM.highlightItem("selected", tagContainer, CM.sideNavContainer);
 });
@@ -234,6 +234,7 @@ function reloadCardList(cards, headerTitle = 'All Cards', order = CM.listInsertB
     // Display the cards
     CM.cardsList.innerHTML = '';  // Clear the current cards
     cards.forEach(card => {
+        console.log(card.id);
         insertCardToList(card, order)
     });
 
@@ -392,7 +393,6 @@ function clearSearch(event) {
 }
 
 const omniSearchButton = document.getElementById('omniSearchButton');
-
 
 omniSearchButton.addEventListener('click', function(event) {
     if (CM.omniSearch.classList.contains('hidden')) {

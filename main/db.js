@@ -176,9 +176,9 @@ function getAllTags(){
     return tags
 }
 
-function getNoTagCards(offset, limit){
-   const cards = db.prepare("SELECT cards.* FROM cards LEFT JOIN tags ON cards.id = tags.card_id WHERE tags.card_id IS NULL order by cards.id desc limit ?, ?;").all(offset, limit)
-   return cards
+function getNoTagCards(offset, limit) {
+    const cards = db.prepare("SELECT cards.* FROM cards LEFT JOIN tags ON cards.id = tags.card_id WHERE tags.card_id IS NULL order by cards.id desc limit ?, ?;").all(offset, limit)
+    return cards
 }
 
 function getCardsByTag(tag, offset, limit){
