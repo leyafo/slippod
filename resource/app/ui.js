@@ -27,7 +27,7 @@ function updateCard(li){
 
     db.updateCardEntryByID(cardID, entry).then(() => {
         content.innerHTML = marked.parse(entry);
-        const controlPanel = li.querySelector(".itemControlPanel");
+        const controlPanel = li.querySelector(".itemCtrlPanel");
         CM.toggleElementHidden(controlPanel)
     });
     li.dataset.editing = 'false';
@@ -38,7 +38,7 @@ function cancelUpdate(li){
     const cardID = li.dataset.id;
     db.getCardByID(cardID).then(function(card){
         content.innerHTML = marked.parse(card.entry);
-        const controlPanel = li.querySelector(".itemControlPanel");
+        const controlPanel = li.querySelector(".itemCtrlPanel");
         CM.toggleElementHidden(controlPanel)
     })
     li.dataset.editing = 'false';
@@ -51,7 +51,7 @@ function editCard(li) {
         const cardEntry = card.entry;
         const content = li.querySelector(".content") 
         content.innerHTML = '';
-        const controlPanel = li.querySelector(".itemControlPanel");
+        const controlPanel = li.querySelector(".itemCtrlPanel");
         CM.toggleElementShown(controlPanel)
         li.dataset.editing = 'true';
         let editor = CodeMirror(content, {
