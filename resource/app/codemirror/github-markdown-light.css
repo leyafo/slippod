@@ -1,18 +1,19 @@
-.markdown-body {
+.markdown-body, .markdown-body * {
     all: revert;
+}
+
+.markdown-body {
     -ms-text-size-adjust: 100%;
     -webkit-text-size-adjust: 100%;
     margin: 0;
     color: #24292f;
-    background-color: #ffffff;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-    font-size: 16px;
+    font-size: 15px;
     line-height: 1.5;
     word-wrap: break-word;
 }
 
 .markdown-body .octicon {
-    all: revert;
     display: inline-block;
     fill: currentColor;
     vertical-align: text-bottom;
@@ -24,7 +25,6 @@
 .markdown-body h4:hover .anchor .octicon-link:before,
 .markdown-body h5:hover .anchor .octicon-link:before,
 .markdown-body h6:hover .anchor .octicon-link:before {
-    all: revert;
     width: 16px;
     height: 16px;
     content: ' ';
@@ -37,46 +37,38 @@
 .markdown-body details,
 .markdown-body figcaption,
 .markdown-body figure {
-    all: revert;
     display: block;
 }
 
 .markdown-body summary {
-    all: revert;
     display: list-item;
 }
 
 .markdown-body [hidden] {
-    all: revert;
     display: none !important;
 }
 
 .markdown-body a {
-    all: revert;
     background-color: transparent;
     color: #0969da;
     text-decoration: none;
 }
 
 .markdown-body abbr[title] {
-    all: revert;
     border-bottom: none;
     text-decoration: underline dotted;
 }
 
 .markdown-body b,
 .markdown-body strong {
-    all: revert;
     font-weight: 600;
 }
 
 .markdown-body dfn {
-    all: revert;
     font-style: italic;
 }
 
 .markdown-body h1 {
-    all: revert;
     margin: .67em 0;
     font-weight: 600;
     padding-bottom: .3em;
@@ -85,19 +77,16 @@
 }
 
 .markdown-body mark {
-    all: revert;
     background-color: #fff8c5;
     color: #24292f;
 }
 
 .markdown-body small {
-    all: revert;
     font-size: 90%;
 }
 
 .markdown-body sub,
 .markdown-body sup {
-    all: revert;
     font-size: 75%;
     line-height: 0;
     position: relative;
@@ -105,17 +94,14 @@
 }
 
 .markdown-body sub {
-    all: revert;
     bottom: -0.25em;
 }
 
 .markdown-body sup {
-    all: revert;
     top: -0.5em;
 }
 
 .markdown-body img {
-    all: revert;
     border-style: none;
     max-width: 100%;
     box-sizing: content-box;
@@ -126,18 +112,15 @@
 .markdown-body kbd,
 .markdown-body pre,
 .markdown-body samp {
-    all: revert;
     font-family: monospace;
     font-size: 1em;
 }
 
 .markdown-body figure {
-    all: revert;
     margin: 1em 40px;
 }
 
 .markdown-body hr {
-    all: revert;
     box-sizing: content-box;
     overflow: hidden;
     background: transparent;
@@ -150,7 +133,6 @@
 }
 
 .markdown-body input {
-    all: revert;
     font: inherit;
     margin: 0;
     overflow: visible;
@@ -162,67 +144,56 @@
 .markdown-body [type=button],
 .markdown-body [type=reset],
 .markdown-body [type=submit] {
-    all: revert;
     -webkit-appearance: button;
 }
 
 .markdown-body [type=checkbox],
 .markdown-body [type=radio] {
-    all: revert;
     box-sizing: border-box;
     padding: 0;
 }
 
 .markdown-body [type=number]::-webkit-inner-spin-button,
 .markdown-body [type=number]::-webkit-outer-spin-button {
-    all: revert;
     height: auto;
 }
 
 .markdown-body [type=search]::-webkit-search-cancel-button,
 .markdown-body [type=search]::-webkit-search-decoration {
-    all: revert;
     -webkit-appearance: none;
 }
 
 .markdown-body ::-webkit-input-placeholder {
-    all: revert;
     color: inherit;
     opacity: .54;
 }
 
 .markdown-body ::-webkit-file-upload-button {
-    all: revert;
     -webkit-appearance: button;
     font: inherit;
 }
 
 .markdown-body a:hover {
-    all: revert;
     text-decoration: underline;
 }
 
 .markdown-body ::placeholder {
-    all: revert;
     color: #6e7781;
     opacity: 1;
 }
 
 .markdown-body hr::before {
-    all: revert;
     display: table;
     content: "";
 }
 
 .markdown-body hr::after {
-    all: revert;
     display: table;
     clear: both;
     content: "";
 }
 
 .markdown-body table {
-    all: revert;
     border-spacing: 0;
     border-collapse: collapse;
     display: block;
@@ -233,17 +204,14 @@
 
 .markdown-body td,
 .markdown-body th {
-    all: revert;
     padding: 0;
 }
 
 .markdown-body details summary {
-    all: revert;
     cursor: pointer;
 }
 
 .markdown-body details:not([open])>*:not(summary) {
-    all: revert;
     display: none !important;
 }
 
@@ -251,7 +219,6 @@
 .markdown-body [role=button]:focus,
 .markdown-body input[type=radio]:focus,
 .markdown-body input[type=checkbox]:focus {
-    all: revert;
     outline: 2px solid #0969da;
     outline-offset: -2px;
     box-shadow: none;
@@ -261,7 +228,6 @@
 .markdown-body [role=button]:focus:not(:focus-visible),
 .markdown-body input[type=radio]:focus:not(:focus-visible),
 .markdown-body input[type=checkbox]:focus:not(:focus-visible) {
-    all: revert;
     outline: solid 1px transparent;
 }
 
@@ -269,7 +235,6 @@
 .markdown-body [role=button]:focus-visible,
 .markdown-body input[type=radio]:focus-visible,
 .markdown-body input[type=checkbox]:focus-visible {
-    all: revert;
     outline: 2px solid #0969da;
     outline-offset: -2px;
     box-shadow: none;
@@ -281,12 +246,10 @@
 .markdown-body input[type=radio]:focus-visible,
 .markdown-body input[type=checkbox]:focus,
 .markdown-body input[type=checkbox]:focus-visible {
-    all: revert;
     outline-offset: 0;
 }
 
 .markdown-body kbd {
-    all: revert;
     display: inline-block;
     padding: 3px 5px;
     font: 11px ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
@@ -306,7 +269,6 @@
 .markdown-body h4,
 .markdown-body h5,
 .markdown-body h6 {
-    all: revert;
     margin-top: 24px;
     margin-bottom: 16px;
     font-weight: 600;
@@ -314,7 +276,6 @@
 }
 
 .markdown-body h2 {
-    all: revert;
     font-weight: 600;
     padding-bottom: .3em;
     font-size: 1.5em;
@@ -322,38 +283,32 @@
 }
 
 .markdown-body h3 {
-    all: revert;
     font-weight: 600;
     font-size: 1.25em;
 }
 
 .markdown-body h4 {
-    all: revert;
     font-weight: 600;
     font-size: 1em;
 }
 
 .markdown-body h5 {
-    all: revert;
     font-weight: 600;
     font-size: .875em;
 }
 
 .markdown-body h6 {
-    all: revert;
     font-weight: 600;
     font-size: .85em;
     color: #57606a;
 }
 
 .markdown-body p {
-    all: revert;
     margin-top: 0;
     margin-bottom: 10px;
 }
 
 .markdown-body blockquote {
-    all: revert;
     margin: 0;
     padding: 0 1em;
     color: #57606a;
@@ -362,7 +317,6 @@
 
 .markdown-body ul,
 .markdown-body ol {
-    all: revert;
     margin-top: 0;
     margin-bottom: 0;
     padding-left: 2em;
@@ -370,7 +324,6 @@
 
 .markdown-body ol ol,
 .markdown-body ul ol {
-    all: revert;
     list-style-type: lower-roman;
 }
 
@@ -378,25 +331,21 @@
 .markdown-body ul ol ol,
 .markdown-body ol ul ol,
 .markdown-body ol ol ol {
-    all: revert;
     list-style-type: lower-alpha;
 }
 
 .markdown-body dd {
-    all: revert;
     margin-left: 0;
 }
 
 .markdown-body tt,
 .markdown-body code,
 .markdown-body samp {
-    all: revert;
     font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
     font-size: 12px;
 }
 
 .markdown-body pre {
-    all: revert;
     margin-top: 0;
     margin-bottom: 0;
     font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
@@ -405,7 +354,6 @@
 }
 
 .markdown-body .octicon {
-    all: revert;
     display: inline-block;
     overflow: visible !important;
     vertical-align: text-bottom;
@@ -414,48 +362,40 @@
 
 .markdown-body input::-webkit-outer-spin-button,
 .markdown-body input::-webkit-inner-spin-button {
-    all: revert;
     margin: 0;
     -webkit-appearance: none;
     appearance: none;
 }
 
 .markdown-body::before {
-    all: revert;
     display: table;
     content: "";
 }
 
 .markdown-body::after {
-    all: revert;
     display: table;
     clear: both;
     content: "";
 }
 
 .markdown-body>*:first-child {
-    all: revert;
     margin-top: 0 !important;
 }
 
 .markdown-body>*:last-child {
-    all: revert;
     margin-bottom: 0 !important;
 }
 
 .markdown-body a:not([href]) {
-    all: revert;
     color: inherit;
     text-decoration: none;
 }
 
 .markdown-body .absent {
-    all: revert;
     color: #cf222e;
 }
 
 .markdown-body .anchor {
-    all: revert;
     float: left;
     padding-right: 4px;
     margin-left: -20px;
@@ -463,7 +403,6 @@
 }
 
 .markdown-body .anchor:focus {
-    all: revert;
     outline: none;
 }
 
@@ -475,18 +414,15 @@
 .markdown-body table,
 .markdown-body pre,
 .markdown-body details {
-    all: revert;
     margin-top: 0;
     margin-bottom: 16px;
 }
 
 .markdown-body blockquote>:first-child {
-    all: revert;
     margin-top: 0;
 }
 
 .markdown-body blockquote>:last-child {
-    all: revert;
     margin-bottom: 0;
 }
 
@@ -496,7 +432,6 @@
 .markdown-body h4 .octicon-link,
 .markdown-body h5 .octicon-link,
 .markdown-body h6 .octicon-link {
-    all: revert;
     color: #24292f;
     vertical-align: middle;
     visibility: hidden;
@@ -508,7 +443,6 @@
 .markdown-body h4:hover .anchor,
 .markdown-body h5:hover .anchor,
 .markdown-body h6:hover .anchor {
-    all: revert;
     text-decoration: none;
 }
 
@@ -518,7 +452,6 @@
 .markdown-body h4:hover .anchor .octicon-link,
 .markdown-body h5:hover .anchor .octicon-link,
 .markdown-body h6:hover .anchor .octicon-link {
-    all: revert;
     visibility: visible;
 }
 
@@ -534,7 +467,6 @@
 .markdown-body h5 code,
 .markdown-body h6 tt,
 .markdown-body h6 code {
-    all: revert;
     padding: 0 .2em;
     font-size: inherit;
 }
@@ -545,7 +477,6 @@
 .markdown-body summary h4,
 .markdown-body summary h5,
 .markdown-body summary h6 {
-    all: revert;
     display: inline-block;
 }
 
@@ -555,51 +486,42 @@
 .markdown-body summary h4 .anchor,
 .markdown-body summary h5 .anchor,
 .markdown-body summary h6 .anchor {
-    all: revert;
     margin-left: -40px;
 }
 
 .markdown-body summary h1,
 .markdown-body summary h2 {
-    all: revert;
     padding-bottom: 0;
     border-bottom: 0;
 }
 
 .markdown-body ul.no-list,
 .markdown-body ol.no-list {
-    all: revert;
     padding: 0;
     list-style-type: none;
 }
 
 .markdown-body ol[type=a] {
-    all: revert;
     list-style-type: lower-alpha;
 }
 
 .markdown-body ol[type=A] {
-    all: revert;
     list-style-type: upper-alpha;
 }
 
 .markdown-body ol[type=i] {
-    all: revert;
     list-style-type: lower-roman;
 }
 
 .markdown-body ol[type=I] {
-    all: revert;
     list-style-type: upper-roman;
 }
 
 .markdown-body ol[type="1"] {
-    all: revert;
     list-style-type: decimal;
 }
 
 .markdown-body div>ol:not([type]) {
-    all: revert;
     list-style-type: decimal;
 }
 
@@ -607,28 +529,23 @@
 .markdown-body ul ol,
 .markdown-body ol ol,
 .markdown-body ol ul {
-    all: revert;
     margin-top: 0;
     margin-bottom: 0;
 }
 
 .markdown-body li>p {
-    all: revert;
     margin-top: 16px;
 }
 
 .markdown-body li+li {
-    all: revert;
     margin-top: .25em;
 }
 
 .markdown-body dl {
-    all: revert;
     padding: 0;
 }
 
 .markdown-body dl dt {
-    all: revert;
     padding: 0;
     margin-top: 16px;
     font-size: 1em;
@@ -637,64 +554,53 @@
 }
 
 .markdown-body dl dd {
-    all: revert;
     padding: 0 16px;
     margin-bottom: 16px;
 }
 
 .markdown-body table th {
-    all: revert;
     font-weight: 600;
 }
 
 .markdown-body table th,
 .markdown-body table td {
-    all: revert;
     padding: 6px 13px;
     border: 1px solid #d0d7de;
 }
 
 .markdown-body table tr {
-    all: revert;
     background-color: #ffffff;
     border-top: 1px solid hsla(210, 18%, 87%, 1);
 }
 
 .markdown-body table tr:nth-child(2n) {
-    all: revert;
     background-color: #f6f8fa;
 }
 
 .markdown-body table img {
-    all: revert;
     background-color: transparent;
 }
 
 .markdown-body img[align=right] {
-    all: revert;
     padding-left: 20px;
 }
 
 .markdown-body img[align=left] {
-    all: revert;
     padding-right: 20px;
 }
 
 .markdown-body .emoji {
-    all: revert;
     max-width: none;
     vertical-align: text-top;
     background-color: transparent;
 }
 
 .markdown-body span.frame {
-    all: revert;
     display: block;
     overflow: hidden;
 }
 
 .markdown-body span.frame>span {
-    all: revert;
     display: block;
     float: left;
     width: auto;
@@ -705,13 +611,11 @@
 }
 
 .markdown-body span.frame span img {
-    all: revert;
     display: block;
     float: left;
 }
 
 .markdown-body span.frame span span {
-    all: revert;
     display: block;
     padding: 5px 0 0;
     clear: both;
@@ -719,14 +623,12 @@
 }
 
 .markdown-body span.align-center {
-    all: revert;
     display: block;
     overflow: hidden;
     clear: both;
 }
 
 .markdown-body span.align-center>span {
-    all: revert;
     display: block;
     margin: 13px auto 0;
     overflow: hidden;
@@ -734,20 +636,17 @@
 }
 
 .markdown-body span.align-center span img {
-    all: revert;
     margin: 0 auto;
     text-align: center;
 }
 
 .markdown-body span.align-right {
-    all: revert;
     display: block;
     overflow: hidden;
     clear: both;
 }
 
 .markdown-body span.align-right>span {
-    all: revert;
     display: block;
     margin: 13px 0 0;
     overflow: hidden;
@@ -755,13 +654,11 @@
 }
 
 .markdown-body span.align-right span img {
-    all: revert;
     margin: 0;
     text-align: right;
 }
 
 .markdown-body span.float-left {
-    all: revert;
     display: block;
     float: left;
     margin-right: 13px;
@@ -769,12 +666,10 @@
 }
 
 .markdown-body span.float-left span {
-    all: revert;
     margin: 13px 0 0;
 }
 
 .markdown-body span.float-right {
-    all: revert;
     display: block;
     float: right;
     margin-left: 13px;
@@ -782,7 +677,6 @@
 }
 
 .markdown-body span.float-right>span {
-    all: revert;
     display: block;
     margin: 13px auto 0;
     overflow: hidden;
@@ -791,7 +685,6 @@
 
 .markdown-body code,
 .markdown-body tt {
-    all: revert;
     padding: .2em .4em;
     margin: 0;
     font-size: 85%;
@@ -802,27 +695,22 @@
 
 .markdown-body code br,
 .markdown-body tt br {
-    all: revert;
     display: none;
 }
 
 .markdown-body del code {
-    all: revert;
     text-decoration: inherit;
 }
 
 .markdown-body samp {
-    all: revert;
     font-size: 85%;
 }
 
 .markdown-body pre code {
-    all: revert;
     font-size: 100%;
 }
 
 .markdown-body pre>code {
-    all: revert;
     padding: 0;
     margin: 0;
     word-break: normal;
@@ -832,19 +720,16 @@
 }
 
 .markdown-body .highlight {
-    all: revert;
     margin-bottom: 16px;
 }
 
 .markdown-body .highlight pre {
-    all: revert;
     margin-bottom: 0;
     word-break: normal;
 }
 
 .markdown-body .highlight pre,
 .markdown-body pre {
-    all: revert;
     padding: 16px;
     overflow: auto;
     font-size: 85%;
@@ -855,7 +740,6 @@
 
 .markdown-body pre code,
 .markdown-body pre tt {
-    all: revert;
     display: inline;
     max-width: auto;
     padding: 0;
@@ -869,7 +753,6 @@
 
 .markdown-body .csv-data td,
 .markdown-body .csv-data th {
-    all: revert;
     padding: 5px;
     overflow: hidden;
     font-size: 12px;
@@ -879,7 +762,6 @@
 }
 
 .markdown-body .csv-data .blob-num {
-    all: revert;
     padding: 10px 8px 9px;
     text-align: right;
     background: #ffffff;
@@ -887,53 +769,44 @@
 }
 
 .markdown-body .csv-data tr {
-    all: revert;
     border-top: 0;
 }
 
 .markdown-body .csv-data th {
-    all: revert;
     font-weight: 600;
     background: #f6f8fa;
     border-top: 0;
 }
 
 .markdown-body [data-footnote-ref]::before {
-    all: revert;
     content: "[";
 }
 
 .markdown-body [data-footnote-ref]::after {
-    all: revert;
     content: "]";
 }
 
 .markdown-body .footnotes {
-    all: revert;
     font-size: 12px;
     color: #57606a;
     border-top: 1px solid #d0d7de;
 }
 
 .markdown-body .footnotes ol {
-    all: revert;
     padding-left: 16px;
 }
 
 .markdown-body .footnotes ol ul {
-    all: revert;
     display: inline-block;
     padding-left: 16px;
     margin-top: 16px;
 }
 
 .markdown-body .footnotes li {
-    all: revert;
     position: relative;
 }
 
 .markdown-body .footnotes li:target::before {
-    all: revert;
     position: absolute;
     top: -8px;
     right: -8px;
@@ -946,45 +819,37 @@
 }
 
 .markdown-body .footnotes li:target {
-    all: revert;
     color: #24292f;
 }
 
 .markdown-body .footnotes .data-footnote-backref g-emoji {
-    all: revert;
     font-family: monospace;
 }
 
 .markdown-body .pl-c {
-    all: revert;
     color: #6e7781;
 }
 
 .markdown-body .pl-c1,
 .markdown-body .pl-s .pl-v {
-    all: revert;
     color: #0550ae;
 }
 
 .markdown-body .pl-e,
 .markdown-body .pl-en {
-    all: revert;
     color: #8250df;
 }
 
 .markdown-body .pl-smi,
 .markdown-body .pl-s .pl-s1 {
-    all: revert;
     color: #24292f;
 }
 
 .markdown-body .pl-ent {
-    all: revert;
     color: #116329;
 }
 
 .markdown-body .pl-k {
-    all: revert;
     color: #cf222e;
 }
 
@@ -995,112 +860,93 @@
 .markdown-body .pl-sr .pl-cce,
 .markdown-body .pl-sr .pl-sre,
 .markdown-body .pl-sr .pl-sra {
-    all: revert;
     color: #0a3069;
 }
 
 .markdown-body .pl-v,
 .markdown-body .pl-smw {
-    all: revert;
     color: #953800;
 }
 
 .markdown-body .pl-bu {
-    all: revert;
     color: #82071e;
 }
 
 .markdown-body .pl-ii {
-    all: revert;
     color: #f6f8fa;
     background-color: #82071e;
 }
 
 .markdown-body .pl-c2 {
-    all: revert;
     color: #f6f8fa;
     background-color: #cf222e;
 }
 
 .markdown-body .pl-sr .pl-cce {
-    all: revert;
     font-weight: bold;
     color: #116329;
 }
 
 .markdown-body .pl-ml {
-    all: revert;
     color: #3b2300;
 }
 
 .markdown-body .pl-mh,
 .markdown-body .pl-mh .pl-en,
 .markdown-body .pl-ms {
-    all: revert;
     font-weight: bold;
     color: #0550ae;
 }
 
 .markdown-body .pl-mi {
-    all: revert;
     font-style: italic;
     color: #24292f;
 }
 
 .markdown-body .pl-mb {
-    all: revert;
     font-weight: bold;
     color: #24292f;
 }
 
 .markdown-body .pl-md {
-    all: revert;
     color: #82071e;
     background-color: #ffebe9;
 }
 
 .markdown-body .pl-mi1 {
-    all: revert;
     color: #116329;
     background-color: #dafbe1;
 }
 
 .markdown-body .pl-mc {
-    all: revert;
     color: #953800;
     background-color: #ffd8b5;
 }
 
 .markdown-body .pl-mi2 {
-    all: revert;
     color: #eaeef2;
     background-color: #0550ae;
 }
 
 .markdown-body .pl-mdr {
-    all: revert;
     font-weight: bold;
     color: #8250df;
 }
 
 .markdown-body .pl-ba {
-    all: revert;
     color: #57606a;
 }
 
 .markdown-body .pl-sg {
-    all: revert;
     color: #8c959f;
 }
 
 .markdown-body .pl-corl {
-    all: revert;
     text-decoration: underline;
     color: #0a3069;
 }
 
 .markdown-body g-emoji {
-    all: revert;
     display: inline-block;
     min-width: 1ch;
     font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
@@ -1112,55 +958,45 @@
 }
 
 .markdown-body g-emoji img {
-    all: revert;
     width: 1em;
     height: 1em;
 }
 
 .markdown-body .task-list-item {
-    all: revert;
     list-style-type: none;
 }
 
 .markdown-body .task-list-item label {
-    all: revert;
     font-weight: 400;
 }
 
 .markdown-body .task-list-item.enabled label {
-    all: revert;
     cursor: pointer;
 }
 
 .markdown-body .task-list-item+.task-list-item {
-    all: revert;
     margin-top: 4px;
 }
 
 .markdown-body .task-list-item .handle {
-    all: revert;
     display: none;
 }
 
 .markdown-body .task-list-item-checkbox {
-    all: revert;
     margin: 0 .2em .25em -1.4em;
     vertical-align: middle;
 }
 
 .markdown-body .contains-task-list:dir(rtl) .task-list-item-checkbox {
-    all: revert;
     margin: 0 -1.6em .25em .2em;
 }
 
 .markdown-body .contains-task-list {
-    all: revert;
     position: relative;
 }
 
 .markdown-body .contains-task-list:hover .task-list-item-convert-container,
 .markdown-body .contains-task-list:focus-within .task-list-item-convert-container {
-    all: revert;
     display: block;
     width: auto;
     height: 24px;
@@ -1169,6 +1005,5 @@
 }
 
 .markdown-body ::-webkit-calendar-picker-indicator {
-    all: revert;
     filter: invert(50%);
 }
