@@ -36,13 +36,14 @@ module.exports = {
             return dbPath;
         });
 
-        ipcMain.handle("showCardDetail", async(event, cardID) =>{
-            let detailWindow = windowMgr.createDetailWindow(cardID);
+        ipcMain.handle("showCardDetail", async (event, cardID) => {
+            windowMgr.createDetailWindow(cardID);
         })
 
         ipcMain.handle("getDBPath", async (event, ...args) => {
             return config.readDBPathConfig();
         });
+
     },
 
     registerDBFunctions: function(){
