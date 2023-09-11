@@ -1,12 +1,13 @@
 import * as CM from "./common"
 import fuzzySearch from "./lib/fuzzy"
-import * as marked from "marked";
 
 const atMatchRegex = /@([a-zA-Z0-9\u4e00-\u9fff/\\_-]+)/
 
 function createCardSuggestion(card){
     const div = document.createElement("div");
-    div.innerHTML = marked.parse(card.entry.trim());
+    utils.markdownRender(entry).then(function(html){
+        div.innerHTML = html
+    });
     div.dataset.id = card.id; 
     div.onclick = function(event){
         // let cursor = cm.getCursor(), token = cm.getTokenAt(cursor);
@@ -199,7 +200,3 @@ export {
     autocompleteHints,
     showAtLinkMenu,
 }
-
-db.searchCardsWithStyle("sdf", 0, 10).then((cards)=>{
-    console.log(cards);
-})

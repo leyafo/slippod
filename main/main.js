@@ -3,6 +3,7 @@ const {ipcMain, app, Menu, BrowserWindow } = require("electron");
 const WindowManager = require('./window_manager');
 const ipcHandler = require("./ipc_handlers");
 const {menuTemplate} = require("./menu");
+const createMarkdownRender = require("./md_render").createMarkdownRender  
 
 const windowMgr = new WindowManager();
 
@@ -34,9 +35,13 @@ app.on("window-all-closed", () => {
     if (process.platform !== "darwin") app.quit();
 });
 
-
 ipcMain.handle("duplicateWindow", async (event, ...args) => {
     const windowMgr = new WindowManager();
     let newMainWindow = windowMgr.createMainWindow();
     newMainWindow.show();
 });
+
+let markdownRender = createMarkdownRender()
+ipcMain.handle("markdownRender", async(event, rawText)=>{
+    return markdownRender(rawText)
+})
