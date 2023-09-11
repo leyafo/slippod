@@ -4,6 +4,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 contextBridge.exposeInMainWorld('utils', {
     reloadAll: (...args) => ipcRenderer.invoke("reloadAll", ...args),
     uploadCardEditing: (id, entry) => ipcRenderer.invoke("uploadCardEditing", id, entry),
+    markdownRender: (rawText) => ipcRenderer.invoke("markdownRender", rawText),
 });
 
 contextBridge.exposeInMainWorld('pages', {
@@ -14,7 +15,6 @@ contextBridge.exposeInMainWorld('pages', {
         return ipcRenderer.invoke("duplicateWindow");
     }
 });
-
 
 (function () {
     const paginatedDFFunc = [

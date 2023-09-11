@@ -1,5 +1,3 @@
-import * as marked from "marked";
-
 //all existed elements
 export const sideNav = document.getElementById('sideNav')
 export const btnSideNav = document.getElementById('btnSideNav')
@@ -124,7 +122,10 @@ export function timeAgo(unixTimestamp) {
 
 export function fillingCardItem(parentItem, card){
     const content = parentItem.querySelector(".content");
-    content.innerHTML = marked.parse(card.entry);
+
+    utils.markdownRender(card.entry).then(function(html){
+        content.innerHTML = html;
+    })
 
     const createTimeSapn = parentItem.querySelector("span.itemCreateTime");
     const createdTime = unixTimeFormat(card.created_at);
@@ -165,18 +166,3 @@ export function linkClick(event){
     event.preventDefault();
     pages.showCardDetail(cardID);
 } 
-
-
-export function markedConfig(){
-    const renderer = new marked.Renderer();
-    renderer.text = function (text) {
-        text = text.replace(window.tagRegex, '<a href="/tags/$1" class="cm-hashtag">#$1</a>');
-        return text.replace(window.linkAtRegex, '<a href="/links/$1" class="cm-linkref">@$1</a>');
-    };
-    marked.setOptions({ renderer });
-
-    marked.use({
-        mangle: false,
-        headerIds: false
-    });
-}

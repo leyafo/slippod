@@ -1,5 +1,4 @@
 import * as CM from './common.js';
-import * as marked from "marked";
 import * as autoComplete from "./autocomplete.js"
 
 const hrefTagAll = "/tag_all"
@@ -13,7 +12,6 @@ function highlightSidebarLink(href){
     if(lastHighlightDiv != null && lastHighlightDiv.classList.contains(className)){
         lastHighlightDiv.classList.remove(className);
     }
-    console.log(href);
     const div = CM.sideNavContainer.querySelector(`div[href="${href}"]`);
     const tagContainer = div.closest(".tagContainer")
     tagContainer.classList.add(className);
@@ -26,7 +24,9 @@ function updateCard(li){
     const entry = content.firstChild.CodeMirror.getValue();
 
     db.updateCardEntryByID(cardID, entry).then(() => {
-        content.innerHTML = marked.parse(entry);
+        utils.markdownRender(entry).then(function(html){
+            content.innerHTML = html
+        });
         const controlPanel = li.querySelector(".itemCtrlPanel");
         CM.toggleElementHidden(controlPanel)
     });
@@ -37,7 +37,9 @@ function cancelUpdate(li){
     const content = li.querySelector(".content");
     const cardID = li.dataset.id;
     db.getCardByID(cardID).then(function(card){
-        content.innerHTML = marked.parse(card.entry);
+        utils.markdownRender(card.entry).then(function(html){
+            content.innerHTML = html;
+        })
         const controlPanel = li.querySelector(".itemCtrlPanel");
         CM.toggleElementHidden(controlPanel)
     })
@@ -234,7 +236,6 @@ function reloadCardList(cards, headerTitle = 'All Cards', order = CM.listInsertB
     // Display the cards
     CM.cardsList.innerHTML = '';  // Clear the current cards
     cards.forEach(card => {
-        console.log(card.id);
         insertCardToList(card, order)
     });
 
@@ -569,7 +570,6 @@ document.addEventListener('click', function(event){
 })
 
 window.addEventListener('DOMContentLoaded', function() {
-    CM.markedConfig();
     //load cards
     db.getCards(0, CM.limitItems).then(function(cards) {
         reloadCardList(cards, "All Cards", CM.listInsertAfterLast)
