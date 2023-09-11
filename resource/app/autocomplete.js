@@ -5,7 +5,7 @@ const atMatchRegex = /@([a-zA-Z0-9\u4e00-\u9fff/\\_-]+)/
 
 function createCardSuggestion(card){
     const div = document.createElement("div");
-    utils.markdownRender(entry).then(function(html){
+    utils.markdownRender(card.entry).then(function(html){
         div.innerHTML = html
     });
     div.dataset.id = card.id; 
