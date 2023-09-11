@@ -32,7 +32,7 @@ class WindowManager{
     }  
 
     createMainWindow() {
-        this.mainWindow = new BrowserWindow({
+        let windowConfig = {
             width: 800,
             height: 600,
             minWidth: 400,
@@ -42,11 +42,20 @@ class WindowManager{
                 preload: path.join(__dirname, "preload.js"),
                 scrollBounce: true
             },
-        });
-
+        };
+    
+        let activeWindow = BrowserWindow.getFocusedWindow();
+        if (activeWindow) {
+            let { x, y } = activeWindow.getBounds();
+            windowConfig.x = x + 50;
+            windowConfig.y = y + 50;
+        }
+    
+        this.mainWindow = new BrowserWindow(windowConfig);
+    
         const url = this.getResourceURL("resource", "app", "index.html");
         this.mainWindow.loadURL(url);
-
+    
         if (process.env.NODE_ENV === "development") {
             const contextMenu = require("electron-context-menu");
             contextMenu({
@@ -55,17 +64,17 @@ class WindowManager{
                 ],
             });
         }
-
+    
         globalShortcut.register("CommandOrControl+R", () => {
             this.mainWindow.reload();
         });
-
+    
         this.mainWindow.once("ready-to-show", () => {
             this.mainWindow.show();
         });
-
+    
         return this.mainWindow;
-    }
+    }    
 
     createSettingsWindow() {
         if (this.mainWindow === null) {
@@ -100,30 +109,45 @@ class WindowManager{
         if (this.mainWindow === null) {
             throw new Error("Main window must be initialized before settings window");
         }
-        let detailWindow = new BrowserWindow({
-            width: 800,
-            height: 600,
-            minWidth: 400,
-            minHeight: 400,
-            titleBarStyle: "hidden",
-            webPreferences: {
-                preload: path.join(__dirname, "preload.js"),
-                scrollBounce: true
-            },
-        });
-
+    
+        let detailWindow;  // Define detailWindow here
+    
+        let activeWindow = BrowserWindow.getFocusedWindow();
+        if (activeWindow) {
+            let { x, y } = activeWindow.getBounds();
+    
+            detailWindow = new BrowserWindow({
+                x: x + 50,
+                y: y + 50,
+                width: 800,
+                height: 600,
+                minWidth: 400,
+                minHeight: 400,
+                titleBarStyle: "hidden",
+                webPreferences: {
+                    preload: path.join(__dirname, "preload.js"),
+                    scrollBounce: true
+                },
+            });
+        }
+    
+        if (!detailWindow) {
+            // Handle the case where detailWindow is not initialized
+            return;
+        }
+    
         const url = this.getResourceURL("resource", "app", "detail.html");
         detailWindow.loadURL(`${url}?cardID=${cardID}`);
-
+    
         detailWindow.once("ready-to-show", () => {
             detailWindow.show();
         });
-
-        detailWindow.on("closed", ()=>{
-            detailWindow=null
+    
+        detailWindow.on("closed", () => {
+            detailWindow = null;
         });
-
-        return detailWindow
+    
+        return detailWindow;
     }
 
 }
