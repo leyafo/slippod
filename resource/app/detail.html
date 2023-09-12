@@ -13,8 +13,20 @@
     <div id="detailWinWrapper" class="w-full max-w-[40rem] mx-auto">
         <div id="mainCardArea"></div>
         <div id="linkedCardsArea">
-            <div id="linkedCardsHeader"><span id="linkedCardsCount"></span></div>
-            <div id="linkedCards"></div>
+            <div id="linkedCardsTab" class="hidden">
+                <div id="backlinkTab">
+                    <span class="icon"></span>
+                    <span class="label"></span>
+                </div>
+                <div id="outgoingLinkTab">
+                    <span class="icon"></span>
+                    <span class="label"></span>
+                </div>
+            </div>
+            <div id="linkedCards">
+                <div id="backlinksCards"></div>
+                <div id="outgoingLinksCards" class="hidden"></div>
+            </div>
         </div>
     </div>
     <template id="cardTemplate">
