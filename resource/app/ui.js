@@ -86,6 +86,9 @@ function editCard(li) {
                 updateCard(li);
             }else if(event.key == 'Escape'){
                 cancelUpdate(li);
+            }else if(!cm.state.completionActive && event.key == '#'){
+                CodeMirror.commands.autocomplete(cm, null, {completeSingle: false});
+                // cm.showHint();
             }
         });
 
