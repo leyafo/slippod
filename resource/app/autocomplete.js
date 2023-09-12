@@ -140,47 +140,60 @@ function navigateMenu(event, menu) {
 }
 
 function autocompleteHints(cm, option) {
-  let allTags = [];
-  db.getAllTags().then(function (tags) {
-    for (let t of tags) {
-        allTags.push(t)
-    }
-  });
-  return new Promise(function (accept) {
-    let cursor = cm.getCursor(),
-      lineContent = cm.getLine(cursor.line),
-      token = cm.getTokenAt(cursor);
-    let lastCharacter = lineContent[cursor.ch - 1];
-    const inputText = token.string.slice(1);
-    if ((inputText.length > 0 && lastCharacter== '#') || lastCharacter == '@'){
-        return accept()
-    }
-    
+    let allTags = [];
+    let allHints = [];
     db.getAllTags().then(function (tags) {
-    let hints = [];
-    for (let t of allTags) {
-        if(inputText.length > 0){
-            if (fuzzySearch(t.tag, inputText, {})){
-                hints.push({
-                    text: `#${t.tag} `,
-                    displayText: t.tag,
-                });
-            }
-        }else{
-            hints.push({
+        for (let t of tags) {
+            allTags.push(t)
+            allHints.push({
                 text: `#${t.tag} `,
                 displayText: t.tag,
             });
         }
-    }
-    return accept({
-        list: hints,
-        from: { line: cursor.line, ch: cursor.ch - (inputText.length+2)},
-        to: cursor,
     });
-    });
-  });
+    return new Promise(function (accept) {
+        setTimeout(function () {
+            var cursor = cm.getCursor(), line = cm.getLine(cursor.line)
+            var start = cursor.ch-1, end = cursor.ch;
+
+            console.log(cursor.ch, line, line.charAt(cursor.ch-1))
+            while (start > 0 && line.charAt(start) != '#'){
+                --start
+            }
+
+            //+1 means remove '#'
+            var nakedTag = line.slice(start+1, end).toLowerCase()
+            console.log(nakedTag);
+            if (nakedTag === "") {
+                return accept({
+                    list: allHints,
+                    from: CodeMirror.Pos(cursor.line, start),
+                    to: CodeMirror.Pos(cursor.line, end)
+                })
+            }
+
+            console.log(!window.tagRegex.test(nakedTag))
+            if (!window.tagRegex.test(`#${nakedTag}`)){
+                return accept(null);
+            }
+            let hints = [];
+            for (let t of allTags) {
+                if (fuzzySearch(t.tag, nakedTag, {})) {
+                    hints.push({
+                        text: `#${t.tag} `,
+                        displayText: t.tag,
+                    });
+                }
+            }
+            return accept({
+                list: hints,
+                from: CodeMirror.Pos(cursor.line, start),
+                to: CodeMirror.Pos(cursor.line, end)
+            })
+        }, 100);
+    })
 }
+  
 
 // CodeMirror.defineMode("hashtags", function (config, parserConfig) {
 //     var hashtagOverlay = {
