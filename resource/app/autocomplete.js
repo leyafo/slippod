@@ -140,6 +140,7 @@ function navigateMenu(event, menu) {
 }
 
 function autocompleteHints(cm, option) {
+    console.log(option)
     let allTags = [];
     let allHints = [];
     db.getAllTags().then(function (tags) {
