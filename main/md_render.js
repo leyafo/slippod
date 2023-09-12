@@ -10,9 +10,8 @@ function createMarkdownRender(){
         text = text.replace(tagRegex, '<a href="/tags/$1" class="cm-hashtag">#$1</a>');
         return text.replace(linkAtRegex, function(matchedLink){
             const linkID = matchedLink.slice(1)
-            const card = db.cardIsExisted(linkID)
-            if (card != undefined){
-                return `<a href="/links/${card.id}" class="cm-linkref">${matchedLink}</a>`;
+            if(db.cardIsExisted(linkID)){
+                return `<a href="/links/${linkID}" class="cm-linkref">${matchedLink}</a>`;
             }
             return matchedLink
         })

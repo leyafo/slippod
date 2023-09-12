@@ -5,10 +5,15 @@ const tagPattern = /#([a-zA-Z0-9\u4e00-\u9fff/\\_-]+)(?![a-zA-Z0-9\u4e00-\u9fff/
 const linkAtPattern = /@(\d+)/g;
 
 let db = null;
+let existedIDs = new Set();
 const configs = {
     isInitlized: false,
     extPath: "",
     dictPath: "",
+}
+
+function N(number){
+    return Math.floor(Number(number))
 }
 
 function getTagRegex(){
@@ -88,29 +93,28 @@ function getAllCards() {
 
 //the newest card is order in first
 function getCards(offset, limit){
-    return db.prepare(`select * from cards order by id desc limit ?, ?`).all(Math.floor(Number(offset)), 
-                    Math.floor(Number(limit)));
+    return db.prepare(`select * from cards order by id desc limit ?, ?`).all(N(offset), N(limit));
 }
 
 function getCardsByMiddleID(middleID, upLimit, downLimit, limit){
     if (upLimit == 0 && downLimit == 0){
-        const upCards = db.prepare(`select * from cards where id >= ? order by id asc limit 0, ?  `).all(Number(middleID), Number(limit));
-        const downCards = db.prepare(`select * from cards where id < ? order by id desc limit 0, ?`).all(Number(middleID), Number(limit)); 
+        const upCards = db.prepare(`select * from cards where id >= ? order by id asc limit 0, ?  `).all(N(middleID), N(limit));
+        const downCards = db.prepare(`select * from cards where id < ? order by id desc limit 0, ?`).all(N(middleID), N(limit)); 
         return downCards.reverse().concat(upCards);
     }
     if(limit > 0){ //going down
-        let downCards =  db.prepare(`select * from cards where id < ? order by id desc limit ?, ?`).all(Number(middleID), Number(downLimit), Number(limit)); 
+        let downCards =  db.prepare(`select * from cards where id < ? order by id desc limit ?, ?`).all(N(middleID), N(downLimit), N(limit)); 
         return downCards.reverse();
     }else if(limit < 0){
         //going up
         console.log(middleID, upLimit, downLimit, limit);
-        return db.prepare(`select * from cards where id >= ? order by id asc limit ?, ?`).all(Number(middleID), Number(upLimit), Math.abs(limit));
+        return db.prepare(`select * from cards where id >= ? order by id asc limit ?, ?`).all(N(middleID), N(upLimit), Math.abs(limit));
     }
 }
 
 function getTrashCards(offset, limit){
-    const trashCards =  db.prepare(`select * from trash order by card_id desc limit ?, ?`).all(Math.floor(Number(offset)), 
-                    Math.floor(Number(limit)));
+    const trashCards =  db.prepare(`select * from trash order by card_id desc limit ?, ?`).all(N(offset), 
+                    N(limit));
     let cards = [];
     for (tc of trashCards){
         cards.push({
@@ -165,7 +169,8 @@ function parseLinks(cardEntry){
     for (m of matches){
         let matchedString = m[0].trim()
         if(matchedString[0] == '@'){
-            links.add(matchedString.slice(1));
+            const linkID = N(matchedString.slice(1));
+            links.add(linkID);
         }
     }
     return links
@@ -191,7 +196,14 @@ function getCardByID(id){
     return db.prepare(`select * from cards where id=?`).get(id);
 }
 
+function getCardsByIDs(ids){
+    const sql = `SELECT * FROM cards WHERE id IN (SELECT value FROM json_each(?))`;
+    const stmt = db.prepare(sql);
+    return stmt.all(JSON.stringify(ids));
+}
+
 function getCardDetails(id){
+    id = N(id);
     var result = {}
     result.card = getCardByID(id)
     result.referencesBy = [] 
@@ -200,7 +212,8 @@ function getCardDetails(id){
     const searchRef = `SELECT rowid, entry, simple_snippet(cards_fts, 0, '', '', '', ${tokenLengh}) as snippet FROM cards_fts WHERE entry MATCH simple_query('${keyword}') ORDER BY rank`;
     const refResult =  db.prepare(searchRef).all()
     for(r of refResult){
-        if(r.snippet.indexOf(keyword) != -1){
+        if(r.snippet.indexOf(keyword) != -1 && N(r.rowid) !== id){
+            
             result.referencesBy.push({
                 id: r.rowid,
                 entry: r.entry,
@@ -214,11 +227,14 @@ function getCardDetails(id){
     `).all(id)
 
     result.references = []
+    let linkIDs = [];
     const links = parseLinks(result.card.entry);
     links.forEach((linkID) => {
-        const card = getCardByID(linkID)
-        result.references.push(card);
+        if (linkID !== id){ //exclude self
+            linkIDs.push(linkID)
+        }
     });
+    result.references = getCardsByIDs(linkIDs)
 
     return result
 }
@@ -231,6 +247,7 @@ function moveCardToTrash(id){
         db.prepare(`insert into trash( 
             card_id, card_entry, card_created_at, card_updated_at
             ) values(?, ?, ?, ?)`).run(card.id, card.entry, card.created_at, card.updated_at);
+        existedIDs.delete(id);
     })(id)
     return 
 }
@@ -262,7 +279,15 @@ function restoreCard(trashID){
 }
 
 function cardIsExisted(id){
-    return db.prepare(`select id from cards where id=?`).get(id);
+    if(existedIDs.has(id)){
+        return true;
+    }
+    let result = db.prepare(`select id from cards where id=?`).get(id);
+    if (result != undefined){
+        existedIDs.add(id)
+        return true
+    }
+    return false
 }
 
 function updateCardEntryByID(id, cardEntry){
