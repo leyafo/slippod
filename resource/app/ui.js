@@ -73,7 +73,7 @@ function editCard(li) {
 
         editor.on("change", function (cm, change) {
             if (change.text[0] == "#") {
-                cm.showHint();
+                cm.showHint({type:'tag'});
             }else if (change.text[0] === "@"){
                 autoComplete.showAtLinkMenu(cm, editor)
             }
@@ -337,7 +337,9 @@ function updateSuggestionBox(cards) {
         const spanEntry = document.createElement("span");
         const spanIcon = document.createElement("span");
       
-        spanEntry.textContent = card.entry.trim();
+        utils.markdownRender(card.entry.trim()).then(function(html){
+            spanEntry.innerHTML = html
+        })
         spanEntry.classList.add("entry");
       
         spanIcon.classList.add("icon");
@@ -382,7 +384,7 @@ function handleOptionSelect(cardID) {
 
 function clearSearch(event) {
   // Defocus the search box
-  CM.searchBox.blur();
+  CM.searchBox.blur()
 
   // Clear the search term
   CM.searchBox.value = "";
