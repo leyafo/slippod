@@ -1,4 +1,4 @@
-const { ipcMain, dialog, app } = require('electron');
+const { BrowserWindow, ipcMain, dialog, app } = require('electron');
 const editorUpdating = require('./editor_update.js');
 const db = require('./db.js');
 const config = require('./config.js');
@@ -7,7 +7,7 @@ const fs = require("fs");
 module.exports = {
     registerWindowHandlers: function (windowMgr) {
         ipcMain.handle("reloadAll", async (event, ...args) => {
-            windowMgr.getMainWindow().reload();
+            BrowserWindow.getFocusedWindow().reload(); 
         });
 
         ipcMain.handle("uploadCardEditing", async (event, id, entry) => {

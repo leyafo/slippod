@@ -33,8 +33,12 @@ function showAtLinkMenu(cm, editor) {
         }
         menu.firstChild.classList.add("highlighted");
         document.body.appendChild(menu);
-        editor.on("keydown", completeAtKeyHandler(editor, menu, cm));
     });
+    editor.on("keydown", completeAtKeyHandler(editor, menu, cm));
+    editor.on("blur", function(event){
+        console.log('editor blur');
+        closeAtMenu(menu)
+    })
 }
 
 function getLastMatch(str, pattern) {
