@@ -28,7 +28,10 @@ app.whenReady().then(() => {
     });
 
     globalShortcut.register("CommandOrControl+R", () => {
-        BrowserWindow.getFocusedWindow().reload(); 
+        const focusedWindow = BrowserWindow.getFocusedWindow()
+        if(focusedWindow != null){
+            focusedWindow.reload(); 
+        }
     });
 });
 

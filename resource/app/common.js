@@ -164,5 +164,9 @@ export function linkClick(event){
         return;
     }
     event.preventDefault();
-    pages.showCardDetail(cardID);
+    db.cardIsExisted(cardID).then(function(isExisted){
+        if (isExisted){
+            pages.showCardDetail(cardID);
+        }
+    });
 } 
