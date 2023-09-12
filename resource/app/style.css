@@ -548,6 +548,9 @@ content: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcv
     line-height: 1.86666667rem;
     border-radius: 0.26667rem;
     background-color: #F2F3F5;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 #suggestionResults .suggestedItem .icon::before {
