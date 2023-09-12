@@ -29,6 +29,12 @@ function updateCard(li){
         });
         const controlPanel = li.querySelector(".itemCtrlPanel");
         CM.toggleElementHidden(controlPanel)
+
+        db.getAllTags().then(function(tags){
+            let tree = buildTagTree(tags)
+            let tagListHTML = buildTagHtml(tree)
+            CM.tagList.innerHTML = tagListHTML
+        })
     });
     li.dataset.editing = 'false';
 }
