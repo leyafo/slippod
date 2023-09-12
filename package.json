@@ -9,6 +9,7 @@
     "build": "vite build",
     "db_init": "node main/du_init.js",
     "dev_start": "NODE_ENV=development electron .",
+    "dev_start_logging": "NODE_ENV=development electron . --enable-logging",
     "pack": "electron-builder --dir",
     "dist": "electron-builder --config.asar=false",
     "cross_dist": "electron-builder -mwl",

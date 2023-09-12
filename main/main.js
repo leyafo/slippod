@@ -1,5 +1,5 @@
 // main.js
-const {ipcMain, app, Menu, BrowserWindow } = require("electron");
+const {globalShortcut,ipcMain, app, Menu, BrowserWindow } = require("electron");
 const WindowManager = require('./window_manager');
 const ipcHandler = require("./ipc_handlers");
 const {menuTemplate} = require("./menu");
@@ -26,6 +26,10 @@ app.whenReady().then(() => {
             mainWindow = windowMgr.createMainWindow();
         }
     });
+
+    globalShortcut.register("CommandOrControl+R", () => {
+        BrowserWindow.getFocusedWindow().reload(); 
+    });
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -40,6 +44,7 @@ ipcMain.handle("duplicateWindow", async (event, ...args) => {
     let newMainWindow = windowMgr.createMainWindow();
     newMainWindow.show();
 });
+
 
 let markdownRender = createMarkdownRender()
 ipcMain.handle("markdownRender", async(event, rawText)=>{

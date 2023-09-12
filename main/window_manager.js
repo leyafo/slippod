@@ -1,4 +1,4 @@
-const { BrowserWindow, globalShortcut} = require('electron');
+const { BrowserWindow} = require('electron');
 const path = require('path');
 
 class WindowManager{
@@ -64,11 +64,6 @@ class WindowManager{
                 ],
             });
         }
-    
-        globalShortcut.register("CommandOrControl+R", () => {
-            this.mainWindow.reload();
-        });
-    
         this.mainWindow.once("ready-to-show", () => {
             this.mainWindow.show();
         });
