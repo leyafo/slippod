@@ -18,11 +18,12 @@ body {
     background-color: #FFFFFF;
     box-shadow: 1px 0px 0px 0px rgba(0, 0, 0, 0.05);
     font-weight: 500;
-    @apply text-base;
+    overflow: auto;
+    @apply text-base w-56;
 }
 
 #sideNavContainer {
-    @apply pt-14 px-4;
+    @apply pt-14 px-4 pb-10;
     line-height: 0;
 }
 
@@ -73,7 +74,7 @@ body {
 }
 
 #tagsList {
-    @apply w-56 pt-6;
+    @apply pt-6;
 }
 
 #tagsList li ul .tagContainer {
@@ -132,10 +133,11 @@ body {
 
 #featureDock {
     border-top: 1px solid #E9EAEC;
-    width: 100%;
     height: 36px;
     padding: 4px;
     background-color: #FFFFFF;
+    position: fixed;
+    @apply w-56 bottom-0;
 }
 
 #publisher {
