@@ -312,7 +312,7 @@ function performSearch(searchTerm) {
     return;
   }
 
-  db.searchCards(searchTerm, 0, CM.limitItems).then(function (cards) {
+  db.getCardSearchSuggestions(searchTerm).then(function (cards) {
     updateSuggestionBox(cards);
   });
 }
