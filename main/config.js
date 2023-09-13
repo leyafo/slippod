@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require('path');
+const os = require("os");
 
 function getAppDataPath() {
   switch (process.platform) {
@@ -20,8 +21,6 @@ function getAppDataPath() {
 }
 
 function getExtensionPath(appDir){
-    const os = require('os');
-    const path = require("path")
     if(os.platform == "win32"){
         return path.join(appDir, "libsimple", "libsimple.dll") 
     }else{
