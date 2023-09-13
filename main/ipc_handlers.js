@@ -3,6 +3,7 @@ const editorUpdating = require('./editor_update.js');
 const db = require('./db.js');
 const config = require('./config.js');
 const fs = require("fs");
+const path = require('path');
 
 module.exports = {
     registerWindowHandlers: function (windowMgr) {
@@ -55,7 +56,7 @@ module.exports = {
         });
         const appPath = app.getAppPath();
         const extPath = config.getExtensionPath(appPath);
-        const dictPath = config.getExtensionPath(appPath);
+        const dictPath = config.getDictPath(appPath);
         let dbPath = config.readDBPathConfig();
         if (dbPath == "" || !fs.existsSync(dbPath)) {
             dbPath = path.join(config.getAppDataPath(), "slippod.db");

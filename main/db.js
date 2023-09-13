@@ -202,6 +202,31 @@ function getCardsByIDs(ids){
     return stmt.all(JSON.stringify(ids));
 }
 
+function getCardSearchSuggestions(keyword){
+    const tokenLengh = keyword.length+20; //limit the token size
+    if(keyword === ""){//get latest 5 records
+        let recentCards = getCards(0, 5);
+        let results = [];
+        for(let card of recentCards){
+            //get the begining of content
+            card.entry = card.entry.trim().slice(0, tokenLengh).replaceAll("\n", " ");
+            results.push(card)
+        }
+        return results;
+    }
+    const searchRef = `SELECT rowid, simple_snippet(cards_fts, 0, '<mark>', '</mark>', '...', ${tokenLengh}) as snippet 
+                            FROM cards_fts WHERE entry MATCH jieba_query('${keyword}') ORDER BY rank`;
+    const results = db.prepare(searchRef).all()
+    let matchedCards = [];
+    for (let r of  results){
+        matchedCards.push({
+            id: r.rowid,
+            entry: r.snippet,
+        })
+    }
+    return matchedCards 
+}
+
 function getCardDetails(id){
     id = N(id);
     var result = {}
@@ -211,7 +236,7 @@ function getCardDetails(id){
     const tokenLengh = keyword.length; //limit the token size
     const searchRef = `SELECT rowid, entry, simple_snippet(cards_fts, 0, '', '', '', ${tokenLengh}) as snippet FROM cards_fts WHERE entry MATCH simple_query('${keyword}') ORDER BY rank`;
     const refResult =  db.prepare(searchRef).all()
-    for(r of refResult){
+    for(let r of refResult){
         if(r.snippet.indexOf(keyword) != -1 && N(r.rowid) !== id){
             
             result.referencesBy.push({
@@ -378,4 +403,5 @@ module.exports = {
     getTagRegex,
     getLinkAtRegex,
     searchCardsWithStyle,
+    getCardSearchSuggestions,
 };

@@ -73,9 +73,9 @@ function editCard(li) {
 
         editor.on("change", function (cm, change) {
             if (change.text[0] == "#") {
-                cm.showHint({type:'tag'});
+                cm.showHint({type:'tag', completeSingle:false});
             }else if (change.text[0] === "@"){
-                autoComplete.showAtLinkMenu(cm, editor)
+                cm.showHint({type:'link', completeSingle:false, async: true});
             }
 
             //set height as the same of content
