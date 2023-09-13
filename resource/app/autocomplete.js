@@ -97,7 +97,6 @@ function showLinkHints(cm, option){
                     to: CodeMirror.Pos(cursor.line, end),
                 });
             });
-
         }, 100);
     });
 }
