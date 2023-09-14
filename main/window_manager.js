@@ -1,4 +1,4 @@
-const { BrowserWindow} = require('electron');
+const {app, BrowserWindow} = require('electron');
 const path = require('path');
 
 class WindowManager{
