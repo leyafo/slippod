@@ -23,5 +23,5 @@ fi
 
 # Start sqlite3 with the extension loaded
 echo sqlite3 "$DB_PATH" -cmd ".load $EXTENSION_PATH"
-sqlite3 "$DB_PATH" -cmd ".load $EXTENSION_PATH"
+sqlite3 "$DB_PATH" -cmd ".load $EXTENSION_PATH" -cmd "select jieba_dict('/home/yafu/code/electron-slippod/libsimple/dict')"
 
