@@ -337,9 +337,7 @@ function updateSuggestionBox(cards) {
         const spanEntry = document.createElement("span");
         const spanIcon = document.createElement("span");
       
-        utils.markdownRender(card.entry.trim()).then(function(html){
-            spanEntry.innerHTML = html
-        })
+        spanEntry.innerHTML = card.entry
         spanEntry.classList.add("entry");
       
         spanIcon.classList.add("icon");
