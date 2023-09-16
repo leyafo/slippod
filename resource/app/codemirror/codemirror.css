@@ -1,3 +1,7 @@
+.CodeMirror, .CodeMirror * {
+  all: revert;
+}
+
 /* BASICS */
 
 .CodeMirror {

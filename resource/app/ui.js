@@ -40,7 +40,7 @@ function updateCard(li){
     li.dataset.editing = 'false';
 }
 
-function cancelUpdate(li){
+function cancelUpdate(li) {
     const content = li.querySelector(".content");
     const cardID = li.dataset.id;
     db.getCardByID(cardID).then(function(card){
@@ -59,8 +59,8 @@ function editCard(li) {
     getEditingCardPromise.then(function(card) {
         const cardEntry = card.entry;
         const content = li.querySelector(".content") 
-        content.innerHTML = '';
         const controlPanel = li.querySelector(".itemCtrlPanel");
+        content.innerHTML = '';
         CM.toggleElementShown(controlPanel)
         li.dataset.editing = 'true';
         let editor = CodeMirror(content, {
@@ -69,7 +69,8 @@ function editCard(li) {
           keyMap: "emacs",
           pollInterval: 1000,
           hintOptions: { hint: autoComplete.autocompleteHints },
-          lineWrapping: false,
+          lineWrapping: true,
+          autoRefresh: true,
         });
 
         editor.on("change", function (cm, change) {
@@ -78,11 +79,6 @@ function editCard(li) {
             }else if (change.text[0] === "@"){
                 cm.showHint({type:'link', completeSingle:false, async: true});
             }
-
-            //set height as the same of content
-            let lineCount = editor.lineCount();
-            let totalHeight = lineCount * editor.defaultTextHeight();
-            editor.setSize(null, totalHeight);
         });
         editor.setValue(cardEntry);
         editor.on("endCompletion", function () {
