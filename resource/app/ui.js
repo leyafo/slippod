@@ -23,7 +23,8 @@ function updateCard(li){
     const cardID = li.dataset.id;
     const entry = content.firstChild.CodeMirror.getValue();
 
-    db.updateCardEntryByID(cardID, entry).then(() => {
+    db.updateCardEntryByID(cardID, entry).then((result) => {
+        console.log(result.id, result.updated_at);
         utils.markdownRender(entry).then(function(html){
             content.innerHTML = html
         });
