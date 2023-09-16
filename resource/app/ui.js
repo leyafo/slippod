@@ -341,6 +341,7 @@ function updateSuggestionBox(cards) {
         spanEntry.classList.add("entry");
       
         spanIcon.classList.add("icon");
+        spanIcon.textContent = `@${card.id} `
       
         div.dataset.id = card.id;
         div.onclick = searchOptionClick;
@@ -367,15 +368,27 @@ function updateSuggestionBox(cards) {
 }
 
 function searchOptionClick(event) {
-  const cardID = event.target.dataset.id;
-  handleOptionSelect(cardID);
-  clearSearch(event);
+  const highlightedSuggestion = CM.suggestionResults.querySelector(
+      "#suggestionResults .highlighted"
+  );
+  if (highlightedSuggestion) {
+    const cardID = highlightedSuggestion.dataset.id
+    handleOptionSelect(cardID);
+    clearSearch(event);
+  }
 }
 
 function handleOptionSelect(cardID) {
   db.getCardsByMiddleID(Number(cardID), 0, 0, CM.limitItems).then(function (cards) {
-    reloadCardList(cards, "All Cards");
+    reloadCardList(cards, "All Cards", CM.listInsertBeforeFirst);
     highlightSidebarLink(hrefTagAll)
+    const selectedItem = CM.cardsList.querySelector(`[data-id='${cardID}']`)
+    CM.highlightItem("selected", selectedItem, CM.cardsList)
+    setTimeout(function(){
+        const position = selectedItem.getBoundingClientRect();
+        let scrollbarHeight = window.innerHeight * (window.innerHeight / document.body.offsetHeight);
+        document.documentElement.scrollTop =  position.top-scrollbarHeight; // Reset the scroll position to the top
+    }, 100);
     CM.hideOmniSearchAndUnfocus()
   });
 }

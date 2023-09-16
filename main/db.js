@@ -214,11 +214,24 @@ function getCardSearchSuggestions(keyword){
         }
         return results;
     }
+    let matchSingleCard = null
+    let singleLinkMatches = keyword.match(linkAtPattern)
+    if(singleLinkMatches!=null){
+        const cardID =singleLinkMatches[0].slice(1)
+        matchSingleCard = getCardByID(N(cardID))
+    }
     const searchRef = `SELECT rowid, simple_snippet(cards_fts, 0, '<mark>', '</mark>', '...', ${tokenLengh}) as snippet 
                             FROM cards_fts WHERE entry MATCH jieba_query('${keyword}') ORDER BY rank`;
     const results = db.prepare(searchRef).all()
+
     let matchedCards = [];
+    if(matchSingleCard != null){
+        matchedCards.push(matchSingleCard);
+    }
     for (let r of  results){
+        if(matchSingleCard != null && r.id == matchSingleCard.id){
+            continue
+        }
         matchedCards.push({
             id: r.rowid,
             entry: r.snippet,
@@ -342,7 +355,7 @@ function updateCardEntryByID(id, cardEntry){
 
 function searchCards(keyWord, offset, limit){
     // in simple_query, we accept a second params, '0' means disable pinyin split
-    const sql = `SELECT rowid, entry FROM cards_fts WHERE entry MATCH simple_query('${keyWord}', '0') ORDER BY rank limit ?, ?;`;
+    const sql = `SELECT rowid, entry FROM cards_fts WHERE entry MATCH simple_query('${keyWord}', 0) ORDER BY rank limit ?, ?;`;
     const result =  db.prepare(sql).all(offset, limit)
     let cards = [];
     for(r of result){
