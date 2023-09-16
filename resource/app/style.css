@@ -229,6 +229,25 @@ body {
     @apply align-text-bottom mr-1;
 }
 
+#newItem {
+    background-color: #FFFFFF;
+    @apply px-4 pb-4 pt-1 mb-4;
+}
+
+#newItem #newItemEditor.empty::before {
+    content: "What's on your mind at the moment?";
+    position: absolute;
+    color: #B0B3B7;
+    line-height: 2rem;
+    cursor: text;
+    @apply pl-1;
+}
+
+#newItem #newItemEditor .editorPlaceholder {
+    height: 48px;
+    cursor: text;
+}
+
 #cardsList .selected,
 #suggestionResults .highlighted,
 .highlighted {
@@ -239,6 +258,7 @@ body {
     @apply text-base;
     background-color: beige;
 }
+
 .completeAtMenu div {
     margin-bottom: 1em;
 }
@@ -250,6 +270,10 @@ body {
 
 #listAreaContainer {
     @apply px-12;
+}
+
+#listHeader {
+    @apply mb-8;
 }
 
 #listHeader .icon {
@@ -320,11 +344,6 @@ body {
     line-height: 24px;
 }
 
-#cardsList {
-    @apply pt-8;
-}
-
-
 #cardsList > li, .cardContainer  {
     @apply mb-4 p-4 bg-white rounded;
 }
@@ -338,69 +357,69 @@ body {
 }
 
 .itemHeaderBar {
-position: relative;
-@apply mb-2;
+    position: relative;
+    @apply mb-2;
 }
 
 .itemMetaInfo {
-color: #8F9193;
+    color: #8F9193;
 }
 
 .itemMetaInfo .itemId a {
-color: #8F9193;
-text-decoration: none;
+    color: #8F9193;
+    text-decoration: none;
 }
 .itemMetaInfo .itemId a:hover {
-color: #8F9193;
-border-bottom: 1px solid #8F9193;
+    color: #8F9193;
+    border-bottom: 1px solid #8F9193;
 }
 
 .itemHeaderBar .itemMenuContainer {
-position: absolute;
-right: 0;
-top: -1.5px;
-border-radius: 9px;
-line-height: 1.2rem;
-@apply px-2;
+    position: absolute;
+    right: 0;
+    top: -1.5px;
+    border-radius: 9px;
+    line-height: 1.2rem;
+    @apply px-2;
 }
 
 .itemHeaderBar .itemMenuContainer:hover {
-background-color: #E0E3E7;
+    background-color: #E0E3E7;
 }
 
 .itemHeaderBar .itemMenu {
-content: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNSIgaGVpZ2h0PSIzIiBmaWxsPSJub25lIiB2aWV3Qm94PSIwIDAgMTUgMyI+PGcgaWQ9Ikdyb3VwIj48ZyBpZD0iaWNvbi1kb3QtbWVudSI+PGNpcmNsZSBpZD0iRWxsaXBzZSA3X19fX18wXzBfVEZDUUNURFVPVSIgY3g9IjEuNSIgY3k9IjEuNSIgcj0iMS41IiBmaWxsPSIjOEY5MTkzIi8+PGNpcmNsZSBpZD0iRWxsaXBzZSA4X19fX18wXzFfSk5BQVNMRFVPQSIgY3g9IjcuNSIgY3k9IjEuNSIgcj0iMS41IiBmaWxsPSIjOEY5MTkzIi8+PGNpcmNsZSBpZD0iRWxsaXBzZSA5X19fX18wXzJfUUFUUUFCSUJRUiIgY3g9IjEzLjUiIGN5PSIxLjUiIHI9IjEuNSIgZmlsbD0iIzhGOTE5MyIvPjwvZz48L2c+PC9zdmc+");
-display: inline-block;
-width: 15px;
-height: 3px;
-vertical-align: middle;
+    content: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNSIgaGVpZ2h0PSIzIiBmaWxsPSJub25lIiB2aWV3Qm94PSIwIDAgMTUgMyI+PGcgaWQ9Ikdyb3VwIj48ZyBpZD0iaWNvbi1kb3QtbWVudSI+PGNpcmNsZSBpZD0iRWxsaXBzZSA3X19fX18wXzBfVEZDUUNURFVPVSIgY3g9IjEuNSIgY3k9IjEuNSIgcj0iMS41IiBmaWxsPSIjOEY5MTkzIi8+PGNpcmNsZSBpZD0iRWxsaXBzZSA4X19fX18wXzFfSk5BQVNMRFVPQSIgY3g9IjcuNSIgY3k9IjEuNSIgcj0iMS41IiBmaWxsPSIjOEY5MTkzIi8+PGNpcmNsZSBpZD0iRWxsaXBzZSA5X19fX18wXzJfUUFUUUFCSUJRUiIgY3g9IjEzLjUiIGN5PSIxLjUiIHI9IjEuNSIgZmlsbD0iIzhGOTE5MyIvPjwvZz48L2c+PC9zdmc+");
+    display: inline-block;
+    width: 15px;
+    height: 3px;
+    vertical-align: middle;
 }
 
 .itemHeaderBar .itemMenuOptions {
-@apply p-2 text-base;
-font-weight: 700;
-color: #FFFFFF;
-position: absolute;
-right: 0;
-border-radius: 0.53333rem;
-background: #2D3238;
-border: 0.5px solid #1C1C1C;
-box-shadow: 
-    inset 0 0 0 1px rgba(255, 255, 255, 0.10),
-    0px 2px 8px 0px rgba(0, 0, 0, 0.25);
+    @apply p-2 text-base;
+    font-weight: 700;
+    color: #FFFFFF;
+    position: absolute;
+    right: 0;
+    border-radius: 0.53333rem;
+    background: #2D3238;
+    border: 0.5px solid #1C1C1C;
+    box-shadow: 
+        inset 0 0 0 1px rgba(255, 255, 255, 0.10),
+        0px 2px 8px 0px rgba(0, 0, 0, 0.25);
 }
 
 .itemMenuOptions .label {
-display: inline-block;
-height: 14px;
+    display: inline-block;
+    height: 14px;
 }
 
 .itemMenuOptions .icon {
-display: inline-block;
-text-align: center;
-width: 20px;
-height: 14px;
-vertical-align: text-bottom;
+    display: inline-block;
+    text-align: center;
+    width: 20px;
+    height: 14px;
+    vertical-align: text-bottom;
 }
 
 .itemMenuOptions div {
@@ -450,47 +469,59 @@ content: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcv
     @apply pl-1;
 }
 
-.itemCtrlPanel {
+.itemCtrlPanel, #newItemCtrlPanel {
     text-align: right;
 }
 
-.itemCtrlPanel .btnCancelCard {
+.itemCtrlPanel .btnCancelCard, #newItemCtrlPanel .btnCancelNewCard {
     @apply mr-2 px-2;
     height: 26px;
 }
 
-.itemCtrlPanel .btnCancelCard .label {
+.itemCtrlPanel.inactive .btnCancelCard, #newItemCtrlPanel.inactive .btnCancelNewCard {
+    @apply hidden;
+}
+
+.itemCtrlPanel .btnCancelCard .label, #newItemCtrlPanel .btnCancelNewCard .label {
     @apply text-sm;
     font-weight: 500;
     color: #8F9193;
 }
 
-.itemCtrlPanel .btnCancelCard:hover {
+.itemCtrlPanel .btnCancelCard:hover, #newItemCtrlPanel .btnCancelNewCard:hover {
     @apply rounded;
     background-color: #DDE0E6;
     color: #FFFFFF;
 }
 
-.itemCtrlPanel .btnCancelCard:hover .label {
+.itemCtrlPanel .btnCancelCard:hover .label, #newItemCtrlPanel .btnCancelNewCard:hover .label {
     color: #FFFFFF;
 }
 
-.itemCtrlPanel .btnUpdateCard {
+.itemCtrlPanel .btnUpdateCard, #newItemCtrlPanel .btnCreateNewCard {
     @apply px-3.5 py-1 rounded;
     text-align: center;
     background-color: #8EB7F0;
     line-height: 16px;
 }
 
-.itemCtrlPanel .btnUpdateCard:hover {
-    background-color: #67A5F3;
-}
-
-.itemCtrlPanel .btnUpdateCard:disabled {
+.itemCtrlPanel.inactive .btnUpdateCard, #newItemCtrlPanel.inactive .btnCreateNewCard {
     background-color: #DDE0E6;
 }
 
-.itemCtrlPanel .btnUpdateCard .icon {
+.itemCtrlPanel .btnUpdateCard:hover, #newItemCtrlPanel .btnCreateNewCard:hover {
+    background-color: #67A5F3;
+}
+
+.itemCtrlPanel.inactive .btnUpdateCard:hover, #newItemCtrlPanel.inactive .btnCreateNewCard:hover {
+    background-color: #DDE0E6;
+}
+
+.itemCtrlPanel .btnUpdateCard:disabled, #newItemCtrlPanel .btnCreateNewCard:disabled {
+    background-color: #DDE0E6;
+}
+
+.itemCtrlPanel .btnUpdateCard .icon, #newItemCtrlPanel .btnCreateNewCard .icon {
     content: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgZmlsbD0ibm9uZSIgdmlld0JveD0iMCAwIDE2IDE2Ij48ZyBpZD0iR3JvdXAiPjxwYXRoIGlkPSJpY29uLXNlbmQtcGFwZXItcGxhbmUiIGZpbGw9IndoaXRlIiBkPSJNMTUuNzUwNyAwLjA5ODIxNDNDMTUuOTQ3MSAwLjI0MTA3MSAxNi4wMjc1IDAuNDMxNTQ4IDE1Ljk5MTggMC42Njk2NDNMMTMuNzA2MSAxNC4zODM5QzEzLjY3NjMgMTQuNTU2NSAxMy41ODExIDE0LjY5MDUgMTMuNDIwNCAxNC43ODU3QzEzLjMzNyAxNC44MzMzIDEzLjI0NDggMTQuODU3MSAxMy4xNDM2IDE0Ljg1NzFDMTMuMDc4MSAxNC44NTcxIDEzLjAwNjcgMTQuODQyMyAxMi45MjkzIDE0LjgxMjVMOC44ODQ3NSAxMy4xNjA3TDYuNzI0MDggMTUuNzk0NkM2LjYxNjk0IDE1LjkzMTUgNi40NzExMSAxNiA2LjI4NjU5IDE2QzYuMjA5MjEgMTYgNi4xNDM3MyAxNS45ODgxIDYuMDkwMTYgMTUuOTY0M0M1Ljk3NzA3IDE1LjkyMjYgNS44ODYzIDE1Ljg1MjcgNS44MTc4NSAxNS43NTQ1QzUuNzQ5MzkgMTUuNjU2MyA1LjcxNTE3IDE1LjU0NzYgNS43MTUxNyAxNS40Mjg2VjEyLjMxMjVMMTMuNDI5MyAyLjg1NzE0TDMuODg0ODUgMTEuMTE2MUwwLjM1ODEyOCA5LjY2OTY0QzAuMTM3ODk0IDkuNTg2MzEgMC4wMTg4NDg4IDkuNDIyNjIgMC4wMDA5OTIwNDUgOS4xNzg1N0MtMC4wMTA5MTI1IDguOTQwNDggMC4wODQzMjM4IDguNzY0ODggMC4yODY3MDEgOC42NTE3OUwxNS4xNDM2IDAuMDgwMzU3MUMxNS4yMzI4IDAuMDI2Nzg1NyAxNS4zMjgxIDAgMTUuNDI5MyAwQzE1LjU0ODMgMCAxNS42NTU1IDAuMDMyNzM4MSAxNS43NTA3IDAuMDk4MjE0M1oiLz48L2c+PC9zdmc+");
     display: inline-block;
     width: 16px;
@@ -676,6 +707,6 @@ a.hidden{
 
 .CodeMirror {
     height: auto;
-    min-height: 100px;
+    min-height: 96px;
     background: transparent;
 }
