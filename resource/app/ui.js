@@ -17,7 +17,6 @@ function highlightSidebarLink(href){
     tagContainer.classList.add(className);
 }
 
-
 function updateCard(li){
     const content = li.querySelector(".content");
     const cardID = li.dataset.id;
@@ -204,8 +203,73 @@ CM.clickHandle(".foldIcon", function(e){
     }
 })
 
-CM.clickHandle("#btnDuplicateWindow", function(e){
+CM.clickHandle("#btnDuplicateWindow", function(e) {
     pages.duplicateWindow();
+})
+
+CM.clickHandle("#newItemEditor", function(e) {
+    if (!CM.newItemEditor.classList.contains('inactive')) {
+        return;
+    }
+    
+    CM.newItemEditor.innerHTML = '';
+
+    let editor = CodeMirror(CM.newItemEditor, {
+        theme: "default",
+        mode: "hashtags",
+        keyMap: "emacs",
+        pollInterval: 1000,
+        hintOptions: { hint: autoComplete.autocompleteHints },
+        lineWrapping: true,
+        autoRefresh: true,
+      });
+
+    editor.on("change", function (cm, change) {
+        if (change.text[0] == "#") {
+            cm.showHint({type:'tag', completeSingle:false});
+        }else if (change.text[0] === "@"){
+            cm.showHint({type:'link', completeSingle:false, async: true});
+        }
+
+        if (!editor.getValue()) {
+            CM.btnCreate.disabled = true;
+            CM.newItemEditor.classList.add("empty");
+        } else {
+            CM.btnCreate.disabled = false;
+            CM.newItemEditor.classList.remove("empty");
+        }
+    });
+
+    CM.newItemEditor.classList.remove('inactive');
+    CM.newItemCtrlPanel.classList.remove('inactive');
+
+    editor.focus()
+})
+
+CM.clickHandle(".btnCreateNewCard", function(e) {
+    if (CM.newItemEditor.classList.contains('inactive')) {
+        newItemEditor.click();
+    }
+
+    if (CM.btnCreate.disabled) {
+        return;
+    }
+
+    const editor = CM.newItemEditor.firstChild.CodeMirror;
+    const entry = editor.getValue();
+    const editorPlaceholder = document.createElement('div');
+    editorPlaceholder.classList.add('editorPlaceholder');
+
+    db.createNewCard(entry).then((newCardID) => {
+        db.getCardByID(newCardID).then((card) => {
+            const li = insertCardToList(card, CM.listInsertBeforeFirst);
+            CM.newItemEditor.innerHTML = '';
+            CM.newItemEditor.classList.add('inactive');
+            CM.newItemEditor.classList.add('empty');
+            CM.newItemEditor.appendChild(editorPlaceholder);
+            CM.newItemCtrlPanel.classList.add('inactive');
+        });
+    });
 })
 
 function addCardEventListeners(li) {

@@ -71,9 +71,11 @@
                     <h1 id="listTitle"></h1>
                 </div>
                 <div id="newItem">
-                    <div id="newItemEditor">
+                    <div id="newItemEditor" class="empty inactive">
+                        <div class="editorPlaceholder"></div>
                     </div>
-                    <div class="itemCtrlPanel"> 
+                    <div id="newItemCtrlPanel" class="inactive">
+                        <!-- <button class="btnCancelNewCard"><span class="label">Cancel</span></button> --><button class="btnCreateNewCard" disabled><span class="icon"></span></button>
                     </div>
                 </div>
                 <ul id="cardsList"></ul>
