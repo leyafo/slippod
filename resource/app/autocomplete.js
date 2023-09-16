@@ -67,7 +67,11 @@ function linkRender(element, self, cur){
     // const div = createCardSuggestion(card)
     // element.appendChild(div);
     console.log(element, self, cur);
-    element.innerHTML = cur.entry
+    const span=document.createElement("span")
+    span.className = "itemId"
+    span.textContent=cur.cardID
+    element.appendChild(span);
+    element.insertAdjacentHTML('beforeend', cur.entry );
 }
 
 function showLinkHints(cm, option){
@@ -87,7 +91,7 @@ function showLinkHints(cm, option){
                     hints.push({
                         text: `@${card.id} `,
                         cardID: card.id,
-                        entry: card.entry,
+                        entry: card.entry.trim(),
                         render: linkRender,
                     });
                 }
