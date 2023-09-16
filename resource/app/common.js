@@ -122,9 +122,15 @@ export function timeAgo(unixTimestamp) {
 
 export function fillingCardItem(parentItem, card){
     const content = parentItem.querySelector(".content");
+    const markdownHtml = document.createElement('div');
 
-    utils.markdownRender(card.entry).then(function(html){
-        content.innerHTML = html;
+    markdownHtml.classList.add('markdown-body');
+
+    utils.markdownRender(card.entry).then(function(html) {
+        markdownHtml.innerHTML = html;
+
+        content.innerHTML = '';
+        content.appendChild(markdownHtml);
     })
 
     const createTimeSapn = parentItem.querySelector("span.itemCreateTime");
