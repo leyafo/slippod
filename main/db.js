@@ -332,8 +332,9 @@ function updateCardEntryByID(id, cardEntry){
     const tagsInContent = parseTags(cardEntry);
     const existedTags = db.prepare("select tag from tags where card_id = ?").pluck().all(id)
     const existedTagsSet = new Set(existedTags);
+    const updateTimeUnix = N(Date.now() / 1000);
     db.transaction(function(cardID, entry, newTags, oldTags){
-        db.prepare("update cards set entry = ?, updated_at=strftime('%s', 'now') where id = ?").run(entry, cardID)
+        db.prepare("update cards set entry = ?, updated_at= ? where id = ?").run(entry, updateTimeUnix, cardID)
 
         //delete removed tags
         oldTags.forEach(function(tag){
@@ -349,8 +350,7 @@ function updateCardEntryByID(id, cardEntry){
         })
 
     })(id, cardEntry, tagsInContent, existedTagsSet);
-    return id;
-    return id;
+    return {id: id, updated_at: updateTimeUnix};
 }
 
 function searchCards(keyWord, offset, limit){

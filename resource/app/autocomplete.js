@@ -115,23 +115,24 @@ function autocompleteHints(cm, option) {
 }
   
 
-// CodeMirror.defineMode("hashtags", function (config, parserConfig) {
-//     var hashtagOverlay = {
-//         token: function (stream, state) {
-//             // This regex matches a single @ followed by the desired pattern.
-//             if (stream.match(window.tagRegex)) {
-//                 return "hashtag";
-//             }
+CodeMirror.defineMode("hashtags", function (config, parserConfig) {
+    var hashtagOverlay = {
+        token: function (stream, state) {
+            // This regex matches a single @ followed by the desired pattern.
+            if (stream.match(window.tagRegex)) {
+                return "hashtag";
+            }
 
-//             while (stream.next() != null && !stream.match(window.tagRegex, false)) { }
+            while (stream.next() != null && !stream.match(window.tagRegex, false)) { }
 
-//             return null;
-//         },
-//     return CodeMirror.overlayMode(
-//         CodeMirror.getMode(config, parserConfig.backdrop || "markdown"),
-//         hashtagOverlay
-//     );
-// });
+            return null;
+        }
+    }
+    return CodeMirror.overlayMode(
+        CodeMirror.getMode(config, parserConfig.backdrop || "markdown"),
+        hashtagOverlay
+    );
+});
 
 export {
     autocompleteHints,
