@@ -36,6 +36,7 @@ function updateCard(li){
         });
         const controlPanel = li.querySelector(".itemCtrlPanel");
         const itemHeader = li.querySelector(".itemHeader");
+        content.classList.remove("empty");
         CM.toggleElementHidden(controlPanel);
         itemHeader.classList.remove("hidden");
 
@@ -64,6 +65,7 @@ function cancelUpdate(li) {
         })
         const controlPanel = li.querySelector(".itemCtrlPanel");
         const itemHeader = li.querySelector(".itemHeader");
+        content.classList.remove("empty");
         CM.toggleElementHidden(controlPanel);
         itemHeader.classList.remove("hidden");
     })
@@ -104,8 +106,10 @@ function editCard(li) {
 
             if (!editor.getValue()) {
                 btnUpdateCard.disabled = true;
+                content.classList.add("empty");
             } else {
                 btnUpdateCard.disabled = false;
+                content.classList.remove("empty");
             }
         });
         editor.setValue(cardEntry);
