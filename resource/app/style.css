@@ -617,5 +617,6 @@ a.hidden{
 
 .CodeMirror {
     height: auto;
-    min-height: 200px;
+    min-height: 100px;
+    background: transparent;
 }

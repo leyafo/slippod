@@ -22,14 +22,22 @@ function updateCard(li){
     const content = li.querySelector(".content");
     const cardID = li.dataset.id;
     const entry = content.firstChild.CodeMirror.getValue();
+    const markdownHtml = document.createElement('div');
+
+    markdownHtml.classList.add("markdown-body");
 
     db.updateCardEntryByID(cardID, entry).then((result) => {
         console.log(result.id, result.updated_at);
         utils.markdownRender(entry).then(function(html){
-            content.innerHTML = html
+            markdownHtml.innerHTML = html;
+
+            content.innerHTML = '';
+            content.appendChild(markdownHtml);
         });
         const controlPanel = li.querySelector(".itemCtrlPanel");
-        CM.toggleElementHidden(controlPanel)
+        const itemHeader = li.querySelector(".itemHeader");
+        CM.toggleElementHidden(controlPanel);
+        itemHeader.classList.remove("hidden");
 
         db.getAllTags().then(function(tags){
             let tree = buildTagTree(tags)
@@ -43,12 +51,21 @@ function updateCard(li){
 function cancelUpdate(li) {
     const content = li.querySelector(".content");
     const cardID = li.dataset.id;
+    const markdownHtml = document.createElement("div");
+
+    markdownHtml.classList.add("markdown-body");
+
     db.getCardByID(cardID).then(function(card){
         utils.markdownRender(card.entry).then(function(html){
-            content.innerHTML = html;
+            markdownHtml.innerHTML = html;
+
+            content.innerHTML = '';
+            content.appendChild(markdownHtml);
         })
         const controlPanel = li.querySelector(".itemCtrlPanel");
-        CM.toggleElementHidden(controlPanel)
+        const itemHeader = li.querySelector(".itemHeader");
+        CM.toggleElementHidden(controlPanel);
+        itemHeader.classList.remove("hidden");
     })
     li.dataset.editing = 'false';
 }
@@ -60,9 +77,13 @@ function editCard(li) {
         const cardEntry = card.entry;
         const content = li.querySelector(".content") 
         const controlPanel = li.querySelector(".itemCtrlPanel");
+        const itemHeader = li.querySelector(".itemHeader");
+
         content.innerHTML = '';
-        CM.toggleElementShown(controlPanel)
+        CM.toggleElementShown(controlPanel);
         li.dataset.editing = 'true';
+        itemHeader.classList.add("hidden");
+        
         let editor = CodeMirror(content, {
           theme: "default",
           mode: "hashtags",
