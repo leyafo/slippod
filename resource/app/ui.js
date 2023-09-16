@@ -77,6 +77,7 @@ function editCard(li) {
         const cardEntry = card.entry;
         const content = li.querySelector(".content") 
         const controlPanel = li.querySelector(".itemCtrlPanel");
+        const btnUpdateCard = controlPanel.querySelector(".btnUpdateCard");
         const itemHeader = li.querySelector(".itemHeader");
 
         content.innerHTML = '';
@@ -99,6 +100,12 @@ function editCard(li) {
                 cm.showHint({type:'tag', completeSingle:false});
             }else if (change.text[0] === "@"){
                 cm.showHint({type:'link', completeSingle:false, async: true});
+            }
+
+            if (!editor.getValue()) {
+                btnUpdateCard.disabled = true;
+            } else {
+                btnUpdateCard.disabled = false;
             }
         });
         editor.setValue(cardEntry);
