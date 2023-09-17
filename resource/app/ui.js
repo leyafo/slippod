@@ -134,18 +134,10 @@ function restoreCard(li){
 CM.clickHandle(".tagClick", function(e){
     e.preventDefault();
 
-    var target = e.target;
-    var tagContainer = target.closest(".tagContainer");
-
-    let href;
-    let tag;
-    if (target.tagName !== 'DIV') {
-        href = target.parentNode.getAttribute("href");
-        tag = target.parentNode.dataset.tag;
-    } else {
-        href = target.getAttribute("href");
-        tag = target.dataset.tag;
-    }
+    const tagContainer = e.target.closest(".tagContainer");
+    const clickDiv = tagContainer.querySelector(".tagClick")
+    const href = clickDiv.getAttribute("href");
+    const tag = clickDiv.dataset.tag;
     
     switch (href) {
         case hrefTagAll:
@@ -159,6 +151,13 @@ CM.clickHandle(".tagClick", function(e){
             break;
         default:
             db.getCardsByTag(tag, 0, CM.limitItems).then(cards => reloadCardList(cards, tag, CM.listInsertAfterLast));
+            db.countTaggedCards(tag).then(function(count){
+                if (count > 0){
+                    const countSpan = clickDiv.querySelector(".count")
+                    countSpan.textContent = count;
+                    // CM.listTitle.textContent = CM.listTitle.textContent + `- ${count}`
+                }
+            });
     }
     CM.highlightItem("selected", tagContainer, CM.sideNavContainer);
 });
@@ -281,7 +280,7 @@ function addCardEventListeners(li) {
         CM.toggleElementShown(cardMenuOptions)
     })
     cardMenuContainer.addEventListener('mouseleave', function(event){
-        CM.toggleElementHidden(cardMenuOptions)
+        // CM.toggleElementHidden(cardMenuOptions)
     })
     cardMenuOptions.querySelector(".editOption").addEventListener('click', function(event) {
         editCard(li)
@@ -640,15 +639,25 @@ function buildTagHtml(tree, prefix = '') {
     if(Object.keys(value).length > 0) {
         html += `<li>
                 <div class="tagContainer">
-                <span class="foldIcon open"></span>
-                <div class="tagClick" href="/tags/${fullTag}" data-tag="${fullTag}"><span class="tagIcon"></span><span class="label">${key}</span></div>
+                    <span class="foldIcon open"></span>
+                    <div class="tagClick" href="/tags/${fullTag}" data-tag="${fullTag}">
+                        <span class="tagIcon"></span>
+                        <span class="label">${key}</span>
+                        <span class="count"></span>
+                    </div>
                 </div>`;
+                //the closed li is below
     }else{
         // file
         html += `<li>
-                <div class="tagContainer">
-                <div class="tagClick" href="/tags/${fullTag}" data-tag="${fullTag}"><span class="tagIcon"></span><span class="label">${key}</span></div>
-                </div>`;
+                    <div class="tagContainer">
+                        <div class="tagClick" href="/tags/${fullTag}" data-tag="${fullTag}">
+                            <span class="tagIcon"></span>
+                            <span class="label">${key}</span>
+                            <span class="count"></span>
+                        </div>
+                    </div>`;
+                //the closed li is below
     }
 
     if (Object.keys(value).length > 0) {
@@ -679,6 +688,22 @@ document.addEventListener('click', function(event){
     highlightSidebarLink(href)
 })
 
+let displayCardCounts = async function () {
+    try {
+        const count = await db.countDifferentCards()
+        const allCardsSpan = CM.allCardsTag.querySelector(".count");
+        allCardsSpan.textContent = count.allCards;
+
+        const cardsNoTagSpan = CM.cardsNoTag.querySelector(".count");
+        cardsNoTagSpan.textContent = count.noTagCards;
+
+        const cardsTrashSpan = CM.cardsTrash.querySelector(".count")
+        cardsTrashSpan.textContent = count.trashCards;
+    } catch (error) {
+        console.error("Error fetching card counts:", error);
+    }
+}
+
 window.addEventListener('DOMContentLoaded', function() {
     //load cards
     db.getCards(0, CM.limitItems).then(function(cards) {
@@ -692,7 +717,14 @@ window.addEventListener('DOMContentLoaded', function() {
         let tagListHTML = buildTagHtml(tree)
         CM.tagList.innerHTML = tagListHTML
     })
+    displayCardCounts();
 });
+
+//This is a black magic, from an India youtube brother. Youtube: 70-p0mq-w5g
+window.backendBridge.displayCardCounts(function(event){
+    displayCardCounts();
+});
+
 
 export {
     handleOptionSelect,

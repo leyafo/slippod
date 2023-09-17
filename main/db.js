@@ -385,6 +385,23 @@ function searchCardsWithStyle(keyWord, offset, limit){
     return cards
 }
 
+function countTaggedCards(tag){
+    const sql = `SELECT count(1) AS count FROM cards JOIN tags ON cards.id = tags.card_id WHERE tags.tag = ?;`
+    const taggedCards = db.prepare(sql).get(tag)
+    return taggedCards.count
+}
+
+function countDifferentCards(){
+    const allCards = db.prepare(`select count(1) as count from cards`).get();
+    const notagCards = db.prepare("SELECT count(1) as count FROM cards LEFT JOIN tags ON cards.id = tags.card_id WHERE tags.card_id IS NULL").get()
+    const trashCards = db.prepare(`select count(1) as count from trash`).get();
+    return {
+        allCards: allCards.count,
+        noTagCards: notagCards.count,
+        trashCards: trashCards.count,
+    }
+}
+
 module.exports = {
     updateSchema,
     reloadDB,
@@ -417,4 +434,6 @@ module.exports = {
     getLinkAtRegex,
     searchCardsWithStyle,
     getCardSearchSuggestions,
+    countDifferentCards,
+    countTaggedCards,
 };

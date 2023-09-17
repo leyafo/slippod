@@ -16,6 +16,11 @@ contextBridge.exposeInMainWorld('pages', {
     }
 });
 
+//black magic
+contextBridge.exposeInMainWorld('backendBridge', {
+    displayCardCounts: (callback) => ipcRenderer.on("displayCardCounts", (callback)),
+});
+
 (function () {
     const paginatedDFFunc = [
         "getCards",
@@ -43,7 +48,15 @@ contextBridge.exposeInMainWorld('pages', {
         "getAllCards",
         "searchCardsWithStyle",
         "getCardSearchSuggestions",
+        "countDifferentCards",
+        "countTaggedCards",
     ]
+    const needRecount = new Set([
+        "removeCardFromTrash",
+        "removeCardPermanently",
+        "moveCardToTrash",
+        "createNewCard",
+    ])
     let backendFunctions = {};
     paginatedDFFunc.forEach((funcName) => {
         backendFunctions[funcName] = (...args) => {
@@ -56,7 +69,16 @@ contextBridge.exposeInMainWorld('pages', {
         };
     })
     fullsetDBFunc.forEach((funcName) => {
-        backendFunctions[funcName] = (...args) => ipcRenderer.invoke(funcName, ...args);
+        backendFunctions[funcName] = (...args) => {
+            let ipcResult = ipcRenderer.invoke(funcName, ...args);
+            if (needRecount.has(funcName)){
+                setTimeout(function(){
+                    //starting spell the India black magic
+                    ipcRenderer.invoke('displayCardCounts');
+                }, 200);
+            }
+            return ipcResult
+        }
     })
     contextBridge.exposeInMainWorld('db', backendFunctions);
 })();
