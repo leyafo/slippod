@@ -96,36 +96,16 @@ function editCard(li) {
           autoRefresh: true,
         });
 
-        editor.on("change", function (cm, change) {
-            if (change.text[0] == "#") {
-                cm.showHint({type:'tag', completeSingle:false});
-            }else if (change.text[0] === "@"){
-                cm.showHint({type:'link', completeSingle:false, async: true});
-            }
-
-            if (!editor.getValue()) {
-                btnUpdateCard.disabled = true;
-                content.classList.add("empty");
-            } else {
-                btnUpdateCard.disabled = false;
-                content.classList.remove("empty");
-            }
-        });
+        editor.on("change", editorChange(editor));
         editor.setValue(cardEntry);
-        editor.on("endCompletion", function () {
-          console.log("Autocomplete menu is being closed programmatically");
-        });
-        editor.on('keydown', function (cm, event) {
-            if (event.ctrlKey && event.key === "Enter") {  
-                updateCard(li);
-            }else if(event.key == 'Escape'){
+        editor.keydownMap({
+            "commit":function(cm, event){
+                updateCard(li)
+            },
+            "cancel":function(cm, event){
                 cancelUpdate(li);
-            }else if(!cm.state.completionActive && event.key == '#'){
-                CodeMirror.commands.autocomplete(cm, null, {completeSingle: false});
-                // cm.showHint();
             }
         });
-
         CM.unHighlightItem("selected", CM.cardsList)
     });
 }
@@ -207,6 +187,16 @@ CM.clickHandle("#btnDuplicateWindow", function(e) {
     pages.duplicateWindow();
 })
 
+function editorChange(editor){
+    return function(cm, change){
+        if (change.text[0] == "#") {
+            cm.showHint({type:'tag', completeSingle:false});
+        }else if (change.text[0] === "@"){
+            cm.showHint({type:'link', completeSingle:false, async: true});
+        }
+    }
+}
+
 CM.clickHandle("#newItemEditor", function(e) {
     if (!CM.newItemEditor.classList.contains('inactive')) {
         return;
@@ -224,34 +214,31 @@ CM.clickHandle("#newItemEditor", function(e) {
         autoRefresh: true,
       });
 
-    editor.on("change", function (cm, change) {
-        if (change.text[0] == "#") {
-            cm.showHint({type:'tag', completeSingle:false});
-        }else if (change.text[0] === "@"){
-            cm.showHint({type:'link', completeSingle:false, async: true});
-        }
+    editor.on("change", editorChange(editor));
 
-        if (!editor.getValue()) {
-            CM.btnCreate.disabled = true;
-            CM.newItemEditor.classList.add("empty");
-        } else {
-            CM.btnCreate.disabled = false;
-            CM.newItemEditor.classList.remove("empty");
+    editor.keydownMap({
+        "commit": function (cm, event) {
+            createNewCardHandle(event);
+        },
+        "cancel": function (cm, event) {
         }
-    });
+    })
 
     CM.newItemEditor.classList.remove('inactive');
     CM.newItemCtrlPanel.classList.remove('inactive');
-
+    const btnCreate = CM.newItemCtrlPanel.querySelector(".btnCreateNewCard");
+    btnCreate.disabled = false;
+    CM.newItemEditor.classList.remove("empty");
     editor.focus()
 })
 
-CM.clickHandle(".btnCreateNewCard", function(e) {
+function createNewCardHandle(e){
     if (CM.newItemEditor.classList.contains('inactive')) {
-        newItemEditor.click();
+        CM.newItemEditor.click();
     }
 
-    if (CM.btnCreate.disabled) {
+    const btnCreate = CM.newItemCtrlPanel.querySelector(".btnCreateNewCard");
+    if (btnCreate.disabled) {
         return;
     }
 
@@ -270,7 +257,9 @@ CM.clickHandle(".btnCreateNewCard", function(e) {
             CM.newItemCtrlPanel.classList.add('inactive');
         });
     });
-})
+}
+
+CM.clickHandle(".btnCreateNewCard", createNewCardHandle)
 
 function addCardEventListeners(li) {
     li.addEventListener('dblclick', function() {
@@ -288,10 +277,10 @@ function addCardEventListeners(li) {
     const cardMenuContainer = li.querySelector(".itemMenuContainer")
     const cardMenuOptions = li.querySelector(".itemMenuOptions");
 
-    cardMenuContainer.addEventListener('mouseover', function(event){
+    cardMenuContainer.addEventListener('mouseenter', function(event){
         CM.toggleElementShown(cardMenuOptions)
     })
-    cardMenuContainer.addEventListener('mouseout', function(event){
+    cardMenuContainer.addEventListener('mouseleave', function(event){
         CM.toggleElementHidden(cardMenuOptions)
     })
     cardMenuOptions.querySelector(".editOption").addEventListener('click', function(event) {
@@ -394,6 +383,10 @@ CM.searchBox.addEventListener("compositionend", function (event) {
   isComposing = false;
   performSearch(event.target.value);
 });
+
+CM.searchBox.addEventListener("blur", function(event){
+    clearSearch(event);
+})
 
 CM.searchBox.addEventListener("input", function (event) {
   if (!isComposing) {
@@ -564,7 +557,6 @@ function closeSideNav() {
     document.body.classList.remove('overflow-hidden');
     isSideNavOpen = false;
 }
-
 
 export function handleScroll() {
     let listHasGetLastItemDown = 0;

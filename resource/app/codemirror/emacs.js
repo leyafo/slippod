@@ -294,14 +294,14 @@
   cmds.killRingSave = function(cm) {
     console.log('ctrl-c');
     addToRing(cm.getSelection());
-    clearMark(cm);
+    // clearMark(cm);
   };
 
   cmds.yank = function(cm) {
     console.log('ctrl-v');
     var start = cm.getCursor();
     cm.replaceRange(getFromRing(getPrefix(cm)), start, start, "paste");
-    cm.setSelection(start, cm.getCursor());
+    // cm.setSelection(start, cm.getCursor());
   };
 
   cmds.yankPop = function(cm) {
@@ -456,7 +456,13 @@
     "Ctrl-W": "killRegion",
     "Ctrl-C": "killRingSave",
     "Ctrl-V": "yank",
-    // "Ctrl-K": "killLineEmacs",
+    "Right": "forwardChar",
+    "Left": "backwardChar",
+    "Alt-A": "selectAll",
+    "Ctrl-Z": "undoRepeatable",
+    "Shift-Ctrl-Z": "redo",
+
+    "Ctrl-K": "killLineEmacs",
     // "Alt-W": "killRingSave",
     // "Ctrl-Y": "yank",
     // "Alt-Y": "yankPop",
@@ -464,8 +470,6 @@
     // "Ctrl-Shift-2": "setMark",
     // "Ctrl-F": "forwardChar",
     // "Ctrl-B": "backwardChar",
-    // "Right": "forwardChar",
-    // "Left": "backwardChar",
     // "Ctrl-D": "deleteChar",
     // "Delete": "deleteForwardChar",
     // "Ctrl-H": "deleteBackwardChar",
@@ -514,7 +518,6 @@
     // "Ctrl-Z": "undoRepeatable",
     // "Cmd-Z": "undoRepeatable",
     // "Ctrl-X U": "undoRepeatable",
-    // "Shift-Ctrl-Z": "redo",
     // "Shift-Alt-,": "goDocStart",
     // "Shift-Alt-.": "goDocEnd",
     // "Ctrl-S": "findPersistentNext",

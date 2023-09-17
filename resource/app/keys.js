@@ -72,3 +72,13 @@ CM.searchBox.addEventListener("keydown", function (event) {
         UI.clearSearch(event);
     }
 });
+
+CodeMirror.defineExtension("keydownMap", function(eventMap){
+    return this.on('keydown', function (cm, event) {
+        if (event.ctrlKey && event.key === "Enter") {  
+            eventMap.commit(cm, event)
+        }else if(event.key == 'Escape'){
+            eventMap.cancel(cm, event)
+        }
+    });
+})
