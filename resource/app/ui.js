@@ -320,12 +320,15 @@ function reloadCardList(cards, headerTitle = 'All Cards', order = CM.listInsertB
     switch (headerTitle) {
         case "All Cards":
             CM.listHeader.classList.add("iconAllCards");
+            CM.listArea.classList.add("allCardsList");
             break;
         case "No Tag":
             CM.listHeader.classList.add("iconNoTag");
+            CM.listArea.classList.add("noTagList");
             break;
         case "Trash":
             CM.listHeader.classList.add("iconTrash");
+            CM.listArea.classList.add("trashList");
             break;
         default:
             CM.listHeader.classList.add("iconTag");
