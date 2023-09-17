@@ -221,7 +221,7 @@ function getCardSearchSuggestions(keyword){
         matchSingleCard = getCardByID(N(cardID))
     }
     const searchRef = `SELECT rowid, simple_snippet(cards_fts, 0, '<mark>', '</mark>', '...', ${tokenLengh}) as snippet 
-                            FROM cards_fts WHERE entry MATCH jieba_query('${keyword}') ORDER BY rank`;
+                            FROM cards_fts WHERE entry MATCH jieba_query('${keyword}', 0) ORDER BY rank`;
     const results = db.prepare(searchRef).all()
 
     let matchedCards = [];

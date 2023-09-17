@@ -14,11 +14,9 @@ export const suggestionResults= document.getElementById("suggestionResults")
 export const noResults= document.getElementById("noResults")
 export const omniSearch= document.getElementById('omniSearch')
 export const sideNavContainer = document.getElementById('sideNavContainer')
-export const newItem = document.getElementById('newItem')
+export const newItemContainer = document.getElementById('newItem')
 export const newItemEditor = document.getElementById('newItemEditor')
 export const newItemCtrlPanel = document.getElementById('newItemCtrlPanel')
-export const btnCreate = newItemCtrlPanel.querySelector(".btnCreateNewCard");
-export const btnCancel = newItemCtrlPanel.querySelector(".btnCancelNewCard");
 export const tagList= document.getElementById("tagsList")
 export const allCardsTag = document.getElementById("allCards")
 export const limitItems= 20
@@ -52,6 +50,7 @@ export function unixTimeFormat(unixTime) {
     second = second < 10 ? '0'+second : second;
     return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getUTCDate()} ${d.getHours()}:${minute}:${second}`;
 }
+
 export function hideOmniSearchAndUnfocus() {
     toggleElementHidden(omniSearch)
     searchBox.blur();
@@ -98,6 +97,9 @@ export function timeAgo(unixTimestamp) {
     const currentTime = Math.floor(Date.now() / 1000); // Convert to Unix timestamp
     const timeDifference = currentTime - unixTimestamp;
 
+    if (timeDifference < 30) {
+        return `just now`;
+    }
     if (timeDifference < 60) {
         return `${timeDifference} seconds ago`;
     }
