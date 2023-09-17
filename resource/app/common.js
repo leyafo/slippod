@@ -2,6 +2,7 @@
 export const sideNav = document.getElementById('sideNav')
 export const btnSideNav = document.getElementById('btnSideNav')
 export const overlay= document.getElementById('overlay')
+export const listArea = document.getElementById('listArea')
 export const listHeader = document.getElementById('listHeader')
 export const listTitle= document.getElementById('listTitle')
 export const cardsList= document.getElementById('cardsList')

@@ -229,6 +229,10 @@ body {
     @apply align-text-bottom mr-1;
 }
 
+#listArea.trashList #newItem {
+    @apply hidden;
+}
+
 #newItem {
     background-color: #FFFFFF;
     @apply px-4 pb-4 pt-1 mb-4;
