@@ -20,7 +20,6 @@
 
   var killRing = [];
   function addToRing(str) {
-    console.log(str);
     killRing.push(str);
     if (killRing.length > 50) killRing.shift();
   }
@@ -283,6 +282,7 @@
   // Maps to emacs kill-line
   cmds.killLineEmacs = repeated(function(cm) {
     var start = cm.getCursor(), end = cm.clipPos(Pos(start.line));
+    console.log(start, end)
     var text = cm.getRange(start, end);
     if (!/\S/.test(text)) {
       text += "\n";
@@ -290,6 +290,17 @@
     }
     _kill(cm, start, end, "grow", text);
   });
+
+  // Maps to kill-line start
+  cmds.killLineStart = repeated(function(cm){
+    let cursor = cm.getCursor();
+    var start = Pos(cursor.line, 0), end = cursor;
+    if(end.ch == 0){
+        start = Pos(start.line-1);
+    }
+    var text = cm.getRange(start, end);
+    _kill(cm, start, end, "grow", text);
+  })
 
   cmds.killRingSave = function(cm) {
     console.log('ctrl-c');
@@ -453,7 +464,6 @@
 
   // Actual keymap
   var keyMap = CodeMirror.keyMap.emacs = CodeMirror.normalizeKeyMap({
-    "Ctrl-W": "killRegion",
     "Ctrl-C": "killRingSave",
     "Ctrl-V": "yank",
     "Right": "forwardChar",
@@ -462,30 +472,38 @@
     "Ctrl-Z": "undoRepeatable",
     "Shift-Ctrl-Z": "redo",
 
+    //moving and erasing  
+    //https://github.com/leyafo/slippod/assets/1463701/ab3f114b-0624-4c86-85b0-d029e9d23683
+    "Ctrl-A": "goLineStart",
+    "Ctrl-E": "goLineEnd",
+    "Alt-B": "backwardWord",
+    "Ctrl-B": "backwardChar",
+    "Ctrl-F": "forwardChar",
+    "Alt-F": "forwardWord",
+    "Ctrl-W": "backwardKillWord",
+    "Alt-D": "killWord",
+    "Ctrl-U": "killLineStart",
+
     "Ctrl-K": "killLineEmacs",
+    "Backspace": "deleteBackwardChar",
+    "Enter": "newlineAndIndent",
+    "Ctrl-P": "previousLine",
+    "Ctrl-N": "nextLine",
+    "Ctrl-H": "deleteBackwardChar",
+    "Ctrl-D": "deleteChar",
+
     // "Alt-W": "killRingSave",
     // "Ctrl-Y": "yank",
     // "Alt-Y": "yankPop",
     // "Ctrl-Space": "setMark",
     // "Ctrl-Shift-2": "setMark",
-    // "Ctrl-F": "forwardChar",
-    // "Ctrl-B": "backwardChar",
-    // "Ctrl-D": "deleteChar",
     // "Delete": "deleteForwardChar",
     // "Ctrl-H": "deleteBackwardChar",
-    // "Backspace": "deleteBackwardChar",
-    // "Alt-F": "forwardWord",
-    // "Alt-B": "backwardWord",
     // "Alt-Right": "forwardWord",
     // "Alt-Left": "backwardWord",
-    // "Alt-D": "killWord",
     // "Alt-Backspace": "backwardKillWord",
-    // "Ctrl-N": "nextLine",
-    // "Ctrl-P": "previousLine",
     // "Down": "nextLine",
     // "Up": "previousLine",
-    // "Ctrl-A": "goLineStart",
-    // "Ctrl-E": "goLineEnd",
     // "End": "goLineEnd",
     // "Home": "goLineStart",
     // "Alt-V": "scrollDownCommand",
@@ -525,7 +543,6 @@
     // "Ctrl-G": "keyboardQuit",
     // "Shift-Alt-5": "replace",
     // "Alt-/": "autocomplete",
-    // "Enter": "newlineAndIndent",
     // "Ctrl-J": "newline",
     // "Tab": "indentAuto",
     // "Alt-G G": "gotoLine",
@@ -538,8 +555,7 @@
     // "Ctrl-X K": "close",
     // "Ctrl-X H": "selectAll",
     // "Ctrl-Q Tab": "quotedInsertTab",
-    // "Ctrl-U": "universalArgument",
-    // "fallthrough": "default"
+    "fallthrough": "default"
   });
 
   var prefixMap = {"Ctrl-G": clearPrefix};

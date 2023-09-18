@@ -7,6 +7,7 @@ db.getLinkAtRegex().then(function(regex){
     window.linkAtRegex = regex
 })
 
+import "./statemachine.js";
 import "./ui.js";
-import "./keys.js"
-import "./autocomplete.js"
+import "./keys.js";
+import "./autocomplete.js";
