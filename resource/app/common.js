@@ -65,6 +65,10 @@ export function showOmniSearchAndFocus() {
     document.body.classList.add('overflow-hidden');
 }
 
+export function setScrollbarToTop(){
+    document.documentElement.scrollTop = 0; // Reset the scroll position to the top
+}
+
 export function highlightUpOrDownItem(arrowDirection, highlightedClass, parentElement){
     const selector = `.${highlightedClass}`
     let highLightedItem = parentElement.querySelector(selector)
@@ -77,6 +81,9 @@ export function highlightUpOrDownItem(arrowDirection, highlightedClass, parentEl
         highLightedItem = highLightedItem.previousElementSibling || parentElement.lastChild 
     }else if(arrowDirection === highlightDown){
         highLightedItem = highLightedItem.nextElementSibling || parentElement.firstChild 
+    }
+    if(highLightedItem == parentElement.firstChild){
+        setScrollbarToTop()
     }
     highLightedItem.classList.add(highlightedClass)
     highLightedItem.scrollIntoView({ block: "nearest" });
@@ -186,3 +193,5 @@ export function linkClick(event){
         }
     });
 } 
+
+

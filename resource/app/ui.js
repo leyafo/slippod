@@ -196,11 +196,7 @@ function editorChange(editor){
     }
 }
 
-CM.clickHandle("#newItemEditor", function(e) {
-    if (!CM.newItemEditor.classList.contains('inactive')) {
-        return;
-    }
-    
+function activateNewItemEditor(value){
     CM.newItemEditor.innerHTML = '';
 
     let editor = CodeMirror(CM.newItemEditor, {
@@ -228,7 +224,19 @@ CM.clickHandle("#newItemEditor", function(e) {
     const btnCreate = CM.newItemCtrlPanel.querySelector(".btnCreateNewCard");
     btnCreate.disabled = false;
     CM.newItemEditor.classList.remove("empty");
+    editor.set
+    editor.setValue(value);
+    editor.setCursor(editor.lineCount(), 0);
     editor.focus()
+    CM.setScrollbarToTop()
+    globalState.setEditing();
+}
+
+CM.clickHandle("#newItemEditor", function(e) {
+    if (!CM.newItemEditor.classList.contains('inactive')) {
+        return;
+    }
+    activateNewItemEditor('');
 })
 
 function createNewCardHandle(e){
@@ -280,7 +288,7 @@ function addCardEventListeners(li) {
         CM.toggleElementShown(cardMenuOptions)
     })
     cardMenuContainer.addEventListener('mouseleave', function(event){
-        // CM.toggleElementHidden(cardMenuOptions)
+        CM.toggleElementHidden(cardMenuOptions)
     })
     cardMenuOptions.querySelector(".editOption").addEventListener('click', function(event) {
         editCard(li)
@@ -324,7 +332,7 @@ function reloadCardList(cards, headerTitle = 'All Cards', order = CM.listInsertB
     }
     CM.listTitle.textContent = headerTitle; // Update the cards header
 
-    document.documentElement.scrollTop = 0; // Reset the scroll position to the top
+    CM.setScrollbarToTop();
 
     // Display the cards
     CM.cardsList.innerHTML = '';  // Clear the current cards
@@ -501,6 +509,7 @@ function clearSearch(event) {
   CM.suggestionBox.classList.add("hidden");
 
   CM.hideOmniSearchAndUnfocus()
+
 }
 
 const omniSearchButton = document.getElementById('omniSearchButton');
@@ -731,4 +740,5 @@ export {
     clearSearch,
     insertCardToList,
     editCard,
+    activateNewItemEditor,
 }
