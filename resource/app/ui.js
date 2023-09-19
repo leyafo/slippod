@@ -87,13 +87,15 @@ function editCard(li) {
         itemHeader.classList.add("hidden");
         
         let editor = CodeMirror(content, {
-          theme: "default",
-          mode: "hashtags",
-          keyMap: "emacs",
-          pollInterval: 1000,
-          hintOptions: { hint: autoComplete.autocompleteHints },
-          lineWrapping: true,
-          autoRefresh: true,
+            theme: "default",
+            mode: {
+                name: "gfm",
+            },
+            keyMap: "emacs",
+            pollInterval: 1000,
+            hintOptions: { hint: autoComplete.autocompleteHints },
+            lineWrapping: true,
+            autoRefresh: true,
         });
 
         editor.on("change", editorChange(editor));
@@ -201,7 +203,9 @@ function activateNewItemEditor(value){
 
     let editor = CodeMirror(CM.newItemEditor, {
         theme: "default",
-        mode: "hashtags",
+        mode: {
+            name: "gfm",
+        },
         keyMap: "emacs",
         pollInterval: 1000,
         hintOptions: { hint: autoComplete.autocompleteHints },

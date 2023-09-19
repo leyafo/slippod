@@ -14,15 +14,15 @@ document.addEventListener("keydown", function (event) {
         event.preventDefault();
         return
     }
-    if (event.key === "ArrowUp"){
+    if (event.key === "ArrowUp" || (event.key === "p" && event.ctrlKey) ){
         CM.highlightUpOrDownItem(CM.highlightUp, "selected", CM.cardsList)
         event.preventDefault();
         return
-    }else if (event.key === "ArrowDown"){
+    }else if (event.key === "ArrowDown" || (event.key === "n" && event.ctrlKey)){
         CM.highlightUpOrDownItem(CM.highlightDown, "selected", CM.cardsList)
         event.preventDefault();
         return
-    }else if (event.key === "n" && event.ctrlKey){
+    }else if (event.key === "o" && event.ctrlKey){
         UI.activateNewItemEditor('')
     }else if (event.key === "Escape"){
         CM.unHighlightItem("selected", CM.cardsList);

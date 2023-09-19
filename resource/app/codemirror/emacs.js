@@ -304,15 +304,17 @@
 
   cmds.killRingSave = function(cm) {
     console.log('ctrl-c');
-    addToRing(cm.getSelection());
+    // addToRing(cm.getSelection());
+    navigator.clipboard.writeText(cm.getSelection());
     // clearMark(cm);
   };
 
   cmds.yank = function(cm) {
-    console.log('ctrl-v');
     var start = cm.getCursor();
-    cm.replaceRange(getFromRing(getPrefix(cm)), start, start, "paste");
-    // cm.setSelection(start, cm.getCursor());
+    // cm.replaceRange(getFromRing(getPrefix(cm)), start, start, "paste");
+    navigator.clipboard.readText().then(function(text){
+        cm.replaceRange(text, start, start, "paste");
+    })
   };
 
   cmds.yankPop = function(cm) {
@@ -548,7 +550,7 @@
     // "Alt-G G": "gotoLine",
     // "Ctrl-X Tab": "indentRigidly",
     // "Ctrl-X Ctrl-X": "exchangePointAndMark",
-    // "Ctrl-X Ctrl-S": "save",
+    // "Ctrl-S": "save",
     // "Ctrl-X Ctrl-W": "save",
     // "Ctrl-X S": "saveAll",
     // "Ctrl-X F": "open",
