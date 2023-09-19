@@ -1,8 +1,6 @@
 import * as CM from "./common"
 import fuzzySearch from "./lib/fuzzy"
 
-const atMatchRegex = /@([a-zA-Z0-9\u4e00-\u9fff/\\_-]+)/
-
 function createCardSuggestion(card){
     const div = document.createElement("div");
     div.textContent = card.entry
@@ -66,7 +64,6 @@ function showTagHints(cm, option){
 function linkRender(element, self, cur){
     // const div = createCardSuggestion(card)
     // element.appendChild(div);
-    console.log(element, self, cur);
     const span=document.createElement("span")
     span.className = "itemId"
     span.textContent=cur.cardID
@@ -114,25 +111,6 @@ function autocompleteHints(cm, option) {
     }
 }
   
-
-CodeMirror.defineMode("hashtags", function (config, parserConfig) {
-    var hashtagOverlay = {
-        token: function (stream, state) {
-            // This regex matches a single @ followed by the desired pattern.
-            if (stream.match(window.tagRegex)) {
-                return "hashtag";
-            }
-
-            while (stream.next() != null && !stream.match(window.tagRegex, false)) { }
-
-            return null;
-        }
-    }
-    return CodeMirror.overlayMode(
-        CodeMirror.getMode(config, parserConfig.backdrop || "markdown"),
-        hashtagOverlay
-    );
-});
 
 export {
     autocompleteHints,
