@@ -154,6 +154,14 @@
     return f;
   }
 
+  function moveAndSelection(by, dir){
+    let f = function(cm){
+      cm.extendSelection(findEnd(cm, cm.getCursor(), by, dir), cm.getCursor('head'));
+    }
+    f.motion = true
+    return f;
+  }
+
   function killTo(cm, by, dir, ring) {
     var selections = cm.listSelections(), cursor;
     var i = selections.length;
@@ -310,10 +318,9 @@
   };
 
   cmds.yank = function(cm) {
-    var start = cm.getCursor();
     // cm.replaceRange(getFromRing(getPrefix(cm)), start, start, "paste");
     navigator.clipboard.readText().then(function(text){
-        cm.replaceRange(text, start, start, "paste");
+        cm.replaceSelection(text, "end");
     })
   };
 
@@ -338,6 +345,20 @@
   cmds.forwardWord = move(byWord, 1);
 
   cmds.backwardWord = move(byWord, -1);
+
+  cmds.forwardWordSelection = moveAndSelection(byWord, 1);
+
+  cmds.backwardWordSelection = moveAndSelection(byWord, -1);
+
+    cmds.goLineStartSelection = function (cm) {
+        const currentCursor = cm.getCursor();
+        cm.setSelection({ line: currentCursor.line, ch: 0 }, currentCursor);
+    }
+    cmds.goLineEndSelection = function (cm) {
+        const currentCursor = cm.getCursor();
+        const lineContent = cm.getLine(currentCursor.line);
+        cm.setSelection({ line: currentCursor.line, ch: lineContent.length }, currentCursor);
+    }
 
   cmds.killWord = function(cm) { killTo(cm, byWord, 1, "grow"); };
 
@@ -470,27 +491,34 @@
     "Ctrl-V": "yank",
     "Right": "forwardChar",
     "Left": "backwardChar",
-    "Alt-A": "selectAll",
     "Ctrl-Z": "undoRepeatable",
     "Shift-Ctrl-Z": "redo",
 
-    //moving and erasing  
+    //selection
+    "Alt-A": "selectAll",
+    "Alt-Shift-F":"forwardWordSelection",
+    "Alt-Shift-B":"backwardWordSelection",
+    "Ctrl-Shift-A": "goLineStartSelection",
+    "Ctrl-Shift-E": "goLineEndSelection",
+
+    //moving 
     //https://github.com/leyafo/slippod/assets/1463701/ab3f114b-0624-4c86-85b0-d029e9d23683
     "Ctrl-A": "goLineStart",
     "Ctrl-E": "goLineEnd",
-    "Alt-B": "backwardWord",
     "Ctrl-B": "backwardChar",
     "Ctrl-F": "forwardChar",
+    "Alt-B": "backwardWord",
     "Alt-F": "forwardWord",
+    "Ctrl-P": "previousLine",
+    "Ctrl-N": "nextLine",
+
+    //erasing  
     "Ctrl-W": "backwardKillWord",
     "Alt-D": "killWord",
     "Ctrl-U": "killLineStart",
-
     "Ctrl-K": "killLineEmacs",
     "Backspace": "deleteBackwardChar",
     "Enter": "newlineAndIndent",
-    "Ctrl-P": "previousLine",
-    "Ctrl-N": "nextLine",
     "Ctrl-H": "deleteBackwardChar",
     "Ctrl-D": "deleteChar",
 
@@ -557,15 +585,16 @@
     // "Ctrl-X K": "close",
     // "Ctrl-X H": "selectAll",
     // "Ctrl-Q Tab": "quotedInsertTab",
-    "fallthrough": "default"
+    "fallthrough": "basic"
   });
+  console.log(CodeMirror.keyMap)
 
-  var prefixMap = {"Ctrl-G": clearPrefix};
-  function regPrefix(d) {
-    prefixMap[d] = function(cm) { addPrefix(cm, d); };
-    keyMap["Ctrl-" + d] = function(cm) { addPrefix(cm, d); };
-    prefixPreservingKeys["Ctrl-" + d] = true;
-  }
-  for (var i = 0; i < 10; ++i) regPrefix(String(i));
-  regPrefix("-");
+//   var prefixMap = {"Ctrl-G": clearPrefix};
+//   function regPrefix(d) {
+//     prefixMap[d] = function(cm) { addPrefix(cm, d); };
+//     keyMap["Ctrl-" + d] = function(cm) { addPrefix(cm, d); };
+//     prefixPreservingKeys["Ctrl-" + d] = true;
+//   }
+//   for (var i = 0; i < 10; ++i) regPrefix(String(i));
+//   regPrefix("-");
 });
