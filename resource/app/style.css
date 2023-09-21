@@ -708,9 +708,15 @@ a.hidden{
     text-decoration: underline;
 }
 
-
 .CodeMirror {
     height: auto;
     min-height: 96px;
     background: transparent;
+}
+
+.CodeMirror-vscrollbar {
+    overflow-y: hidden;
+}
+.CodeMirror-hscrollbar {
+    overflow-x: hidden;
 }
