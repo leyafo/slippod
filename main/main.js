@@ -1,5 +1,5 @@
 // main.js
-const {globalShortcut,ipcMain, app, Menu, BrowserWindow } = require("electron");
+const {clipboard, globalShortcut,ipcMain, app, Menu, BrowserWindow } = require("electron");
 const WindowManager = require('./window_manager');
 const ipcHandler = require("./ipc_handlers");
 const {menuTemplate} = require("./menu");
@@ -58,4 +58,12 @@ ipcMain.handle("displayCardCounts", async(event)=>{
 let markdownRender = createMarkdownRender()
 ipcMain.handle("markdownRender", async(event, rawText)=>{
     return markdownRender(rawText)
+})
+
+ipcMain.handle("copyTextToClipboard", async function(event, text){
+    return clipboard.writeText(text);
+});
+
+ipcMain.handle("pasteTextFromClipboard", async function(event){
+    return clipboard.readText();
 })

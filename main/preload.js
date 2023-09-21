@@ -1,10 +1,16 @@
 // preload.js
-const { contextBridge, ipcRenderer } = require('electron');
+const { clipboard, contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('utils', {
     reloadAll: (...args) => ipcRenderer.invoke("reloadAll", ...args),
     uploadCardEditing: (id, entry) => ipcRenderer.invoke("uploadCardEditing", id, entry),
     markdownRender: (rawText) => ipcRenderer.invoke("markdownRender", rawText),
+    copyTextToClipboard:function(text){
+        return ipcRenderer.invoke("copyTextToClipboard", text);
+    },
+    pasteTextFromClipboard:function(){
+        return ipcRenderer.invoke("pasteTextFromClipboard");
+    }
 });
 
 contextBridge.exposeInMainWorld('pages', {
