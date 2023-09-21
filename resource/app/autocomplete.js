@@ -83,7 +83,7 @@ function showLinkHints(cm, option){
             //+1 means exclude @
             var keyword = line.slice(start+1, end).toLowerCase()
             let hints = [];
-            db.getCardSearchSuggestions(keyword).then(function (cards) {
+            db.getCardSearchSuggestions(keyword, CM.limitSugesstionItmes).then(function (cards) {
                 for (let card of cards) {
                     hints.push({
                         text: `@${card.id} `,

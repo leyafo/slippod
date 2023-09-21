@@ -23,11 +23,12 @@ export const tagList= document.getElementById("tagsList")
 export const allCardsTag = document.getElementById("allCards");
 export const cardsNoTag = document.getElementById("noTag");
 export const cardsTrash = document.getElementById("trashCards");
-export const limitItems= 20
-export const listInsertBeforeFirst= 1
-export const listInsertAfterLast= 2
-export const highlightUp = 1
-export const highlightDown = 2
+export const limitItems= 20;
+export const listInsertBeforeFirst= 1;
+export const listInsertAfterLast= 2;
+export const highlightUp = 1;
+export const highlightDown = 2;
+export const limitSugesstionItmes = 10;
 
 export function clickHandle(selector, handle) {
     document.addEventListener("click", function(event) {

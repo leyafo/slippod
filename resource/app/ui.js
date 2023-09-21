@@ -372,6 +372,7 @@ function reloadCardList(cards, headerTitle = 'All Cards', order = CM.listInsertB
     } else {
         CM.toggleElementShown(CM.creationTip);
     }
+    globalState.setViewing();
 }
 
 function insertCardToList(card, order){
@@ -440,7 +441,7 @@ function performSearch(searchTerm) {
     return;
   }
 
-  db.getCardSearchSuggestions(searchTerm).then(function (cards) {
+  db.getCardSearchSuggestions(searchTerm, CM.limitSugesstionItmes).then(function (cards) {
     updateSuggestionBox(cards);
   });
 }
