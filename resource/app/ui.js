@@ -91,6 +91,9 @@ function editCard(li) {
             mode: {
                 name: "gfm",
             },
+            configureMouse: function(cm, repeat, ev){
+                return { addNew: false };
+            },
             keyMap: "emacs",
             pollInterval: 1000,
             hintOptions: { hint: autoComplete.autocompleteHints },
@@ -205,6 +208,9 @@ function activateNewItemEditor(value){
         theme: "default",
         mode: {
             name: "gfm",
+        },
+        configureMouse: function(cm, repeat, ev){
+            return { addNew: false };
         },
         keyMap: "emacs",
         pollInterval: 1000,
