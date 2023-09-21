@@ -202,10 +202,10 @@ function getCardsByIDs(ids){
     return stmt.all(JSON.stringify(ids));
 }
 
-function getCardSearchSuggestions(keyword){
+function getCardSearchSuggestions(keyword, limit){
     const tokenLengh = keyword.length+20; //limit the token size
     if(keyword === ""){//get latest 5 records
-        let recentCards = getCards(0, 5);
+        let recentCards = getCards(0, limit);
         let results = [];
         for(let card of recentCards){
             //get the begining of content
@@ -221,11 +221,12 @@ function getCardSearchSuggestions(keyword){
         matchSingleCard = getCardByID(N(cardID))
     }
     const searchRef = `SELECT rowid, simple_snippet(cards_fts, 0, '<mark>', '</mark>', '...', ${tokenLengh}) as snippet 
-                            FROM cards_fts WHERE entry MATCH jieba_query('${keyword}', 0) ORDER BY rank`;
-    const results = db.prepare(searchRef).all()
+                            FROM cards_fts WHERE entry MATCH jieba_query('${keyword}', 0) ORDER BY rank limit ?,?`;
+    const results = db.prepare(searchRef).all(0, limit)
 
     let matchedCards = [];
     if(matchSingleCard != null){
+        matchSingleCard.entry = card.entry.trim().replaceAll("\n", " ");
         matchedCards.push(matchSingleCard);
     }
     for (let r of  results){
@@ -234,7 +235,7 @@ function getCardSearchSuggestions(keyword){
         }
         matchedCards.push({
             id: r.rowid,
-            entry: r.snippet,
+            entry: r.snippet.trim().replaceAll("\n", " "),
         })
     }
     return matchedCards 
