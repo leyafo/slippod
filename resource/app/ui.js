@@ -143,6 +143,7 @@ CM.clickHandle(".tagClick", function(e){
     const clickDiv = tagContainer.querySelector(".tagClick")
     const href = clickDiv.getAttribute("href");
     const tag = clickDiv.dataset.tag;
+    const currentTag = CM.tagList.querySelector("div.selected");
     
     switch (href) {
         case hrefTagAll:
@@ -155,6 +156,9 @@ CM.clickHandle(".tagClick", function(e){
             db.getNoTagCards(0, CM.limitItems).then(cards => reloadCardList(cards, "No Tag", CM.listInsertAfterLast));
             break;
         default:
+            if (currentTag) {
+                currentTag.querySelector(".count").textContent = "";
+            }
             db.getCardsByTag(tag, 0, CM.limitItems).then(cards => reloadCardList(cards, tag, CM.listInsertAfterLast));
             db.countTaggedCards(tag).then(function(count){
                 if (count > 0){
@@ -163,6 +167,7 @@ CM.clickHandle(".tagClick", function(e){
                     // CM.listTitle.textContent = CM.listTitle.textContent + `- ${count}`
                 }
             });
+
     }
     CM.highlightItem("selected", tagContainer, CM.sideNavContainer);
 });
@@ -638,6 +643,7 @@ document.addEventListener('scroll', handleScroll());
 
 function buildTagTree(tagList) {
   const tree = {};
+  console.log(tagList);
   tagList.forEach(tagItem => {
     let node = tree;
     tagItem.tag.split('/').forEach(part => {
@@ -660,8 +666,10 @@ function buildTagHtml(tree, prefix = '') {
                 <div class="tagContainer">
                     <span class="foldIcon open"></span>
                     <div class="tagClick" href="/tags/${fullTag}" data-tag="${fullTag}">
-                        <span class="tagIcon"></span>
-                        <span class="label">${key}</span>
+                        <div class="left-group">
+                            <span class="tagIcon"></span>
+                            <span class="label">${key}</span>
+                        </div>
                         <span class="count"></span>
                     </div>
                 </div>`;
@@ -671,8 +679,10 @@ function buildTagHtml(tree, prefix = '') {
         html += `<li>
                     <div class="tagContainer">
                         <div class="tagClick" href="/tags/${fullTag}" data-tag="${fullTag}">
-                            <span class="tagIcon"></span>
-                            <span class="label">${key}</span>
+                            <div class="left-group">
+                                <span class="tagIcon"></span>
+                                <span class="label">${key}</span>
+                            </div>
                             <span class="count"></span>
                         </div>
                     </div>`;
@@ -696,7 +706,7 @@ document.addEventListener('click', function(event){
     if (event.target.tagName !== 'A') {
         return;
     }
-
+    
     const href = event.target.getAttribute('href');
     const tag = CM.getSuffix(href, "/tags/")
     if(tag == ""){

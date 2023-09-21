@@ -18,7 +18,7 @@ body {
     background-color: #FFFFFF;
     box-shadow: 1px 0px 0px 0px rgba(0, 0, 0, 0.05);
     font-weight: 500;
-    @apply text-base w-56;
+    @apply text-base w-64;
 }
 
 #sideNavContainer {
@@ -70,6 +70,12 @@ body {
 
 .tagContainer.selected {
     background: #DDE0E6;
+}
+
+.tagContainer .tagClick {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 #tagsList {
@@ -126,8 +132,8 @@ body {
     vertical-align: text-bottom;
 }
 
-#tagsList li a:hover {
-    text-decoration: underline;
+#sideNavContainer .count {
+    color: #9A9DA3;
 }
 
 #featureDock {
@@ -136,7 +142,7 @@ body {
     padding: 4px;
     background-color: #FFFFFF;
     position: fixed;
-    @apply w-56 bottom-0;
+    @apply w-64 bottom-0;
 }
 
 #publisher {
