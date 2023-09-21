@@ -714,9 +714,10 @@ a.hidden{
     background: transparent;
 }
 
-.CodeMirror-vscrollbar {
-    overflow-y: hidden;
+.CodeMirror-scroll {
+    margin-right: 0;
 }
-.CodeMirror-hscrollbar {
-    overflow-x: hidden;
+
+.CodeMirror-sizer {
+    border-right: 0px solid transparent;
 }
