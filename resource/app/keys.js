@@ -1,37 +1,64 @@
 import * as CM from "./common.js";
 import * as UI from "./ui.js";
 
+function startingSearch(){
+    globalState.setSearching();
+    CM.showOmniSearchAndFocus();
+    CM.searchBox.focus();
+}
+
+function ctrlCmdKey(event){
+    switch (window.platform){
+    case "darwin":
+        return event.metaKey
+    default:
+        return event.ctrlKey
+    }
+}
+
 //全局快捷键盘
 document.addEventListener("keydown", function (event) {
     if(!globalState.isViewing()){
         return
     }
 
-    if (event.key == "k" && event.ctrlKey) {
-        globalState.setSearching();
-        CM.showOmniSearchAndFocus();
-        CM.searchBox.focus();
+    if (event.key == "k" && ctrlCmdKey(event)) {
+        startingSearch()
         event.preventDefault();
         return
     }
-    if (event.key === "ArrowUp" || (event.key === "p" && event.ctrlKey) ){
+
+    if (event.key === "ArrowUp" || (event.key === "p" && event.ctrlKey) ){ //ctrl-p
         CM.highlightUpOrDownItem(CM.highlightUp, "selected", CM.cardsList)
         event.preventDefault();
         return
-    }else if (event.key === "ArrowDown" || (event.key === "n" && event.ctrlKey)){
+    }else if (event.key === "ArrowDown" || (event.key === "n" && event.ctrlKey)){ //ctrl-n
         CM.highlightUpOrDownItem(CM.highlightDown, "selected", CM.cardsList)
         event.preventDefault();
         return
-    }else if (event.key === "o" && event.ctrlKey){
+    }else if (event.key === "o" && ctrlCmdKey(event)){
         UI.activateNewItemEditor('')
     }else if (event.key === "Escape"){
         CM.unHighlightItem("selected", CM.cardsList);
+    } else if (event.key === "d" && ctrlCmdKey(event)){
+        const li = CM.getHighlightedCardItem()
+        CM.deleteCard(li);
+    }else if (event.key === "Enter"){
+        const li = CM.getHighlightedCardItem()
+        UI.editCard(li);
+        globalState.setEditing();
     }
 });
 
 //搜索框快捷键
 CM.searchBox.addEventListener("keydown", function (event) {
     if (!globalState.isSearching()){
+        return
+    }
+
+    if (event.key == "k" && event.ctrlKey) {
+        startingSearch()
+        event.preventDefault();
         return
     }
 
@@ -74,12 +101,14 @@ CodeMirror.defineExtension("keydownMap", function(eventMap){
         if (!globalState.isEditing()){
             return
         }
-        if (event.ctrlKey && event.key === "Enter") {  
+        if (ctrlCmdKey(event) && event.key === "Enter") {  
             eventMap.commit(cm, event)
             globalState.setViewing();
         }else if(event.key == 'Escape'){
             eventMap.cancel(cm, event)
             globalState.setViewing();
+        }else if(ctrlCmdKey(event) && event.key === "s"){
+            eventMap.save(cm, event)
         }
     });
 })

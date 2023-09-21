@@ -1,5 +1,5 @@
 // preload.js
-const { clipboard, contextBridge, ipcRenderer } = require('electron');
+const {contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('utils', {
     reloadAll: (...args) => ipcRenderer.invoke("reloadAll", ...args),
@@ -10,7 +10,10 @@ contextBridge.exposeInMainWorld('utils', {
     },
     pasteTextFromClipboard:function(){
         return ipcRenderer.invoke("pasteTextFromClipboard");
-    }
+    },
+    platform: function(){
+        return ipcRenderer.invoke("platform");
+    },
 });
 
 contextBridge.exposeInMainWorld('pages', {

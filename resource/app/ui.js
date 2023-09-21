@@ -17,27 +17,30 @@ function highlightSidebarLink(href){
     tagContainer.classList.add(className);
 }
 
-function updateCard(li){
+function updateCard(li, needCloseEditor=true){
     const content = li.querySelector(".content");
     const cardID = li.dataset.id;
     const entry = content.firstChild.CodeMirror.getValue();
-    const markdownHtml = document.createElement('div');
-
-    markdownHtml.classList.add("markdown-body");
 
     db.updateCardEntryByID(cardID, entry).then((result) => {
         console.log(result.id, result.updated_at);
-        utils.markdownRender(entry).then(function(html){
-            markdownHtml.innerHTML = html;
+        //ctrl-s will not close the editor
+        if(needCloseEditor){
+            const markdownHtml = document.createElement('div');
+            markdownHtml.classList.add("markdown-body");
+            utils.markdownRender(entry).then(function(html){
+                markdownHtml.innerHTML = html;
 
-            content.innerHTML = '';
-            content.appendChild(markdownHtml);
-        });
-        const controlPanel = li.querySelector(".itemCtrlPanel");
-        const itemHeader = li.querySelector(".itemHeader");
-        content.classList.remove("empty");
-        CM.toggleElementHidden(controlPanel);
-        itemHeader.classList.remove("hidden");
+                content.innerHTML = '';
+                content.appendChild(markdownHtml);
+            });
+
+            const controlPanel = li.querySelector(".itemCtrlPanel");
+            const itemHeader = li.querySelector(".itemHeader");
+            content.classList.remove("empty");
+            CM.toggleElementHidden(controlPanel);
+            itemHeader.classList.remove("hidden");
+        }
 
         db.getAllTags().then(function(tags){
             let tree = buildTagTree(tags)
@@ -101,31 +104,25 @@ function editCard(li) {
             autoRefresh: true,
         });
 
-        editor.on("change", editorChange(editor));
+        editor.on("change", editorOnChange(editor));
+        editor.on("focus", editorOnFocus(editor));
+        editor.on("blur", editorOnBlur(editor));
         editor.setValue(cardEntry);
         editor.keydownMap({
             "commit":function(cm, event){
-                updateCard(li)
+                updateCard(li, true);
             },
             "cancel":function(cm, event){
                 cancelUpdate(li);
+            },
+            "save": function(cm, event){
+                updateCard(li, false);
             }
         });
         CM.unHighlightItem("selected", CM.cardsList)
+        editor.focus();
+        editor.setCursor(editor.lineCount(), 0);
     });
-}
-
-function deleteCard(li) {
-    const cardID = li.dataset.id
-    if(li.dataset.is_trash) {
-        db.removeCardPermanently(li.dataset.trash_id).then(function(){
-            CM.cardsList.removeChild(li);
-        })
-    } else {
-        db.moveCardToTrash(cardID).then(function() {
-            CM.cardsList.removeChild(li);
-        })
-    }
 }
 
 function restoreCard(li){
@@ -196,13 +193,26 @@ CM.clickHandle("#btnDuplicateWindow", function(e) {
     pages.duplicateWindow();
 })
 
-function editorChange(editor){
+function editorOnChange(editor){
     return function(cm, change){
         if (change.text[0] == "#") {
             cm.showHint({type:'tag', completeSingle:false});
         }else if (change.text[0] === "@"){
             cm.showHint({type:'link', completeSingle:false, async: true});
         }
+    }
+}
+
+function editorOnFocus(editor){
+    return function(cm, event){
+        console.log('onfocus');
+        globalState.setEditing();
+    }
+}
+
+function editorOnBlur(editor){
+    return function(cm, event){
+        globalState.setViewing();
     }
 }
 
@@ -224,10 +234,13 @@ function activateNewItemEditor(value){
         autoRefresh: true,
       });
 
-    editor.on("change", editorChange(editor));
+    editor.on("change", editorOnChange(editor));
+    editor.on("blur", editorOnBlur(editor));
+    editor.on("focus", editorOnFocus(editor))
 
     editor.keydownMap({
         "commit": function (cm, event) {
+            console.log(cm, event)
             createNewCardHandle(event);
         },
         "cancel": function (cm, event) {
@@ -239,12 +252,11 @@ function activateNewItemEditor(value){
     const btnCreate = CM.newItemCtrlPanel.querySelector(".btnCreateNewCard");
     btnCreate.disabled = false;
     CM.newItemEditor.classList.remove("empty");
-    editor.set
     editor.setValue(value);
     editor.setCursor(editor.lineCount(), 0);
     editor.focus()
     CM.setScrollbarToTop()
-    globalState.setEditing();
+    return editor
 }
 
 CM.clickHandle("#newItemEditor", function(e) {
@@ -309,7 +321,7 @@ function addCardEventListeners(li) {
         editCard(li)
     })
     cardMenuOptions.querySelector(".deleteOption").addEventListener('click', function(event) {
-        deleteCard(li)
+        CM.deleteCard(li)
     })
     cardMenuOptions.querySelector(".restoreOption").addEventListener('click', function(event) {
         restoreCard(li)
@@ -407,7 +419,12 @@ CM.searchBox.addEventListener("compositionend", function (event) {
 });
 
 CM.searchBox.addEventListener("blur", function(event){
+    globalState.setViewing();
     clearSearch(event);
+})
+
+CM.searchBox.addEventListener("focus", function(event){
+    globalState.setSearching();
 })
 
 CM.searchBox.addEventListener("input", function (event) {

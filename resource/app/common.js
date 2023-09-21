@@ -1,3 +1,5 @@
+import { activateNewItemEditor } from "./ui"
+
 //all existed elements
 export const sideNav = document.getElementById('sideNav')
 export const btnSideNav = document.getElementById('btnSideNav')
@@ -165,6 +167,25 @@ export function fillingCardItem(parentItem, card){
     updateTimeSpan.textContent = "Updated: "+ timeAgo(card.updated_at);
 }
 
+export function deleteCard(li) {
+    const cardID = li.dataset.id
+    if(li.dataset.is_trash) {
+        db.removeCardPermanently(li.dataset.trash_id).then(function(){
+            cardsList.removeChild(li);
+        })
+    } else {
+        db.moveCardToTrash(cardID).then(function() {
+            cardsList.removeChild(li);
+        })
+    }
+}
+
+
+export function getHighlightedCardItem(){
+    const highlightedLi = cardsList.querySelector("li.selected")
+    return highlightedLi
+}
+
 export function getSuffix(str, ...prefixes){
     for(let prefix of prefixes){
         if(str.indexOf(prefix) != 0){
@@ -194,4 +215,5 @@ export function linkClick(event){
     });
 } 
 
-
+window.testHotKey = function() {
+}

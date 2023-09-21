@@ -24,6 +24,7 @@ class StateMachine{
     isSearching(){
         return this.#state == States.Searching;
     }
+
     showStateText(){
         switch(this.#state){
         case States.Viewing:

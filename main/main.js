@@ -67,3 +67,7 @@ ipcMain.handle("copyTextToClipboard", async function(event, text){
 ipcMain.handle("pasteTextFromClipboard", async function(event){
     return clipboard.readText();
 })
+
+ipcMain.handle("platform", async function(event){
+    return process.platform
+})
