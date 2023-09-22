@@ -1,5 +1,3 @@
-import { activateNewItemEditor } from "./ui"
-
 //all existed elements
 export const sideNav = document.getElementById('sideNav')
 export const btnSideNav = document.getElementById('btnSideNav')
