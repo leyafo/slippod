@@ -5,7 +5,7 @@ const hrefTagAll = "/tag_all"
 const hrefTagTrash = "/tag_trash"
 const hrefTagNo = "/tag_no"
 
-function highlightSidebarLink(href){
+function highlightSidebarLink(href) {
     const className = "selected" 
     //remove previous highlight
     const lastHighlightDiv = CM.sideNavContainer.querySelector(`div.${className}`);
@@ -17,7 +17,7 @@ function highlightSidebarLink(href){
     tagContainer.classList.add(className);
 }
 
-function updateCard(li, needCloseEditor=true){
+function updateCard(li, needCloseEditor=true) {
     const content = li.querySelector(".content");
     const cardID = li.dataset.id;
     const entry = content.firstChild.CodeMirror.getValue();
@@ -311,10 +311,10 @@ function addCardEventListeners(li) {
     const cardMenuContainer = li.querySelector(".itemMenuContainer")
     const cardMenuOptions = li.querySelector(".itemMenuOptions");
 
-    cardMenuContainer.addEventListener('mouseenter', function(event){
+    cardMenuContainer.addEventListener('mouseover', function(event) {
         CM.toggleElementShown(cardMenuOptions)
     })
-    cardMenuContainer.addEventListener('mouseleave', function(event){
+    cardMenuContainer.addEventListener('mouseout', function(event) {
         CM.toggleElementHidden(cardMenuOptions)
     })
     cardMenuOptions.querySelector(".editOption").addEventListener('click', function(event) {
@@ -339,6 +339,7 @@ CM.clickHandle(".btnCancelCard", function(ev) {
 })
 
 function reloadCardList(cards, headerTitle = 'All Cards', order = CM.listInsertBeforeFirst) {
+    CM.listArea.classList.remove("allCardsList", "noTagList", "trashList", "tagList");
     CM.listHeader.classList.remove("iconAllCards", "iconNoTag", "iconTrash", "iconTag");
     switch (headerTitle) {
         case "All Cards":
@@ -355,6 +356,7 @@ function reloadCardList(cards, headerTitle = 'All Cards', order = CM.listInsertB
             break;
         default:
             CM.listHeader.classList.add("iconTag");
+            CM.listArea.classList.add("tagList");
             break;
     }
     CM.listTitle.textContent = headerTitle; // Update the cards header
