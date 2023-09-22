@@ -22,12 +22,16 @@
 }
 
 .CodeMirror-hint {
-  margin: 0;
-  padding: 0 4px;
-  border-radius: 2px;
-  white-space: pre;
-  color: black;
-  cursor: pointer;
+    display: block;
+    border-bottom: solid var(--borderColor-muted, var(--color-border-muted));
+    font-weight: var(--base-text-weight-medium, 500);
+    margin: 0;
+    padding: 0 4px;
+    border-radius: 2px;
+    white-space: pre;
+    color: black;
+    cursor: pointer;
+
 }
 
 li.CodeMirror-hint-active {

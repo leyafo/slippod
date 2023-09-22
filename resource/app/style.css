@@ -18,7 +18,7 @@ body {
     background-color: #FFFFFF;
     box-shadow: 1px 0px 0px 0px rgba(0, 0, 0, 0.05);
     font-weight: 500;
-    @apply text-base w-56;
+    @apply text-base w-64;
 }
 
 #sideNavContainer {
@@ -70,6 +70,12 @@ body {
 
 .tagContainer.selected {
     background: #DDE0E6;
+}
+
+.tagContainer .tagClick {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 #tagsList {
@@ -126,8 +132,8 @@ body {
     vertical-align: text-bottom;
 }
 
-#tagsList li a:hover {
-    text-decoration: underline;
+#sideNavContainer .count {
+    color: #9A9DA3;
 }
 
 #featureDock {
@@ -136,7 +142,7 @@ body {
     padding: 4px;
     background-color: #FFFFFF;
     position: fixed;
-    @apply w-56 bottom-0;
+    @apply w-64 bottom-0;
 }
 
 #publisher {
@@ -229,16 +235,40 @@ body {
     @apply align-text-bottom mr-1;
 }
 
+#listArea.trashList #newItem {
+    @apply hidden;
+}
+
+#newItem {
+    background-color: #FFFFFF;
+    @apply px-4 pb-4 pt-1 mb-4;
+}
+
+#newItem #newItemEditor.empty::before {
+    content: "What's on your mind at the moment?";
+    position: absolute;
+    color: #B0B3B7;
+    line-height: 2rem;
+    cursor: text;
+    @apply pl-1;
+}
+
+#newItem #newItemEditor .editorPlaceholder {
+    height: 48px;
+    cursor: text;
+}
+
 #cardsList .selected,
 #suggestionResults .highlighted,
 .highlighted {
-    @apply bg-slate-300;
+    @apply bg-slate-200;
 }
 
 .completeAtMenu {
     @apply text-base;
     background-color: beige;
 }
+
 .completeAtMenu div {
     margin-bottom: 1em;
 }
@@ -250,6 +280,10 @@ body {
 
 #listAreaContainer {
     @apply px-12;
+}
+
+#listHeader {
+    @apply mb-8;
 }
 
 #listHeader .icon {
@@ -320,10 +354,6 @@ body {
     line-height: 24px;
 }
 
-#cardsList {
-    @apply pt-8;
-}
-
 #cardsList > li, .cardContainer  {
     @apply mb-4 p-4 bg-white rounded;
 }
@@ -337,69 +367,69 @@ body {
 }
 
 .itemHeaderBar {
-position: relative;
-@apply mb-2;
+    position: relative;
+    @apply mb-2;
 }
 
 .itemMetaInfo {
-color: #8F9193;
+    color: #8F9193;
 }
 
 .itemMetaInfo .itemId a {
-color: #8F9193;
-text-decoration: none;
+    color: #8F9193;
+    text-decoration: none;
 }
 .itemMetaInfo .itemId a:hover {
-color: #8F9193;
-border-bottom: 1px solid #8F9193;
+    color: #8F9193;
+    border-bottom: 1px solid #8F9193;
 }
 
 .itemHeaderBar .itemMenuContainer {
-position: absolute;
-right: 0;
-top: -1.5px;
-border-radius: 9px;
-line-height: 1.2rem;
-@apply px-2;
+    position: absolute;
+    right: 0;
+    top: -1.5px;
+    border-radius: 9px;
+    line-height: 1.2rem;
+    @apply px-2;
 }
 
 .itemHeaderBar .itemMenuContainer:hover {
-background-color: #E0E3E7;
+    background-color: #E0E3E7;
 }
 
 .itemHeaderBar .itemMenu {
-content: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNSIgaGVpZ2h0PSIzIiBmaWxsPSJub25lIiB2aWV3Qm94PSIwIDAgMTUgMyI+PGcgaWQ9Ikdyb3VwIj48ZyBpZD0iaWNvbi1kb3QtbWVudSI+PGNpcmNsZSBpZD0iRWxsaXBzZSA3X19fX18wXzBfVEZDUUNURFVPVSIgY3g9IjEuNSIgY3k9IjEuNSIgcj0iMS41IiBmaWxsPSIjOEY5MTkzIi8+PGNpcmNsZSBpZD0iRWxsaXBzZSA4X19fX18wXzFfSk5BQVNMRFVPQSIgY3g9IjcuNSIgY3k9IjEuNSIgcj0iMS41IiBmaWxsPSIjOEY5MTkzIi8+PGNpcmNsZSBpZD0iRWxsaXBzZSA5X19fX18wXzJfUUFUUUFCSUJRUiIgY3g9IjEzLjUiIGN5PSIxLjUiIHI9IjEuNSIgZmlsbD0iIzhGOTE5MyIvPjwvZz48L2c+PC9zdmc+");
-display: inline-block;
-width: 15px;
-height: 3px;
-vertical-align: middle;
+    content: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNSIgaGVpZ2h0PSIzIiBmaWxsPSJub25lIiB2aWV3Qm94PSIwIDAgMTUgMyI+PGcgaWQ9Ikdyb3VwIj48ZyBpZD0iaWNvbi1kb3QtbWVudSI+PGNpcmNsZSBpZD0iRWxsaXBzZSA3X19fX18wXzBfVEZDUUNURFVPVSIgY3g9IjEuNSIgY3k9IjEuNSIgcj0iMS41IiBmaWxsPSIjOEY5MTkzIi8+PGNpcmNsZSBpZD0iRWxsaXBzZSA4X19fX18wXzFfSk5BQVNMRFVPQSIgY3g9IjcuNSIgY3k9IjEuNSIgcj0iMS41IiBmaWxsPSIjOEY5MTkzIi8+PGNpcmNsZSBpZD0iRWxsaXBzZSA5X19fX18wXzJfUUFUUUFCSUJRUiIgY3g9IjEzLjUiIGN5PSIxLjUiIHI9IjEuNSIgZmlsbD0iIzhGOTE5MyIvPjwvZz48L2c+PC9zdmc+");
+    display: inline-block;
+    width: 15px;
+    height: 3px;
+    vertical-align: middle;
 }
 
 .itemHeaderBar .itemMenuOptions {
-@apply p-2 text-base;
-font-weight: 700;
-color: #FFFFFF;
-position: absolute;
-right: 0;
-border-radius: 0.53333rem;
-background: #2D3238;
-border: 0.5px solid #1C1C1C;
-box-shadow: 
-    inset 0 0 0 1px rgba(255, 255, 255, 0.10),
-    0px 2px 8px 0px rgba(0, 0, 0, 0.25);
+    @apply p-2 text-base;
+    font-weight: 700;
+    color: #FFFFFF;
+    position: absolute;
+    right: 0;
+    border-radius: 0.53333rem;
+    background: #2D3238;
+    border: 0.5px solid #1C1C1C;
+    box-shadow: 
+        inset 0 0 0 1px rgba(255, 255, 255, 0.10),
+        0px 2px 8px 0px rgba(0, 0, 0, 0.25);
 }
 
 .itemMenuOptions .label {
-display: inline-block;
-height: 14px;
+    display: inline-block;
+    height: 14px;
 }
 
 .itemMenuOptions .icon {
-display: inline-block;
-text-align: center;
-width: 20px;
-height: 14px;
-vertical-align: text-bottom;
+    display: inline-block;
+    text-align: center;
+    width: 20px;
+    height: 14px;
+    vertical-align: text-bottom;
 }
 
 .itemMenuOptions div {
@@ -435,6 +465,77 @@ content: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcv
 
 .restoreOption:hover .icon {
 content: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNCIgaGVpZ2h0PSIxNCIgZmlsbD0ibm9uZSIgdmlld0JveD0iMCAwIDE0IDE0Ij48ZyBpZD0iR3JvdXAiPjxwYXRoIGlkPSJpY29uLXJlc3RvcmUtd2hpdGUiIGZpbGw9IndoaXRlIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik01LjcyMTA4IDBIOC4yNzg5MkM4LjQ0MzE0IDAgOC41ODYxNiAwIDguNzIwODcgMC4wMjAxMDI3QzguOTgzMjQgMC4wNTk5Nzk5IDkuMjMyMTQgMC4xNTc1NjMgOS40NDc2NCAwLjMwNTA0NEM5LjY2MzE1IDAuNDUyNTI2IDkuODM5MjggMC42NDU4MTIgOS45NjE5NSAwLjg2OTQzOUMxMC4wMjMxIDAuOTc5ODkyIDEwLjA2NjcgMS4xMDI5NiAxMC4xMTY0IDEuMjQzMUwxMC4xMjI0IDEuMjZMMTAuMjA2NCAxLjUwMDUyQzEwLjI2NDMgMS42OTU5MiAxMC4zOTA0IDEuODY2OTEgMTAuNTY0IDEuOTg1NTdDMTAuNzM3NiAyLjEwNDIzIDEwLjk0ODQgMi4xNjM1NSAxMS4xNjIyIDIuMTUzODVIMTMuNDMyNEMxMy41ODMgMi4xNTM4NSAxMy43MjczIDIuMjEwNTggMTMuODMzOCAyLjMxMTU3QzEzLjk0MDIgMi40MTI1NSAxNCAyLjU0OTUxIDE0IDIuNjkyMzJDMTQgMi44MzUxMyAxMy45NDAyIDIuOTcyMDkgMTMuODMzOCAzLjA3MzA3QzEzLjcyNzMgMy4xNzQwNSAxMy41ODMgMy4yMzA3OCAxMy40MzI0IDMuMjMwNzhIMC41Njc1NjhDMC40MTcwMzkgMy4yMzA3OCAwLjI3MjY3NiAzLjE3NDA1IDAuMTY2MjM3IDMuMDczMDdDMC4wNTk3OTcxIDIuOTcyMDkgMCAyLjgzNTEzIDAgMi42OTIzMkMwIDIuNTQ5NTEgMC4wNTk3OTcxIDIuNDEyNTUgMC4xNjYyMzcgMi4zMTE1N0MwLjI3MjY3NiAyLjIxMDU4IDAuNDE3MDM5IDIuMTUzODUgMC41Njc1NjggMi4xNTM4NUgyLjkwNTk1QzMuMTA4MDggMi4xNDkyNSAzLjMwMzM0IDIuMDgzMzMgMy40NjMwOSAxLjk2NTc1QzMuNjIyODQgMS44NDgxNyAzLjczODY4IDEuNjg1MTIgMy43OTM2MiAxLjUwMDUyTDMuODc4MzggMS4yNkwzLjg4MDI3IDEuMjU0NkMzLjkzMDk0IDEuMTA5NjcgMy45NzUyNiAwLjk4MjkwMiA0LjAzNzMgMC44Njk0MzlDNC4xNjAwNCAwLjY0NTcyNCA0LjMzNjI5IDAuNDUyMzgzIDQuNTUxOTMgMC4zMDQ4OTZDNC43Njc1NyAwLjE1NzQwOSA1LjAxNjYyIDAuMDU5ODc1MSA1LjI3OTE0IDAuMDIwMTAyN0M1LjQxMzg0IDAgNS41NTY4NyAwIDUuNzIwMzIgMEg1LjcyMTA4Wk00LjczNTc4IDIuMTUzODVDNC43ODg5MiAyLjA1NTEyIDQuODMzMjIgMS45NTIzNCA0Ljg2ODIyIDEuODQ2NTdMNC45NDM4OSAxLjYzMTE4QzUuMDEyNzYgMS40MzUxOCA1LjAyODY1IDEuMzk1NyA1LjA0NDU0IDEuMzY2OThDNS4wODUzOSAxLjI5MjMyIDUuMTQ0MTIgMS4yMjc3OCA1LjIxNiAxLjE3ODUzQzUuMjg3ODkgMS4xMjkyOCA1LjM3MDkzIDEuMDk2NyA1LjQ1ODQ5IDEuMDgzMzlDNS41NTcxNCAxLjA3NTQ4IDUuNjU2MjEgMS4wNzMzMyA1Ljc1NTE0IDEuMDc2OTNIOC4yNDQ4N0M4LjQ2MjgxIDEuMDc2OTMgOC41MDgyMiAxLjA3ODM2IDguNTQxNTEgMS4wODQxMUM4LjYyODk5IDEuMDk3MzQgOC43MTE5OSAxLjEyOTgxIDguNzgzODcgMS4xNzg5M0M4Ljg1NTc1IDEuMjI4MDUgOC45MTQ1MiAxLjI5MjQ1IDguOTU1NDYgMS4zNjY5OEM4Ljk3MTM1IDEuMzk1NyA4Ljk4NzI0IDEuNDM1MTggOS4wNTYxMSAxLjYzMTlMOS4xMzE3OCAxLjg0NzI5TDkuMTYxMyAxLjkyNzdDOS4xOTA4MSAyLjAwNjY3IDkuMjI1NjIgMi4wODEzNCA5LjI2NDIyIDIuMTUzODVINC43MzU3OFpNMi4zOTQ4NyA0LjQ1MTI0QzIuMzg0ODQgNC4zMDg3MSAyLjMxNTUzIDQuMTc1ODEgMi4yMDIyMSA0LjA4MTc2QzIuMDg4ODkgMy45ODc3MiAxLjk0MDgzIDMuOTQwMjMgMS43OTA2IDMuOTQ5NzVDMS42NDAzNyAzLjk1OTI3IDEuNTAwMjkgNC4wMjUwMiAxLjQwMTE1IDQuMTMyNTNDMS4zMDIwMiA0LjI0MDA0IDEuMjUxOTcgNC4zODA1MSAxLjI2MjAxIDQuNTIzMDNMMS42MTMxNCA5LjUxNDIzQzEuNjc3NDYgMTAuNDM0NiAxLjcyOTY4IDExLjE3ODQgMS44NTIyOCAxMS43NjI5QzEuOTgwMTcgMTIuMzY5NSAyLjE5NjYgMTIuODc2NCAyLjY0NDYgMTMuMjczNEMzLjA5MTg0IDEzLjY3MTIgMy42Mzk3NCAxMy44NDI4IDQuMjg2NzYgMTMuOTIyNEM0LjkwODgyIDE0IDUuNjk0MzMgMTQgNi42Njc1MiAxNEg3LjMzMjcxQzguMzA1MTQgMTQgOS4wOTE0MSAxNCA5LjcxMzQ2IDEzLjkyMjRDMTAuMzU5NyAxMy44NDI4IDEwLjkwNzYgMTMuNjcxMiAxMS4zNTU2IDEzLjI3MzRDMTEuODAyOSAxMi44NzY0IDEyLjAxOTMgMTIuMzY4OCAxMi4xNDcyIDExLjc2MjlDMTIuMjY4IDExLjE4NzQgMTIuMzE5OCAxMC40NTU3IDEyLjM4MzYgOS41NTMzMkwxMi4zODYzIDkuNTE0MjNMMTIuNzM3NSA0LjUyMzAzQzEyLjc0NzUgNC4zODA1MSAxMi42OTc0IDQuMjQwMDQgMTIuNTk4MyA0LjEzMjUzQzEyLjQ5OTIgNC4wMjUwMiAxMi4zNTkxIDMuOTU5MjcgMTIuMjA4OSAzLjk0OTc1QzEyLjA1ODYgMy45NDAyMyAxMS45MTA2IDMuOTg3NzIgMTEuNzk3MyA0LjA4MTc2QzExLjY4MzkgNC4xNzU4MSAxMS42MTQ2IDQuMzA4NzEgMTEuNjA0NiA0LjQ1MTI0TDExLjI1NjUgOS40MDUxQzExLjE4ODQgMTAuMzcyMiAxMS4xNCAxMS4wNDU2IDExLjAzNCAxMS41NTE4QzEwLjkzMDMgMTIuMDQzNiAxMC43ODY1IDEyLjMwMzUgMTAuNTggMTIuNDg3M0MxMC4zNzI2IDEyLjY3MTEgMTAuMDg5NiAxMi43OTAyIDkuNTY1OSAxMi44NTQ5QzkuMDI2MzMgMTIuOTIxNiA4LjMxNDk4IDEyLjkyMzEgNy4yOTI2IDEyLjkyMzFINi43MDY4N0M1LjY4NTI1IDEyLjkyMzEgNC45NzM5IDEyLjkyMTYgNC40MzM1NyAxMi44NTQ5QzMuOTA5OSAxMi43OTAyIDMuNjI2ODcgMTIuNjcxMSAzLjQxOTUyIDEyLjQ4NzNDMy4yMTI5MiAxMi4zMDM1IDMuMDY5MTQgMTIuMDQzNiAyLjk2NTQ3IDExLjU1MjVDMi44NTk1MiAxMS4wNDU2IDIuODExMDkgMTAuMzcyMiAyLjc0Mjk4IDkuNDA0MzhMMi4zOTQ4NyA0LjQ1MTI0Wk03LjM3Nzg0IDUuNjcyNTNDNy4yODI4NyA1LjU2Mjk1IDcuMTQ1MDEgNS41IDcgNS41QzYuODU0OTkgNS41IDYuNzE3MTMgNS41NjI5NSA2LjYyMjE2IDUuNjcyNTNMNC42MjIxNiA3Ljk4MDIzQzQuNDQxMyA4LjE4ODkgNC40NjM4NiA4LjUwNDY4IDQuNjcyNTMgOC42ODU1NEM0Ljg4MTIxIDguODY2MzkgNS4xOTY5OSA4Ljg0Mzg0IDUuMzc3ODQgOC42MzUxNkw2LjUgNy4zNDAzNlYxMUM2LjUgMTEuMjc2MSA2LjcyMzg2IDExLjUgNyAxMS41QzcuMjc2MTQgMTEuNSA3LjUgMTEuMjc2MSA3LjUgMTFWNy4zNDAzNkw4LjYyMjE2IDguNjM1MTZDOC44MDMwMSA4Ljg0Mzg0IDkuMTE4NzkgOC44NjYzOSA5LjMyNzQ3IDguNjg1NTRDOS41MzYxNCA4LjUwNDY4IDkuNTU4NyA4LjE4ODkgOS4zNzc4NCA3Ljk4MDIzTDcuMzc3ODQgNS42NzI1M1oiIGNsaXAtcnVsZT0iZXZlbm9kZCIvPjwvZz48L3N2Zz4=");
+}
+
+.itemBody {
+    position: relative;
+}
+
+.itemBody .content.empty::before {
+    content: "What's on your mind at the moment?";
+    position: absolute;
+    color: #B0B3B7;
+    line-height: 2rem;
+    @apply pl-1;
+}
+
+.itemCtrlPanel, #newItemCtrlPanel {
+    text-align: right;
+}
+
+.itemCtrlPanel .btnCancelCard, #newItemCtrlPanel .btnCancelNewCard {
+    @apply mr-2 px-2;
+    height: 26px;
+}
+
+.itemCtrlPanel.inactive .btnCancelCard, #newItemCtrlPanel.inactive .btnCancelNewCard {
+    @apply hidden;
+}
+
+.itemCtrlPanel .btnCancelCard .label, #newItemCtrlPanel .btnCancelNewCard .label {
+    @apply text-sm;
+    font-weight: 500;
+    color: #8F9193;
+}
+
+.itemCtrlPanel .btnCancelCard:hover, #newItemCtrlPanel .btnCancelNewCard:hover {
+    @apply rounded;
+    background-color: #DDE0E6;
+    color: #FFFFFF;
+}
+
+.itemCtrlPanel .btnCancelCard:hover .label, #newItemCtrlPanel .btnCancelNewCard:hover .label {
+    color: #FFFFFF;
+}
+
+.itemCtrlPanel .btnUpdateCard, #newItemCtrlPanel .btnCreateNewCard {
+    @apply px-3.5 py-1 rounded;
+    text-align: center;
+    background-color: #8EB7F0;
+    line-height: 16px;
+}
+
+.itemCtrlPanel.inactive .btnUpdateCard, #newItemCtrlPanel.inactive .btnCreateNewCard {
+    background-color: #DDE0E6;
+}
+
+.itemCtrlPanel .btnUpdateCard:hover, #newItemCtrlPanel .btnCreateNewCard:hover {
+    background-color: #67A5F3;
+}
+
+.itemCtrlPanel.inactive .btnUpdateCard:hover, #newItemCtrlPanel.inactive .btnCreateNewCard:hover {
+    background-color: #DDE0E6;
+}
+
+.itemCtrlPanel .btnUpdateCard:disabled, #newItemCtrlPanel .btnCreateNewCard:disabled {
+    background-color: #DDE0E6;
+}
+
+.itemCtrlPanel .btnUpdateCard .icon, #newItemCtrlPanel .btnCreateNewCard .icon {
+    content: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgZmlsbD0ibm9uZSIgdmlld0JveD0iMCAwIDE2IDE2Ij48ZyBpZD0iR3JvdXAiPjxwYXRoIGlkPSJpY29uLXNlbmQtcGFwZXItcGxhbmUiIGZpbGw9IndoaXRlIiBkPSJNMTUuNzUwNyAwLjA5ODIxNDNDMTUuOTQ3MSAwLjI0MTA3MSAxNi4wMjc1IDAuNDMxNTQ4IDE1Ljk5MTggMC42Njk2NDNMMTMuNzA2MSAxNC4zODM5QzEzLjY3NjMgMTQuNTU2NSAxMy41ODExIDE0LjY5MDUgMTMuNDIwNCAxNC43ODU3QzEzLjMzNyAxNC44MzMzIDEzLjI0NDggMTQuODU3MSAxMy4xNDM2IDE0Ljg1NzFDMTMuMDc4MSAxNC44NTcxIDEzLjAwNjcgMTQuODQyMyAxMi45MjkzIDE0LjgxMjVMOC44ODQ3NSAxMy4xNjA3TDYuNzI0MDggMTUuNzk0NkM2LjYxNjk0IDE1LjkzMTUgNi40NzExMSAxNiA2LjI4NjU5IDE2QzYuMjA5MjEgMTYgNi4xNDM3MyAxNS45ODgxIDYuMDkwMTYgMTUuOTY0M0M1Ljk3NzA3IDE1LjkyMjYgNS44ODYzIDE1Ljg1MjcgNS44MTc4NSAxNS43NTQ1QzUuNzQ5MzkgMTUuNjU2MyA1LjcxNTE3IDE1LjU0NzYgNS43MTUxNyAxNS40Mjg2VjEyLjMxMjVMMTMuNDI5MyAyLjg1NzE0TDMuODg0ODUgMTEuMTE2MUwwLjM1ODEyOCA5LjY2OTY0QzAuMTM3ODk0IDkuNTg2MzEgMC4wMTg4NDg4IDkuNDIyNjIgMC4wMDA5OTIwNDUgOS4xNzg1N0MtMC4wMTA5MTI1IDguOTQwNDggMC4wODQzMjM4IDguNzY0ODggMC4yODY3MDEgOC42NTE3OUwxNS4xNDM2IDAuMDgwMzU3MUMxNS4yMzI4IDAuMDI2Nzg1NyAxNS4zMjgxIDAgMTUuNDI5MyAwQzE1LjU0ODMgMCAxNS42NTU1IDAuMDMyNzM4MSAxNS43NTA3IDAuMDk4MjE0M1oiLz48L2c+PC9zdmc+");
+    display: inline-block;
+    width: 16px;
+    height: 16px;
 }
 
 /* Card details window specific styles */
@@ -613,12 +714,16 @@ a.hidden{
     text-decoration: underline;
 }
 
-
 .CodeMirror {
-  height: auto;
+    height: auto;
+    min-height: 96px;
+    background: transparent;
 }
 
 .CodeMirror-scroll {
-  overflow-y: hidden;
-  overflow-x: auto;
+    margin-right: 0;
+}
+
+.CodeMirror-sizer {
+    border-right: 0px solid transparent;
 }

@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./style.css" />
     <link rel="stylesheet" href="./codemirror/codemirror.css" />
     <link rel="stylesheet" href="./codemirror/show-hint.css" />
+    <link rel="stylesheet" href="./style.css" />
     <title>Slippod</title>
 </head>
 <body>
@@ -16,8 +16,11 @@
                 <li>
                     <div class="tagContainer">
                         <div class="tagClick"  href="/tag_all" id="allCards">
-                            <span class="icon"></span>
-                            <span class="label">All Cards</span>    
+                            <div class="left-group">
+                                <span class="icon"></span>
+                                <span class="label">All Cards</span>  
+                            </div>
+                            <span class="count"></span>
                         </div>
                     </div>
                 </li>
@@ -25,16 +28,22 @@
                 <li>
                     <div class="tagContainer">
                         <div class="tagClick"  href="/tag_no" id="noTag">
-                            <span class="icon"></span>
-                            <span class="label">Untagged</span>    
+                            <div class="left-group">
+                                <span class="icon"></span>
+                                <span class="label">Untagged</span>
+                            </div>
+                            <span class="count"></span>
                         </div>
                     </div>
                 </li>
                 <li>
                     <div class="tagContainer">
                         <div class="tagClick"  href="/tag_trash" id="trashCards">
-                            <span class="icon"></span>
-                            <span class="label">Trash</span>    
+                            <div class="left-group">
+                                <span class="icon"></span>
+                                <span class="label">Trash</span>
+                            </div>    
+                            <span class="count"></span>
                         </div>
                     </div>
                 </li>
@@ -71,11 +80,11 @@
                     <h1 id="listTitle"></h1>
                 </div>
                 <div id="newItem">
-                    <div id="newItemEditor">
-
+                    <div id="newItemEditor" class="empty inactive">
+                        <div class="editorPlaceholder"></div>
                     </div>
-                    <div id="newItemCtrlPanel">
-
+                    <div id="newItemCtrlPanel" class="inactive">
+                        <!-- <button class="btnCancelNewCard"><span class="label">Cancel</span></button> --><button class="btnCreateNewCard" disabled><span class="icon"></span></button>
                     </div>
                 </div>
                 <ul id="cardsList"></ul>
@@ -112,17 +121,18 @@
             </div>
         </div>
         <div class="itemBody">
-            <div class="content markdown-body"></div>
+            <div class="content"></div>
             <div class="itemCtrlPanel hidden"> 
-                <button class="btnUpdateCard">Save</button>
-                <button class="btnCancelCard">Cancel</button>
+                <button class="btnCancelCard"><span class="label">Cancel</span></button><button class="btnUpdateCard"><span class="icon"></span></button>
             </div>
         </div>
     </template>
 </body>
 <script  src="./codemirror/codemirror.js"></script>
+<script  src="./codemirror/autorefresh.js"></script>
 <script  src="./codemirror/overlay.js"></script>
 <script  src="./codemirror/codemirror_markdown.js"></script>
+<script  src="./codemirror/gfm.js"></script>
 <script  src="./codemirror/show-hint.js"></script>
 <script  src="./codemirror/emacs.js"></script>
 <script type="module" src="./index.js"></script>

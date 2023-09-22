@@ -2,6 +2,7 @@
 export const sideNav = document.getElementById('sideNav')
 export const btnSideNav = document.getElementById('btnSideNav')
 export const overlay= document.getElementById('overlay')
+export const listArea = document.getElementById('listArea')
 export const listHeader = document.getElementById('listHeader')
 export const listTitle= document.getElementById('listTitle')
 export const cardsList= document.getElementById('cardsList')
@@ -13,13 +14,19 @@ export const suggestionResults= document.getElementById("suggestionResults")
 export const noResults= document.getElementById("noResults")
 export const omniSearch= document.getElementById('omniSearch')
 export const sideNavContainer = document.getElementById('sideNavContainer')
+export const newItemContainer = document.getElementById('newItem')
+export const newItemEditor = document.getElementById('newItemEditor')
+export const newItemCtrlPanel = document.getElementById('newItemCtrlPanel')
 export const tagList= document.getElementById("tagsList")
-export const allCardsTag = document.getElementById("allCards")
-export const limitItems= 20
-export const listInsertBeforeFirst= 1
-export const listInsertAfterLast= 2
-export const highlightUp = 1
-export const highlightDown = 2
+export const allCardsTag = document.getElementById("allCards");
+export const cardsNoTag = document.getElementById("noTag");
+export const cardsTrash = document.getElementById("trashCards");
+export const limitItems= 20;
+export const listInsertBeforeFirst= 1;
+export const listInsertAfterLast= 2;
+export const highlightUp = 1;
+export const highlightDown = 2;
+export const limitSugesstionItmes = 10;
 
 export function clickHandle(selector, handle) {
     document.addEventListener("click", function(event) {
@@ -46,6 +53,7 @@ export function unixTimeFormat(unixTime) {
     second = second < 10 ? '0'+second : second;
     return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getUTCDate()} ${d.getHours()}:${minute}:${second}`;
 }
+
 export function hideOmniSearchAndUnfocus() {
     toggleElementHidden(omniSearch)
     searchBox.blur();
@@ -56,6 +64,10 @@ export function showOmniSearchAndFocus() {
     toggleElementShown(omniSearch)
     searchBox.focus();
     document.body.classList.add('overflow-hidden');
+}
+
+export function setScrollbarToTop(){
+    document.documentElement.scrollTop = 0; // Reset the scroll position to the top
 }
 
 export function highlightUpOrDownItem(arrowDirection, highlightedClass, parentElement){
@@ -70,6 +82,9 @@ export function highlightUpOrDownItem(arrowDirection, highlightedClass, parentEl
         highLightedItem = highLightedItem.previousElementSibling || parentElement.lastChild 
     }else if(arrowDirection === highlightDown){
         highLightedItem = highLightedItem.nextElementSibling || parentElement.firstChild 
+    }
+    if(highLightedItem == parentElement.firstChild){
+        setScrollbarToTop()
     }
     highLightedItem.classList.add(highlightedClass)
     highLightedItem.scrollIntoView({ block: "nearest" });
@@ -92,6 +107,9 @@ export function timeAgo(unixTimestamp) {
     const currentTime = Math.floor(Date.now() / 1000); // Convert to Unix timestamp
     const timeDifference = currentTime - unixTimestamp;
 
+    if (timeDifference < 30) {
+        return `just now`;
+    }
     if (timeDifference < 60) {
         return `${timeDifference} seconds ago`;
     }
@@ -122,9 +140,15 @@ export function timeAgo(unixTimestamp) {
 
 export function fillingCardItem(parentItem, card){
     const content = parentItem.querySelector(".content");
+    const markdownHtml = document.createElement('div');
 
-    utils.markdownRender(card.entry).then(function(html){
-        content.innerHTML = html;
+    markdownHtml.classList.add('markdown-body');
+
+    utils.markdownRender(card.entry).then(function(html) {
+        markdownHtml.innerHTML = html;
+
+        content.innerHTML = '';
+        content.appendChild(markdownHtml);
     })
 
     const createTimeSapn = parentItem.querySelector("span.itemCreateTime");
@@ -140,6 +164,25 @@ export function fillingCardItem(parentItem, card){
 
     const updateTimeSpan = parentItem.querySelector("span.itemUpdateTime");
     updateTimeSpan.textContent = "Updated: "+ timeAgo(card.updated_at);
+}
+
+export function deleteCard(li) {
+    const cardID = li.dataset.id
+    if(li.dataset.is_trash) {
+        db.removeCardPermanently(li.dataset.trash_id).then(function(){
+            cardsList.removeChild(li);
+        })
+    } else {
+        db.moveCardToTrash(cardID).then(function() {
+            cardsList.removeChild(li);
+        })
+    }
+}
+
+
+export function getHighlightedCardItem(){
+    const highlightedLi = cardsList.querySelector("li.selected")
+    return highlightedLi
 }
 
 export function getSuffix(str, ...prefixes){
@@ -170,3 +213,6 @@ export function linkClick(event){
         }
     });
 } 
+
+window.testHotKey = function() {
+}
