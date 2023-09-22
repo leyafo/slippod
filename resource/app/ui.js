@@ -17,18 +17,30 @@ function highlightSidebarLink(href){
     tagContainer.classList.add(className);
 }
 
-
-function updateCard(li){
+function updateCard(li, needCloseEditor=true){
     const content = li.querySelector(".content");
     const cardID = li.dataset.id;
     const entry = content.firstChild.CodeMirror.getValue();
 
-    db.updateCardEntryByID(cardID, entry).then(() => {
-        utils.markdownRender(entry).then(function(html){
-            content.innerHTML = html
-        });
-        const controlPanel = li.querySelector(".itemCtrlPanel");
-        CM.toggleElementHidden(controlPanel)
+    db.updateCardEntryByID(cardID, entry).then((result) => {
+        console.log(result.id, result.updated_at);
+        //ctrl-s will not close the editor
+        if(needCloseEditor){
+            const markdownHtml = document.createElement('div');
+            markdownHtml.classList.add("markdown-body");
+            utils.markdownRender(entry).then(function(html){
+                markdownHtml.innerHTML = html;
+
+                content.innerHTML = '';
+                content.appendChild(markdownHtml);
+            });
+
+            const controlPanel = li.querySelector(".itemCtrlPanel");
+            const itemHeader = li.querySelector(".itemHeader");
+            content.classList.remove("empty");
+            CM.toggleElementHidden(controlPanel);
+            itemHeader.classList.remove("hidden");
+        }
 
         db.getAllTags().then(function(tags){
             let tree = buildTagTree(tags)
@@ -39,15 +51,25 @@ function updateCard(li){
     li.dataset.editing = 'false';
 }
 
-function cancelUpdate(li){
+function cancelUpdate(li) {
     const content = li.querySelector(".content");
     const cardID = li.dataset.id;
+    const markdownHtml = document.createElement("div");
+
+    markdownHtml.classList.add("markdown-body");
+
     db.getCardByID(cardID).then(function(card){
         utils.markdownRender(card.entry).then(function(html){
-            content.innerHTML = html;
+            markdownHtml.innerHTML = html;
+
+            content.innerHTML = '';
+            content.appendChild(markdownHtml);
         })
         const controlPanel = li.querySelector(".itemCtrlPanel");
-        CM.toggleElementHidden(controlPanel)
+        const itemHeader = li.querySelector(".itemHeader");
+        content.classList.remove("empty");
+        CM.toggleElementHidden(controlPanel);
+        itemHeader.classList.remove("hidden");
     })
     li.dataset.editing = 'false';
 }
@@ -58,61 +80,49 @@ function editCard(li) {
     getEditingCardPromise.then(function(card) {
         const cardEntry = card.entry;
         const content = li.querySelector(".content") 
-        content.innerHTML = '';
         const controlPanel = li.querySelector(".itemCtrlPanel");
-        CM.toggleElementShown(controlPanel)
+        const btnUpdateCard = controlPanel.querySelector(".btnUpdateCard");
+        const itemHeader = li.querySelector(".itemHeader");
+
+        content.innerHTML = '';
+        CM.toggleElementShown(controlPanel);
         li.dataset.editing = 'true';
+        itemHeader.classList.add("hidden");
+        
         let editor = CodeMirror(content, {
-          theme: "default",
-          mode: "hashtags",
-          keyMap: "emacs",
-          pollInterval: 1000,
-          hintOptions: { hint: autoComplete.autocompleteHints },
-          lineWrapping: false,
+            theme: "default",
+            mode: {
+                name: "gfm",
+            },
+            configureMouse: function(cm, repeat, ev){
+                return { addNew: false };
+            },
+            keyMap: "emacs",
+            pollInterval: 1000,
+            hintOptions: { hint: autoComplete.autocompleteHints },
+            lineWrapping: true,
+            autoRefresh: true,
         });
 
-        editor.on("change", function (cm, change) {
-            if (change.text[0] == "#") {
-                cm.showHint({type:'tag', completeSingle:false});
-            }else if (change.text[0] === "@"){
-                cm.showHint({type:'link', completeSingle:false, async: true});
-            }
-
-            //set height as the same of content
-            let lineCount = editor.lineCount();
-            let totalHeight = lineCount * editor.defaultTextHeight();
-            editor.setSize(null, totalHeight);
-        });
+        editor.on("change", editorOnChange(editor));
+        editor.on("focus", editorOnFocus(editor));
+        editor.on("blur", editorOnBlur(editor));
         editor.setValue(cardEntry);
-        editor.on("endCompletion", function () {
-          console.log("Autocomplete menu is being closed programmatically");
-        });
-        editor.on('keydown', function (cm, event) {
-            if (event.ctrlKey && event.key === "Enter") {  
-                updateCard(li);
-            }else if(event.key == 'Escape'){
+        editor.keydownMap({
+            "commit":function(cm, event){
+                updateCard(li, true);
+            },
+            "cancel":function(cm, event){
                 cancelUpdate(li);
-            }else if(!cm.state.completionActive && event.key == '#'){
-                CodeMirror.commands.autocomplete(cm, null, {completeSingle: false});
-                // cm.showHint();
+            },
+            "save": function(cm, event){
+                updateCard(li, false);
             }
         });
-
         CM.unHighlightItem("selected", CM.cardsList)
+        editor.focus();
+        editor.setCursor(editor.lineCount(), 0);
     });
-}
-
-function deleteCard(li) {
-    const cardID = li.dataset.id
-    if(li.dataset.is_trash) {
-        db.removeCardPermanently(li.dataset.trash_id).then(function(){
-            CM.cardsList.removeChild(li);
-        })
-    } else {
-        db.moveCardToTrash(cardID).then(function() {
-            CM.cardsList.removeChild(li);
-        })
-    }
 }
 
 function restoreCard(li){
@@ -126,18 +136,11 @@ function restoreCard(li){
 CM.clickHandle(".tagClick", function(e){
     e.preventDefault();
 
-    var target = e.target;
-    var tagContainer = target.closest(".tagContainer");
-
-    let href;
-    let tag;
-    if (target.tagName !== 'DIV') {
-        href = target.parentNode.getAttribute("href");
-        tag = target.parentNode.dataset.tag;
-    } else {
-        href = target.getAttribute("href");
-        tag = target.dataset.tag;
-    }
+    const tagContainer = e.target.closest(".tagContainer");
+    const clickDiv = tagContainer.querySelector(".tagClick")
+    const href = clickDiv.getAttribute("href");
+    const tag = clickDiv.dataset.tag;
+    const currentTag = CM.tagList.querySelector("div.selected");
     
     switch (href) {
         case hrefTagAll:
@@ -150,7 +153,18 @@ CM.clickHandle(".tagClick", function(e){
             db.getNoTagCards(0, CM.limitItems).then(cards => reloadCardList(cards, "No Tag", CM.listInsertAfterLast));
             break;
         default:
+            if (currentTag) {
+                currentTag.querySelector(".count").textContent = "";
+            }
             db.getCardsByTag(tag, 0, CM.limitItems).then(cards => reloadCardList(cards, tag, CM.listInsertAfterLast));
+            db.countTaggedCards(tag).then(function(count){
+                if (count > 0){
+                    const countSpan = clickDiv.querySelector(".count")
+                    countSpan.textContent = count;
+                    // CM.listTitle.textContent = CM.listTitle.textContent + `- ${count}`
+                }
+            });
+
     }
     CM.highlightItem("selected", tagContainer, CM.sideNavContainer);
 });
@@ -175,9 +189,111 @@ CM.clickHandle(".foldIcon", function(e){
     }
 })
 
-CM.clickHandle("#btnDuplicateWindow", function(e){
+CM.clickHandle("#btnDuplicateWindow", function(e) {
     pages.duplicateWindow();
 })
+
+function editorOnChange(editor){
+    return function(cm, change){
+        if (change.text[0] == "#") {
+            cm.showHint({type:'tag', completeSingle:false});
+        }else if (change.text[0] === "@"){
+            cm.showHint({type:'link', completeSingle:false, async: true});
+        }
+    }
+}
+
+function editorOnFocus(editor){
+    return function(cm, event){
+        console.log('onfocus');
+        globalState.setEditing();
+    }
+}
+
+function editorOnBlur(editor){
+    return function(cm, event){
+        globalState.setViewing();
+    }
+}
+
+function activateNewItemEditor(value){
+    CM.newItemEditor.innerHTML = '';
+
+    let editor = CodeMirror(CM.newItemEditor, {
+        theme: "default",
+        mode: {
+            name: "gfm",
+        },
+        configureMouse: function(cm, repeat, ev){
+            return { addNew: false };
+        },
+        keyMap: "emacs",
+        pollInterval: 1000,
+        hintOptions: { hint: autoComplete.autocompleteHints },
+        lineWrapping: true,
+        autoRefresh: true,
+      });
+
+    editor.on("change", editorOnChange(editor));
+    editor.on("blur", editorOnBlur(editor));
+    editor.on("focus", editorOnFocus(editor))
+
+    editor.keydownMap({
+        "commit": function (cm, event) {
+            console.log(cm, event)
+            createNewCardHandle(event);
+        },
+        "cancel": function (cm, event) {
+        }
+    })
+
+    CM.newItemEditor.classList.remove('inactive');
+    CM.newItemCtrlPanel.classList.remove('inactive');
+    const btnCreate = CM.newItemCtrlPanel.querySelector(".btnCreateNewCard");
+    btnCreate.disabled = false;
+    CM.newItemEditor.classList.remove("empty");
+    editor.setValue(value);
+    editor.setCursor(editor.lineCount(), 0);
+    editor.focus()
+    CM.setScrollbarToTop()
+    return editor
+}
+
+CM.clickHandle("#newItemEditor", function(e) {
+    if (!CM.newItemEditor.classList.contains('inactive')) {
+        return;
+    }
+    activateNewItemEditor('');
+})
+
+function createNewCardHandle(e){
+    if (CM.newItemEditor.classList.contains('inactive')) {
+        CM.newItemEditor.click();
+    }
+
+    const btnCreate = CM.newItemCtrlPanel.querySelector(".btnCreateNewCard");
+    if (btnCreate.disabled) {
+        return;
+    }
+
+    const editor = CM.newItemEditor.firstChild.CodeMirror;
+    const entry = editor.getValue();
+    const editorPlaceholder = document.createElement('div');
+    editorPlaceholder.classList.add('editorPlaceholder');
+
+    db.createNewCard(entry).then((newCardID) => {
+        db.getCardByID(newCardID).then((card) => {
+            const li = insertCardToList(card, CM.listInsertBeforeFirst);
+            CM.newItemEditor.innerHTML = '';
+            CM.newItemEditor.classList.add('inactive');
+            CM.newItemEditor.classList.add('empty');
+            CM.newItemEditor.appendChild(editorPlaceholder);
+            CM.newItemCtrlPanel.classList.add('inactive');
+        });
+    });
+}
+
+CM.clickHandle(".btnCreateNewCard", createNewCardHandle)
 
 function addCardEventListeners(li) {
     li.addEventListener('dblclick', function() {
@@ -195,17 +311,17 @@ function addCardEventListeners(li) {
     const cardMenuContainer = li.querySelector(".itemMenuContainer")
     const cardMenuOptions = li.querySelector(".itemMenuOptions");
 
-    cardMenuContainer.addEventListener('mouseover', function(event){
+    cardMenuContainer.addEventListener('mouseenter', function(event){
         CM.toggleElementShown(cardMenuOptions)
     })
-    cardMenuContainer.addEventListener('mouseout', function(event){
+    cardMenuContainer.addEventListener('mouseleave', function(event){
         CM.toggleElementHidden(cardMenuOptions)
     })
     cardMenuOptions.querySelector(".editOption").addEventListener('click', function(event) {
         editCard(li)
     })
     cardMenuOptions.querySelector(".deleteOption").addEventListener('click', function(event) {
-        deleteCard(li)
+        CM.deleteCard(li)
     })
     cardMenuOptions.querySelector(".restoreOption").addEventListener('click', function(event) {
         restoreCard(li)
@@ -227,12 +343,15 @@ function reloadCardList(cards, headerTitle = 'All Cards', order = CM.listInsertB
     switch (headerTitle) {
         case "All Cards":
             CM.listHeader.classList.add("iconAllCards");
+            CM.listArea.classList.add("allCardsList");
             break;
         case "No Tag":
             CM.listHeader.classList.add("iconNoTag");
+            CM.listArea.classList.add("noTagList");
             break;
         case "Trash":
             CM.listHeader.classList.add("iconTrash");
+            CM.listArea.classList.add("trashList");
             break;
         default:
             CM.listHeader.classList.add("iconTag");
@@ -240,7 +359,7 @@ function reloadCardList(cards, headerTitle = 'All Cards', order = CM.listInsertB
     }
     CM.listTitle.textContent = headerTitle; // Update the cards header
 
-    document.documentElement.scrollTop = 0; // Reset the scroll position to the top
+    CM.setScrollbarToTop();
 
     // Display the cards
     CM.cardsList.innerHTML = '';  // Clear the current cards
@@ -253,6 +372,7 @@ function reloadCardList(cards, headerTitle = 'All Cards', order = CM.listInsertB
     } else {
         CM.toggleElementShown(CM.creationTip);
     }
+    globalState.setViewing();
 }
 
 function insertCardToList(card, order){
@@ -299,6 +419,15 @@ CM.searchBox.addEventListener("compositionend", function (event) {
   performSearch(event.target.value);
 });
 
+CM.searchBox.addEventListener("blur", function(event){
+    globalState.setViewing();
+    clearSearch(event);
+})
+
+CM.searchBox.addEventListener("focus", function(event){
+    globalState.setSearching();
+})
+
 CM.searchBox.addEventListener("input", function (event) {
   if (!isComposing) {
     performSearch(event.target.value);
@@ -312,7 +441,7 @@ function performSearch(searchTerm) {
     return;
   }
 
-  db.getCardSearchSuggestions(searchTerm).then(function (cards) {
+  db.getCardSearchSuggestions(searchTerm, CM.limitSugesstionItmes).then(function (cards) {
     updateSuggestionBox(cards);
   });
 }
@@ -341,6 +470,7 @@ function updateSuggestionBox(cards) {
         spanEntry.classList.add("entry");
       
         spanIcon.classList.add("icon");
+        spanIcon.textContent = `@${card.id} `
       
         div.dataset.id = card.id;
         div.onclick = searchOptionClick;
@@ -367,15 +497,27 @@ function updateSuggestionBox(cards) {
 }
 
 function searchOptionClick(event) {
-  const cardID = event.target.dataset.id;
-  handleOptionSelect(cardID);
-  clearSearch(event);
+  const highlightedSuggestion = CM.suggestionResults.querySelector(
+      "#suggestionResults .highlighted"
+  );
+  if (highlightedSuggestion) {
+    const cardID = highlightedSuggestion.dataset.id
+    handleOptionSelect(cardID);
+    clearSearch(event);
+  }
 }
 
 function handleOptionSelect(cardID) {
   db.getCardsByMiddleID(Number(cardID), 0, 0, CM.limitItems).then(function (cards) {
-    reloadCardList(cards, "All Cards");
+    reloadCardList(cards, "All Cards", CM.listInsertBeforeFirst);
     highlightSidebarLink(hrefTagAll)
+    const selectedItem = CM.cardsList.querySelector(`[data-id='${cardID}']`)
+    CM.highlightItem("selected", selectedItem, CM.cardsList)
+    setTimeout(function(){
+        const position = selectedItem.getBoundingClientRect();
+        let scrollbarHeight = window.innerHeight * (window.innerHeight / document.body.offsetHeight);
+        document.documentElement.scrollTop =  position.top-scrollbarHeight; // Reset the scroll position to the top
+    }, 100);
     CM.hideOmniSearchAndUnfocus()
   });
 }
@@ -400,6 +542,7 @@ function clearSearch(event) {
   CM.suggestionBox.classList.add("hidden");
 
   CM.hideOmniSearchAndUnfocus()
+
 }
 
 const omniSearchButton = document.getElementById('omniSearchButton');
@@ -455,7 +598,6 @@ function closeSideNav() {
     document.body.classList.remove('overflow-hidden');
     isSideNavOpen = false;
 }
-
 
 export function handleScroll() {
     let listHasGetLastItemDown = 0;
@@ -519,6 +661,7 @@ document.addEventListener('scroll', handleScroll());
 
 function buildTagTree(tagList) {
   const tree = {};
+  console.log(tagList);
   tagList.forEach(tagItem => {
     let node = tree;
     tagItem.tag.split('/').forEach(part => {
@@ -539,15 +682,29 @@ function buildTagHtml(tree, prefix = '') {
     if(Object.keys(value).length > 0) {
         html += `<li>
                 <div class="tagContainer">
-                <span class="foldIcon open"></span>
-                <div class="tagClick" href="/tags/${fullTag}" data-tag="${fullTag}"><span class="tagIcon"></span><span class="label">${key}</span></div>
+                    <span class="foldIcon open"></span>
+                    <div class="tagClick" href="/tags/${fullTag}" data-tag="${fullTag}">
+                        <div class="left-group">
+                            <span class="tagIcon"></span>
+                            <span class="label">${key}</span>
+                        </div>
+                        <span class="count"></span>
+                    </div>
                 </div>`;
+                //the closed li is below
     }else{
         // file
         html += `<li>
-                <div class="tagContainer">
-                <div class="tagClick" href="/tags/${fullTag}" data-tag="${fullTag}"><span class="tagIcon"></span><span class="label">${key}</span></div>
-                </div>`;
+                    <div class="tagContainer">
+                        <div class="tagClick" href="/tags/${fullTag}" data-tag="${fullTag}">
+                            <div class="left-group">
+                                <span class="tagIcon"></span>
+                                <span class="label">${key}</span>
+                            </div>
+                            <span class="count"></span>
+                        </div>
+                    </div>`;
+                //the closed li is below
     }
 
     if (Object.keys(value).length > 0) {
@@ -567,7 +724,7 @@ document.addEventListener('click', function(event){
     if (event.target.tagName !== 'A') {
         return;
     }
-
+    
     const href = event.target.getAttribute('href');
     const tag = CM.getSuffix(href, "/tags/")
     if(tag == ""){
@@ -577,6 +734,22 @@ document.addEventListener('click', function(event){
     db.getCardsByTag(tag, 0, CM.limitItems).then(cards => reloadCardList(cards, tag));
     highlightSidebarLink(href)
 })
+
+let displayCardCounts = async function () {
+    try {
+        const count = await db.countDifferentCards()
+        const allCardsSpan = CM.allCardsTag.querySelector(".count");
+        allCardsSpan.textContent = count.allCards;
+
+        const cardsNoTagSpan = CM.cardsNoTag.querySelector(".count");
+        cardsNoTagSpan.textContent = count.noTagCards;
+
+        const cardsTrashSpan = CM.cardsTrash.querySelector(".count")
+        cardsTrashSpan.textContent = count.trashCards;
+    } catch (error) {
+        console.error("Error fetching card counts:", error);
+    }
+}
 
 window.addEventListener('DOMContentLoaded', function() {
     //load cards
@@ -591,11 +764,19 @@ window.addEventListener('DOMContentLoaded', function() {
         let tagListHTML = buildTagHtml(tree)
         CM.tagList.innerHTML = tagListHTML
     })
+    displayCardCounts();
 });
+
+//This is a black magic, from an India youtube brother. Youtube: 70-p0mq-w5g
+window.backendBridge.displayCardCounts(function(event){
+    displayCardCounts();
+});
+
 
 export {
     handleOptionSelect,
     clearSearch,
     insertCardToList,
     editCard,
+    activateNewItemEditor,
 }

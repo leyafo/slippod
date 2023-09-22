@@ -202,10 +202,10 @@ function getCardsByIDs(ids){
     return stmt.all(JSON.stringify(ids));
 }
 
-function getCardSearchSuggestions(keyword){
+function getCardSearchSuggestions(keyword, limit){
     const tokenLengh = keyword.length+20; //limit the token size
     if(keyword === ""){//get latest 5 records
-        let recentCards = getCards(0, 5);
+        let recentCards = getCards(0, limit);
         let results = [];
         for(let card of recentCards){
             //get the begining of content
@@ -214,14 +214,28 @@ function getCardSearchSuggestions(keyword){
         }
         return results;
     }
+    let matchSingleCard = null
+    let singleLinkMatches = keyword.match(linkAtPattern)
+    if(singleLinkMatches!=null){
+        const cardID =singleLinkMatches[0].slice(1)
+        matchSingleCard = getCardByID(N(cardID))
+    }
     const searchRef = `SELECT rowid, simple_snippet(cards_fts, 0, '<mark>', '</mark>', '...', ${tokenLengh}) as snippet 
-                            FROM cards_fts WHERE entry MATCH jieba_query('${keyword}') ORDER BY rank`;
-    const results = db.prepare(searchRef).all()
+                            FROM cards_fts WHERE entry MATCH jieba_query('${keyword}', 0) ORDER BY rank limit ?,?`;
+    const results = db.prepare(searchRef).all(0, limit)
+
     let matchedCards = [];
+    if(matchSingleCard != null){
+        matchSingleCard.entry = card.entry.trim().replaceAll("\n", " ");
+        matchedCards.push(matchSingleCard);
+    }
     for (let r of  results){
+        if(matchSingleCard != null && r.id == matchSingleCard.id){
+            continue
+        }
         matchedCards.push({
             id: r.rowid,
-            entry: r.snippet,
+            entry: r.snippet.trim().replaceAll("\n", " "),
         })
     }
     return matchedCards 
@@ -319,8 +333,9 @@ function updateCardEntryByID(id, cardEntry){
     const tagsInContent = parseTags(cardEntry);
     const existedTags = db.prepare("select tag from tags where card_id = ?").pluck().all(id)
     const existedTagsSet = new Set(existedTags);
+    const updateTimeUnix = N(Date.now() / 1000);
     db.transaction(function(cardID, entry, newTags, oldTags){
-        db.prepare("update cards set entry = ?, updated_at=strftime('%s', 'now') where id = ?").run(entry, cardID)
+        db.prepare("update cards set entry = ?, updated_at= ? where id = ?").run(entry, updateTimeUnix, cardID)
 
         //delete removed tags
         oldTags.forEach(function(tag){
@@ -336,13 +351,12 @@ function updateCardEntryByID(id, cardEntry){
         })
 
     })(id, cardEntry, tagsInContent, existedTagsSet);
-    return id;
-    return id;
+    return {id: id, updated_at: updateTimeUnix};
 }
 
 function searchCards(keyWord, offset, limit){
     // in simple_query, we accept a second params, '0' means disable pinyin split
-    const sql = `SELECT rowid, entry FROM cards_fts WHERE entry MATCH simple_query('${keyWord}', '0') ORDER BY rank limit ?, ?;`;
+    const sql = `SELECT rowid, entry FROM cards_fts WHERE entry MATCH simple_query('${keyWord}', 0) ORDER BY rank limit ?, ?;`;
     const result =  db.prepare(sql).all(offset, limit)
     let cards = [];
     for(r of result){
@@ -370,6 +384,23 @@ function searchCardsWithStyle(keyWord, offset, limit){
         })
     }
     return cards
+}
+
+function countTaggedCards(tag){
+    const sql = `SELECT count(1) AS count FROM cards JOIN tags ON cards.id = tags.card_id WHERE tags.tag = ?;`
+    const taggedCards = db.prepare(sql).get(tag)
+    return taggedCards.count
+}
+
+function countDifferentCards(){
+    const allCards = db.prepare(`select count(1) as count from cards`).get();
+    const notagCards = db.prepare("SELECT count(1) as count FROM cards LEFT JOIN tags ON cards.id = tags.card_id WHERE tags.card_id IS NULL").get()
+    const trashCards = db.prepare(`select count(1) as count from trash`).get();
+    return {
+        allCards: allCards.count,
+        noTagCards: notagCards.count,
+        trashCards: trashCards.count,
+    }
 }
 
 module.exports = {
@@ -404,4 +435,6 @@ module.exports = {
     getLinkAtRegex,
     searchCardsWithStyle,
     getCardSearchSuggestions,
+    countDifferentCards,
+    countTaggedCards,
 };

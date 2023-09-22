@@ -1,10 +1,19 @@
 // preload.js
-const { contextBridge, ipcRenderer } = require('electron');
+const {contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('utils', {
     reloadAll: (...args) => ipcRenderer.invoke("reloadAll", ...args),
     uploadCardEditing: (id, entry) => ipcRenderer.invoke("uploadCardEditing", id, entry),
     markdownRender: (rawText) => ipcRenderer.invoke("markdownRender", rawText),
+    copyTextToClipboard:function(text){
+        return ipcRenderer.invoke("copyTextToClipboard", text);
+    },
+    pasteTextFromClipboard:function(){
+        return ipcRenderer.invoke("pasteTextFromClipboard");
+    },
+    platform: function(){
+        return ipcRenderer.invoke("platform");
+    },
 });
 
 contextBridge.exposeInMainWorld('pages', {
@@ -14,6 +23,11 @@ contextBridge.exposeInMainWorld('pages', {
     duplicateWindow: function(){
         return ipcRenderer.invoke("duplicateWindow");
     }
+});
+
+//black magic
+contextBridge.exposeInMainWorld('backendBridge', {
+    displayCardCounts: (callback) => ipcRenderer.on("displayCardCounts", (callback)),
 });
 
 (function () {
@@ -43,7 +57,15 @@ contextBridge.exposeInMainWorld('pages', {
         "getAllCards",
         "searchCardsWithStyle",
         "getCardSearchSuggestions",
+        "countDifferentCards",
+        "countTaggedCards",
     ]
+    const needRecount = new Set([
+        "removeCardFromTrash",
+        "removeCardPermanently",
+        "moveCardToTrash",
+        "createNewCard",
+    ])
     let backendFunctions = {};
     paginatedDFFunc.forEach((funcName) => {
         backendFunctions[funcName] = (...args) => {
@@ -56,7 +78,16 @@ contextBridge.exposeInMainWorld('pages', {
         };
     })
     fullsetDBFunc.forEach((funcName) => {
-        backendFunctions[funcName] = (...args) => ipcRenderer.invoke(funcName, ...args);
+        backendFunctions[funcName] = (...args) => {
+            let ipcResult = ipcRenderer.invoke(funcName, ...args);
+            if (needRecount.has(funcName)){
+                setTimeout(function(){
+                    //starting spell the India black magic
+                    ipcRenderer.invoke('displayCardCounts');
+                }, 200);
+            }
+            return ipcResult
+        }
     })
     contextBridge.exposeInMainWorld('db', backendFunctions);
 })();

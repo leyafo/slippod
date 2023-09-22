@@ -1,8 +1,6 @@
 import * as CM from "./common"
 import fuzzySearch from "./lib/fuzzy"
 
-const atMatchRegex = /@([a-zA-Z0-9\u4e00-\u9fff/\\_-]+)/
-
 function createCardSuggestion(card){
     const div = document.createElement("div");
     div.textContent = card.entry
@@ -66,8 +64,11 @@ function showTagHints(cm, option){
 function linkRender(element, self, cur){
     // const div = createCardSuggestion(card)
     // element.appendChild(div);
-    console.log(element, self, cur);
-    element.innerHTML = cur.entry
+    const span=document.createElement("span")
+    span.className = "itemId"
+    span.textContent=cur.cardID
+    element.appendChild(span);
+    element.insertAdjacentHTML('beforeend', cur.entry );
 }
 
 function showLinkHints(cm, option){
@@ -82,12 +83,12 @@ function showLinkHints(cm, option){
             //+1 means exclude @
             var keyword = line.slice(start+1, end).toLowerCase()
             let hints = [];
-            db.getCardSearchSuggestions(keyword).then(function (cards) {
+            db.getCardSearchSuggestions(keyword, CM.limitSugesstionItmes).then(function (cards) {
                 for (let card of cards) {
                     hints.push({
                         text: `@${card.id} `,
                         cardID: card.id,
-                        entry: card.entry,
+                        entry: card.entry.trim(),
                         render: linkRender,
                     });
                 }
@@ -110,24 +111,6 @@ function autocompleteHints(cm, option) {
     }
 }
   
-
-// CodeMirror.defineMode("hashtags", function (config, parserConfig) {
-//     var hashtagOverlay = {
-//         token: function (stream, state) {
-//             // This regex matches a single @ followed by the desired pattern.
-//             if (stream.match(window.tagRegex)) {
-//                 return "hashtag";
-//             }
-
-//             while (stream.next() != null && !stream.match(window.tagRegex, false)) { }
-
-//             return null;
-//         },
-//     return CodeMirror.overlayMode(
-//         CodeMirror.getMode(config, parserConfig.backdrop || "markdown"),
-//         hashtagOverlay
-//     );
-// });
 
 export {
     autocompleteHints,

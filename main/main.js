@@ -1,5 +1,5 @@
 // main.js
-const {globalShortcut,ipcMain, app, Menu, BrowserWindow } = require("electron");
+const {clipboard, globalShortcut,ipcMain, app, Menu, BrowserWindow } = require("electron");
 const WindowManager = require('./window_manager');
 const ipcHandler = require("./ipc_handlers");
 const {menuTemplate} = require("./menu");
@@ -35,6 +35,7 @@ app.whenReady().then(() => {
     });
 });
 
+
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
@@ -48,8 +49,25 @@ ipcMain.handle("duplicateWindow", async (event, ...args) => {
     newMainWindow.show();
 });
 
+ipcMain.handle("displayCardCounts", async(event)=>{
+    const window = BrowserWindow.getFocusedWindow()
+    window.webContents.send("displayCardCounts");
+})
+
 
 let markdownRender = createMarkdownRender()
 ipcMain.handle("markdownRender", async(event, rawText)=>{
     return markdownRender(rawText)
+})
+
+ipcMain.handle("copyTextToClipboard", async function(event, text){
+    return clipboard.writeText(text);
+});
+
+ipcMain.handle("pasteTextFromClipboard", async function(event){
+    return clipboard.readText();
+})
+
+ipcMain.handle("platform", async function(event){
+    return process.platform
 })
