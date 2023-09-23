@@ -793,6 +793,12 @@ let displayCardCounts = async function () {
     }
 }
 
+let removeSplashScreen = function() {
+    let splashScreen = document.getElementById('splashScreen');
+    console.log(splashScreen);
+    splashScreen.remove();
+}
+
 window.addEventListener('DOMContentLoaded', function() {
     //load cards
     db.getCards(0, CM.limitItems).then(function(cards) {
@@ -801,10 +807,11 @@ window.addEventListener('DOMContentLoaded', function() {
     });
 
     //load tags
-    db.getAllTags().then(function(tags){
+    db.getAllTags().then(function(tags) {
         let tree = buildTagTree(tags)
         let tagListHTML = buildTagHtml(tree)
         CM.tagList.innerHTML = tagListHTML
+        removeSplashScreen();
     })
     displayCardCounts();
 });
@@ -813,7 +820,6 @@ window.addEventListener('DOMContentLoaded', function() {
 window.backendBridge.displayCardCounts(function(event){
     displayCardCounts();
 });
-
 
 export {
     handleOptionSelect,

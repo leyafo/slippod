@@ -4,6 +4,20 @@
 @tailwind components;
 @tailwind utilities;
 
+#splashScreen {
+    position: fixed;
+    inset: 0;
+    font-size: 1.25rem;
+    font-weight: 500;
+    z-index: 100;
+    background-color:#F5F6F8;
+    color: #93969A;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
 html {
     font-size: 15px;
 }
