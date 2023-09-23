@@ -346,3 +346,22 @@ div.CodeMirror-dragcursors {
 
 /* Help users use markselection to safely style text background */
 span.CodeMirror-selectedtext { background: none; }
+
+/* Custom styles to CodeMirror editor */
+.CodeMirror {
+  color: #121417;
+  height: auto;
+  min-height: 96px;
+  background: transparent;
+  font-family: system-ui, sans-serif;
+}
+
+.CodeMirror span.cm-link {
+  color: #2569D3;
+  text-decoration: none;
+}
+
+.CodeMirror .cm-header-1 {
+  font-weight: 400;
+  color: #121417;
+}

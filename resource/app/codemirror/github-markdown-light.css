@@ -1009,6 +1009,9 @@
 }
 
 /* Custom css styles for the markdown body */
+.markdown-body {
+    color: #121417;
+}
 .markdown-body a.cm-hashtag { 
     display: inline-block;
     font-size: 13px;
