@@ -719,11 +719,3 @@ a.hidden{
     min-height: 96px;
     background: transparent;
 }
-
-.CodeMirror-scroll {
-    margin-right: 0;
-}
-
-.CodeMirror-sizer {
-    border-right: 0px solid transparent;
-}
