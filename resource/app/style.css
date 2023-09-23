@@ -699,19 +699,8 @@ content: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcv
   background-color: #f0f0f0;
 }
 
-a.hidden{
+a.hidden {
     display: none;
-}
-
-.cm-hashtag {
-    color: blue;
-    background: #CBE2FE !important;
-    text-decoration: underline;
-}
-
-.cm-linkref {
-    color: blue;
-    text-decoration: underline;
 }
 
 .CodeMirror {
