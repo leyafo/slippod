@@ -195,16 +195,27 @@ CM.clickHandle("#btnDuplicateWindow", function(e) {
 
 function editorOnChange(editor) {
     return function(cm, change) {
-        const btnCreate = CM.newItemCtrlPanel.querySelector(".btnCreateNewCard");
+        const editorDiv = editor.display.wrapper;
+        const editorWrapper = editorDiv.parentNode;
+        const editorCtrlPanel = editorWrapper.nextElementSibling;
+        const btnCreateNewCard = editorCtrlPanel.querySelector(".btnCreateNewCard");
 
-        if (editor.getValue() !== '') {
-            btnCreate.disabled = false;
-            CM.newItemEditor.classList.remove("empty");
+        if (editorCtrlPanel.id === "newItemCtrlPanel") {
+            if (editor.getValue() !== '') {
+                btnCreateNewCard.disabled = false;
+                CM.newItemEditor.classList.remove("empty");
+            } else {
+                btnCreateNewCard.disabled = true;
+                CM.newItemEditor.classList.add("empty");
+            }
         } else {
-            btnCreate.disabled = true;
-            CM.newItemEditor.classList.add("empty");
+            if (editor.getValue() !== '') {
+                editorCtrlPanel.querySelector(".btnUpdateCard").disabled = false;
+            } else {
+                editorCtrlPanel.querySelector(".btnUpdateCard").disabled = true;
+            }
         }
- 
+        
         if (change.text[0] == "#") {
             cm.showHint({type:'tag', completeSingle:false});
         }else if (change.text[0] === "@"){
@@ -273,7 +284,7 @@ CM.clickHandle("#newItemEditor", function(e) {
     activateNewItemEditor('');
 })
 
-function createNewCardHandle(e){
+function createNewCardHandle(e) {
     if (CM.newItemEditor.classList.contains('inactive')) {
         CM.newItemEditor.click();
     }
@@ -336,6 +347,7 @@ function addCardEventListeners(li) {
 }
 
 CM.clickHandle(".btnUpdateCard", function(ev) {
+    if (ev.target.closest(".btnUpdateCard").disabled) { return; }
     const li = ev.target.closest("li");
     updateCard(li);
 })
