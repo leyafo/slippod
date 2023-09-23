@@ -19,6 +19,7 @@ body {
     box-shadow: 1px 0px 0px 0px rgba(0, 0, 0, 0.05);
     font-weight: 500;
     @apply text-base w-64;
+    overflow-y: auto;
 }
 
 #sideNavContainer {
