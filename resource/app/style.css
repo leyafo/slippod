@@ -18,8 +18,8 @@ body {
     background-color: #FFFFFF;
     box-shadow: 1px 0px 0px 0px rgba(0, 0, 0, 0.05);
     font-weight: 500;
-    @apply text-base w-64;
     overflow-y: auto;
+    @apply text-base w-64 scroll-smooth;
 }
 
 #sideNavContainer {
@@ -246,6 +246,10 @@ body {
     @apply px-4 pb-4 pt-1 mb-4 rounded;
 }
 
+#newItem, #newItem * {
+    @apply transition;
+}
+
 #newItem[data-editing="true"] {
     box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.10);
 }
@@ -360,9 +364,17 @@ body {
     line-height: 24px;
 }
 
+#cardsList {
+    @apply scroll-smooth;
+}
+
 #cardsList > li, .cardContainer  {
     @apply mb-4 p-4 bg-white rounded;
     box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+}
+
+#cardsList > li, #cardsList > li * {
+    @apply transition;
 }
 
 #cardsList > li:hover {
