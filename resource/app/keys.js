@@ -29,13 +29,17 @@ document.addEventListener("keydown", function (event) {
     }
 
     if (event.key === "ArrowUp" || (event.key === "p" && event.ctrlKey) ){ //ctrl-p
-        CM.highlightUpOrDownItem(CM.highlightUp, "selected", CM.cardsList)
-        event.preventDefault();
-        return
+        if (CM.cardsList.querySelectorAll("li").length > 0) {
+            CM.highlightUpOrDownItem(CM.highlightUp, "selected", CM.cardsList)
+            event.preventDefault();
+            return
+        }
     }else if (event.key === "ArrowDown" || (event.key === "n" && event.ctrlKey)){ //ctrl-n
-        CM.highlightUpOrDownItem(CM.highlightDown, "selected", CM.cardsList)
-        event.preventDefault();
-        return
+        if (CM.cardsList.querySelectorAll("li").length > 0) {
+            CM.highlightUpOrDownItem(CM.highlightDown, "selected", CM.cardsList)
+            event.preventDefault();
+            return
+        }
     }else if (event.key === "o" && ctrlCmdKey(event)){
         UI.activateNewItemEditor('')
     }else if (event.key === "Escape"){
