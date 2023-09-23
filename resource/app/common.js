@@ -18,9 +18,10 @@ export const newItemContainer = document.getElementById('newItem')
 export const newItemEditor = document.getElementById('newItemEditor')
 export const newItemCtrlPanel = document.getElementById('newItemCtrlPanel')
 export const tagList= document.getElementById("tagsList")
-export const allCardsTag = document.getElementById("allCards");
-export const cardsNoTag = document.getElementById("noTag");
-export const cardsTrash = document.getElementById("trashCards");
+export const allCardsTag = document.getElementById("allCards")
+export const cardsNoTag = document.getElementById("noTag")
+export const cardsTrash = document.getElementById("trashCards")
+export const endTip = document.getElementById("endTip")
 export const limitItems= 20;
 export const listInsertBeforeFirst= 1;
 export const listInsertAfterLast= 2;
@@ -70,7 +71,7 @@ export function setScrollbarToTop(){
     document.documentElement.scrollTop = 0; // Reset the scroll position to the top
 }
 
-export function highlightUpOrDownItem(arrowDirection, highlightedClass, parentElement){
+export function highlightUpOrDownItem(arrowDirection, highlightedClass, parentElement) {
     const selector = `.${highlightedClass}`
     let highLightedItem = parentElement.querySelector(selector)
     if(!highLightedItem){

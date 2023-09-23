@@ -565,6 +565,15 @@ content: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcv
     height: 16px;
 }
 
+#creationTip, #endTip {
+    @apply text-center text-base font-medium mb-4;
+    color: #93969A;
+}
+
+#creationTip {
+    @apply mt-8;
+}
+
 /* Card details window specific styles */
 
 #detailWinHeaderBar {

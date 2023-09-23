@@ -373,6 +373,7 @@ CM.clickHandle(".btnCancelCard", function(ev) {
 function reloadCardList(cards, headerTitle = 'All Cards', order = CM.listInsertBeforeFirst) {
     CM.listArea.classList.remove("allCardsList", "noTagList", "trashList", "tagList");
     CM.listHeader.classList.remove("iconAllCards", "iconNoTag", "iconTrash", "iconTag");
+    CM.endTip.classList.add("hidden");
     switch (headerTitle) {
         case "All Cards":
             CM.listHeader.classList.add("iconAllCards");
@@ -400,6 +401,9 @@ function reloadCardList(cards, headerTitle = 'All Cards', order = CM.listInsertB
     cards.forEach(card => {
         insertCardToList(card, order)
     });
+
+    let creationTipText = window.platform === "darwin" ? "Press ⌘+O to create a new card": "Press Ctrl+O to create a new card";
+    CM.creationTip.innerText = creationTipText;
 
     if (CM.cardsList.children.length > 0) {
         CM.toggleElementHidden(CM.creationTip);
@@ -648,8 +652,12 @@ export function handleScroll() {
             scrollDirection === 'down' ? listHasGetLastItemDown = 0 : listHasGetLastItemUp = 0;
         }
 
-        if ((scrollDirection === 'down' && listHasGetLastItemDown === 1) || 
-            (scrollDirection === 'up' && listHasGetLastItemUp === 1)) {
+        if (scrollDirection === 'up' && listHasGetLastItemUp === 1) {
+            return Promise.resolve([]);
+        }
+
+        if ((scrollDirection === 'down' && listHasGetLastItemDown === 1)) {
+            CM.endTip.classList.remove("hidden");
             return Promise.resolve([]); 
         }
 
