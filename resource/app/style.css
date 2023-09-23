@@ -242,7 +242,12 @@ body {
 
 #newItem {
     background-color: #FFFFFF;
-    @apply px-4 pb-4 pt-1 mb-4;
+    box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+    @apply px-4 pb-4 pt-1 mb-4 rounded;
+}
+
+#newItem[data-editing="true"] {
+    box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.10);
 }
 
 #newItem #newItemEditor.empty::before {
@@ -357,6 +362,15 @@ body {
 
 #cardsList > li, .cardContainer  {
     @apply mb-4 p-4 bg-white rounded;
+    box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+}
+
+#cardsList > li:hover {
+    box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.10);
+}
+
+#cardsList > li[data-editing="true"] {
+    box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.10);
 }
 
 .itemHeader {
@@ -607,6 +621,10 @@ content: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcv
 
 #outgoingLinkTab.selected .label {
     color: #FFFFFF;
+}
+
+#linkedCards #outgoingLinksCards {
+    box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
 }
 
 #linkedCards .noLinkMessage {

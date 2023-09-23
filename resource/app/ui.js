@@ -227,12 +227,25 @@ function editorOnChange(editor) {
 function editorOnFocus(editor) {
     return function(cm, event) {
         console.log('onfocus');
+        const editorDiv = editor.display.wrapper;
+        const editorWrapper = editorDiv.parentNode;
+
+        if (editorWrapper.id === "newItemEditor") {
+            CM.newItemContainer.dataset.editing = 'true';
+        }
+
         globalState.setEditing();
     }
 }
 
 function editorOnBlur(editor) {
     return function(cm, event) {
+        const editorDiv = editor.display.wrapper;
+        const editorWrapper = editorDiv.parentNode;
+
+        if (editorWrapper.id === "newItemEditor") {
+            CM.newItemContainer.dataset.editing = 'false';
+        }
         globalState.setViewing();
     }
 }
