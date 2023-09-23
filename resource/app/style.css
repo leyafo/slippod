@@ -702,9 +702,3 @@ content: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcv
 a.hidden {
     display: none;
 }
-
-.CodeMirror {
-    height: auto;
-    min-height: 96px;
-    background: transparent;
-}
