@@ -193,8 +193,18 @@ CM.clickHandle("#btnDuplicateWindow", function(e) {
     pages.duplicateWindow();
 })
 
-function editorOnChange(editor){
-    return function(cm, change){
+function editorOnChange(editor) {
+    return function(cm, change) {
+        const btnCreate = CM.newItemCtrlPanel.querySelector(".btnCreateNewCard");
+
+        if (editor.getValue() !== '') {
+            btnCreate.disabled = false;
+            CM.newItemEditor.classList.remove("empty");
+        } else {
+            btnCreate.disabled = true;
+            CM.newItemEditor.classList.add("empty");
+        }
+ 
         if (change.text[0] == "#") {
             cm.showHint({type:'tag', completeSingle:false});
         }else if (change.text[0] === "@"){
@@ -203,20 +213,20 @@ function editorOnChange(editor){
     }
 }
 
-function editorOnFocus(editor){
-    return function(cm, event){
+function editorOnFocus(editor) {
+    return function(cm, event) {
         console.log('onfocus');
         globalState.setEditing();
     }
 }
 
-function editorOnBlur(editor){
-    return function(cm, event){
+function editorOnBlur(editor) {
+    return function(cm, event) {
         globalState.setViewing();
     }
 }
 
-function activateNewItemEditor(value){
+function activateNewItemEditor(value) {
     CM.newItemEditor.innerHTML = '';
 
     let editor = CodeMirror(CM.newItemEditor, {
@@ -224,7 +234,7 @@ function activateNewItemEditor(value){
         mode: {
             name: "gfm",
         },
-        configureMouse: function(cm, repeat, ev){
+        configureMouse: function(cm, repeat, ev) {
             return { addNew: false };
         },
         keyMap: "emacs",
@@ -249,9 +259,6 @@ function activateNewItemEditor(value){
 
     CM.newItemEditor.classList.remove('inactive');
     CM.newItemCtrlPanel.classList.remove('inactive');
-    const btnCreate = CM.newItemCtrlPanel.querySelector(".btnCreateNewCard");
-    btnCreate.disabled = false;
-    CM.newItemEditor.classList.remove("empty");
     editor.setValue(value);
     editor.setCursor(editor.lineCount(), 0);
     editor.focus()
