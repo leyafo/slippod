@@ -29,11 +29,10 @@ module.exports = async function () {
       target: "AppImage",
     },    
     mac: {
-      category: "public.app-category.education",
       target: "dmg"
     },
     win: {
-      "target": "nsis"
+      target: "nsis"
     },
   };
 };
