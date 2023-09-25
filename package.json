@@ -26,7 +26,6 @@
     "electron-context-menu": "^3.6.1",
     "electron-rebuild": "^3.2.9",
     "electron-squirrel-startup": "^1.0.0",
-    "electron-vite": "^1.0.28",
     "mocha": "^10.2.0",
     "postcss": "^8.4.23",
     "postcss-import": "^15.1.0",
