@@ -1,59 +1,51 @@
 {
-  "name": "electron-slippod",
+  "name": "slippod",
+  "description": "",
   "version": "0.0.4",
-  "description": "I hate nodejs",
-  "main": "main/main.js",
+  "private": true,
+  "update_schema": "node tasks/update_schema.js",
+  "author": {
+    "name": "Double L"
+  },
+  "main": "packages/main/dist/index.cjs",
   "scripts": {
-    "dev": "vite",
-    "test": "mocha",
-    "build": "vite build",
-    "db_init": "node main/du_init.js",
-    "dev_start": "NODE_ENV=development electron .",
-    "dev_start_logging": "NODE_ENV=development electron . --enable-logging",
-    "pack": "electron-builder --dir",
-    "dist": "electron-builder --config.asar=false",
-    "cross_dist": "electron-builder -mwl",
-    "local_release": "vite build && electron-builder --config.asar=false",
-    "update_schema": "node tasks/update_schema.js",
+    "build": "npm run build:main && npm run build:preload && npm run build:renderer",
+    "build:main": "cd ./packages/main && vite build",
+    "build:preload": "cd ./packages/preload && vite build",
+    "build:renderer": "vite build --config ./packages/renderer/vite.config.js",
+    "compile": "cross-env MODE=production npm run build && electron-builder build --config .electron-builder.config.js --dir --config.asar=false",
+    "watch": "node scripts/watch.mjs",
+    "lint": "eslint . --ext js,mjs,cjs,vue",
+    "postinstall": "cross-env ELECTRON_RUN_AS_NODE=1 electron scripts/update-electron-vendors.mjs",
+    "format": "npx prettier --write \"**/*.{js,mjs,cjs,json}\"",
     "install_app_deps": "./node_modules/.bin/electron-builder install-app-deps"
   },
-  "keywords": [],
-  "author": "Li Yafu",
   "devDependencies": {
-    "autoprefixer": "^10.4.14",
+    "@types/node": "18.17.19",
+    "@vitejs/plugin-vue": "4.3.4",
+    "@vue/test-utils": "2.4.1",
+    "autoprefixer": "^10.4.16",
+    "cross-env": "7.0.3",
     "electron": "^24.2.0",
-    "electron-builder": "^23.6.0",
+    "electron-builder": "24.6.4",
     "electron-context-menu": "^3.6.1",
-    "electron-rebuild": "^3.2.9",
     "electron-squirrel-startup": "^1.0.0",
-    "mocha": "^10.2.0",
-    "postcss": "^8.4.23",
-    "postcss-import": "^15.1.0",
-    "tailwindcss": "^3.3.2",
-    "vite": "^4.3.9"
+    "eslint": "8.50.0",
+    "eslint-plugin-vue": "9.17.0",
+    "happy-dom": "12.1.6",
+    "nano-staged": "0.8.0",
+    "playwright": "1.38.1",
+    "postcss": "^8.4.30",
+    "simple-git-hooks": "2.9.0",
+    "tailwindcss": "^3.3.3",
+    "unplugin-auto-expose": "0.0.5",
+    "vite": "4.4.9",
+    "vitest": "0.34.5",
+    "vue": "3.3.4"
   },
   "dependencies": {
-    "better-sqlite3": "^8.5.0",
-    "codemirror": "5.65.13",
+    "better-sqlite3": "^8.6.0",
+    "electron-updater": "6.1.4",
     "marked": "^5.0.2"
-  },
-  "build": {
-    "appId": "liyafu",
-    "mac": {
-      "category": "public.app-category.education",
-      "target": "dmg"
-    },
-    "linux": {
-      "target": "AppImage"
-    },
-    "win": {
-      "target": "nsis"
-    },
-    "files": [
-      "libsimple/",
-      "main",
-      "dist/assets",
-      "dist/resource"
-    ]
   }
 }
