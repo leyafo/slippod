@@ -4,6 +4,20 @@
 @tailwind components;
 @tailwind utilities;
 
+#splashScreen {
+    position: fixed;
+    inset: 0;
+    font-size: 1.25rem;
+    font-weight: 500;
+    z-index: 100;
+    background-color:#F5F6F8;
+    color: #93969A;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
 html {
     font-size: 15px;
 }
@@ -18,7 +32,8 @@ body {
     background-color: #FFFFFF;
     box-shadow: 1px 0px 0px 0px rgba(0, 0, 0, 0.05);
     font-weight: 500;
-    @apply text-base w-64;
+    overflow-y: auto;
+    @apply text-base w-64 scroll-smooth;
 }
 
 #sideNavContainer {
@@ -241,7 +256,16 @@ body {
 
 #newItem {
     background-color: #FFFFFF;
-    @apply px-4 pb-4 pt-1 mb-4;
+    box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+    @apply px-4 pb-4 pt-1 mb-4 rounded;
+}
+
+#newItem, #newItem * {
+    @apply transition;
+}
+
+#newItem[data-editing="true"] {
+    box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.10);
 }
 
 #newItem #newItemEditor.empty::before {
@@ -354,8 +378,25 @@ body {
     line-height: 24px;
 }
 
+#cardsList {
+    @apply scroll-smooth;
+}
+
 #cardsList > li, .cardContainer  {
     @apply mb-4 p-4 bg-white rounded;
+    box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+}
+
+#cardsList > li, #cardsList > li * {
+    @apply transition;
+}
+
+#cardsList > li:hover {
+    box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.10);
+}
+
+#cardsList > li[data-editing="true"] {
+    box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.10);
 }
 
 .itemHeader {
@@ -538,6 +579,15 @@ content: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcv
     height: 16px;
 }
 
+#creationTip, #endTip {
+    @apply text-center text-base font-medium mb-4;
+    color: #93969A;
+}
+
+#creationTip {
+    @apply mt-8;
+}
+
 /* Card details window specific styles */
 
 #detailWinHeaderBar {
@@ -606,6 +656,10 @@ content: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcv
 
 #outgoingLinkTab.selected .label {
     color: #FFFFFF;
+}
+
+#linkedCards #outgoingLinksCards {
+    box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
 }
 
 #linkedCards .noLinkMessage {
@@ -699,31 +753,6 @@ content: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcv
   background-color: #f0f0f0;
 }
 
-a.hidden{
+a.hidden {
     display: none;
-}
-
-.cm-hashtag {
-    color: blue;
-    background: #CBE2FE !important;
-    text-decoration: underline;
-}
-
-.cm-linkref {
-    color: blue;
-    text-decoration: underline;
-}
-
-.CodeMirror {
-    height: auto;
-    min-height: 96px;
-    background: transparent;
-}
-
-.CodeMirror-scroll {
-    margin-right: 0;
-}
-
-.CodeMirror-sizer {
-    border-right: 0px solid transparent;
 }
