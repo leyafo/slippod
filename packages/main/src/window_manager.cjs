@@ -49,7 +49,7 @@ class WindowManager{
         let iconPath = "";
         switch (process.platform) {
             case "darwin": {
-                iconPath = path.join(app.getAppPath(), 'icons/icon.icns')
+                iconPath = path.join(app.getAppPath(), 'icons/icon.png')
                 break
             }
             case "win32": {
@@ -58,9 +58,11 @@ class WindowManager{
             }
             case "linux": {
                 iconPath = path.join(app.getAppPath(), 'icons/icon.png')
+                break
             }
             default:{
                 iconPath = path.join(app.getAppPath(), 'icons/icon.png')
+                break
             }
         }
         console.log(iconPath)
