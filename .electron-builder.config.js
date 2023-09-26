@@ -18,8 +18,10 @@ module.exports = async function () {
     },
     files: [
         'packages/**/dist/**',
-        "libsimple/",
         "icons/",
+    ],
+    extraResources: [
+          "libsimple/"
     ],
     extraMetadata: {
       version: getVersion(),
