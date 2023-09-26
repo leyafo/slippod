@@ -1,6 +1,7 @@
 const {app, BrowserWindow} = require('electron');
 const path = require('path');
 const db = require('./db');
+const { platform } = require('os');
 
 console.log(import.meta.env.DEV);
 class WindowManager{
@@ -44,6 +45,28 @@ class WindowManager{
           }
     }
 
+    getIconPath(){
+        let iconPath = "";
+        switch (process.platform) {
+            case "darwin": {
+                iconPath = path.join(app.getAppPath(), 'icons/icon.icns')
+                break
+            }
+            case "win32": {
+                iconPath = path.join(app.getAppPath(), 'icons/icon.ico')
+                break
+            }
+            case "linux": {
+                iconPath = path.join(app.getAppPath(), 'icons/icon.png')
+            }
+            default:{
+                iconPath = path.join(app.getAppPath(), 'icons/icon.png')
+            }
+        }
+        console.log(iconPath)
+        return iconPath
+    }
+
     createMainWindow() {
         let windowConfig = {
             width: 800,
@@ -51,6 +74,7 @@ class WindowManager{
             minWidth: 400,
             minHeight: 400,
             titleBarStyle: "hidden",
+            icon: this.getIconPath(),
             webPreferences: {
                 preload: path.join(app.getAppPath(), 'packages/preload/dist/main.cjs'),
                 scrollBounce: true
@@ -92,6 +116,7 @@ class WindowManager{
             height: 400,
             minWidth: 400,
             minHeight: 400,
+            icon: this.getIconPath(),
             webPreferences: {
                 preload: path.join(app.getAppPath(), 'packages/preload/dist/settings.cjs'),
                 scrollBounce: true
@@ -128,6 +153,7 @@ class WindowManager{
                 height: 600,
                 minWidth: 400,
                 minHeight: 400,
+                icon: this.getIconPath(),
                 titleBarStyle: "hidden",
                 webPreferences: {
                     preload: path.join(app.getAppPath(), 'packages/preload/dist/main.cjs'),

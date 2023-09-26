@@ -75,6 +75,9 @@ function cancelUpdate(li) {
 }
 
 function editCard(li) {
+    if(li == undefined){
+        return
+    }
     let getEditingCardPromise = db.getCardByID(li.dataset.id);
 
     getEditingCardPromise.then(function(card) {

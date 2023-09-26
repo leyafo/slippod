@@ -49,7 +49,9 @@ document.addEventListener("keydown", function (event) {
         CM.deleteCard(li);
     }else if (event.key === "Enter"){
         const li = CM.getHighlightedCardItem()
-        UI.editCard(li);
+        if(li){
+            UI.editCard(li);
+        }
         globalState.setEditing();
     }
 });
