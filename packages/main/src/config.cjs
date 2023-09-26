@@ -1,23 +1,27 @@
 const fs = require("fs");
 const path = require('path');
 const os = require("os");
+const {app} = require('electron');
 
-function getAppDataPath() {
-  switch (process.platform) {
+function getUserDataPath() {
+    if (import.meta.env.DEV){
+        return app.getAppPath();
+    } 
+    switch (process.platform) {
     case "darwin": {
-      return path.join(process.env.HOME, "Library", "Application Support", "slippod");
-    }
+            return path.join(process.env.HOME, "Library", "Application Support", "slippod");
+        }
     case "win32": {
-      return path.join(process.env.APPDATA, "slippod");
-    }
+            return path.join(process.env.APPDATA, "slippod");
+        }
     case "linux": {
-      return path.join(process.env.HOME, ".slippod");
-    }
+            return path.join(process.env.HOME, ".slippod");
+        }
     default: {
-      console.log("Unsupported platform!");
-      process.exit(1);
+            console.log("Unsupported platform!");
+            process.exit(1);
+        }
     }
-  }
 }
 
 function getExtensionPath(appDir){
@@ -32,27 +36,21 @@ function getDictPath(appDir){
     return path.join(appDir, "libsimple", "dict")
 }
 
-function readDBPathConfig(){
-    const configFilePath = path.join(getAppDataPath(), "slippod.config");
+function readDBPathFromConfigFile(configFilePath){
     if(!fs.existsSync(configFilePath)){
         return ""
     }
     const dbPath = fs.readFileSync(configFilePath).toString();
     return dbPath;
 }
-
-function writeDBPathConfig(dbPath){
-    const configFilePath = path.join(getAppDataPath(), "slippod.config");
-    if (!fs.existsSync(getAppDataPath())){
-        fs.mkdirSync(getAppDataPath())
-    }
+function saveDBPathToConfigFile(configFilePath, dbPath){
     fs.writeFileSync(configFilePath, dbPath)
 }
 
 module.exports = {
-    getAppDataPath,
+    readDBPathFromConfigFile,
+    saveDBPathToConfigFile,
+    getUserDataPath,
     getDictPath,
     getExtensionPath,
-    readDBPathConfig,
-    writeDBPathConfig,
 }

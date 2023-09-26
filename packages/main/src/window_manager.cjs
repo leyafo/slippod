@@ -1,5 +1,6 @@
 const {app, BrowserWindow} = require('electron');
 const path = require('path');
+const db = require('./db');
 
 console.log(import.meta.env.DEV);
 class WindowManager{
@@ -140,10 +141,14 @@ class WindowManager{
             return;
         }
     
-        this.#loadEntryPoint(detailWindow, `detail.html?cardID=${cardID}`);
+        this.#loadEntryPoint(detailWindow, `detail.html`);
     
         detailWindow.once("ready-to-show", () => {
             detailWindow.show();
+        });
+        detailWindow.webContents.on('did-finish-load', () => {
+            const cardDetails = db.getCardDetails(cardID)
+            detailWindow.webContents.send('displayCardDetail', cardDetails);
         });
     
         detailWindow.on("closed", () => {
