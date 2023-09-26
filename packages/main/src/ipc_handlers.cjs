@@ -1,9 +1,9 @@
 const { BrowserWindow, ipcMain, dialog, app } = require('electron');
-const db = require('./db');
-const config = require('./config');
+const db = require('./db.cjs');
+const config = require('./config.cjs');
 const fs = require("fs");
 const path = require('path');
-const dbSchema = require('./schema');
+const dbSchema = require('./schema.cjs');
 
 const configFilePath = path.join(config.getUserDataPath(), "slippod.config")
 module.exports = {
@@ -57,8 +57,9 @@ module.exports = {
         const dictPath = config.getDictPath(appPath);
         const dbPath = config.readDBPathFromConfigFile(configFilePath);
         //如果数据库路径不存在就初始化它
+        console.log('==========',dbPath,  fs.existsSync(dbPath));
         if (dbPath == "" || !fs.existsSync(dbPath)) {
-            const defaultDBPath = path.join(app.getUserDataPath(), "slippod.db");
+            const defaultDBPath = path.join(config.getUserDataPath(), "slippod.db");
             config.saveDBPathToConfigFile(configFilePath, defaultDBPath);
             db.connect(extPath, dictPath, defaultDBPath);
             db.loadSchema(dbSchema.schema);
