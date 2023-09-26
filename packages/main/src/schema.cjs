@@ -60,9 +60,6 @@ CREATE TABLE IF NOT EXISTS trash (
 );
 CREATE INDEX IF NOT EXISTS idx_trash_card_id on trash(card_id);
 `;
-
-
-
 const tables = ['cards', 'links', 'tags', 'configurations'];
 
 module.exports.schema = sqlSchema;

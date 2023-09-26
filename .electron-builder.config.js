@@ -19,6 +19,7 @@ module.exports = async function () {
     files: [
         'packages/**/dist/**',
         "libsimple/",
+        "icons/",
     ],
     extraMetadata: {
       version: getVersion(),
@@ -26,13 +27,16 @@ module.exports = async function () {
 
     // Specify linux target just for disabling snap compilation
     linux: {
-      target: "AppImage"
+      target: "AppImage",
+      icon: "icons/icon.png",
     },    
     mac: {
-      target: "dmg"
+      target: "dmg",
+      icon: "icons/icon.icns",
     },
     win: {
-      target: "nsis"
+      target: "nsis",
+      icon: "icons/icon.ico",
     },
   };
 };

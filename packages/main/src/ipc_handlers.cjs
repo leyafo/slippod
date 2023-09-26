@@ -1,9 +1,11 @@
 const { BrowserWindow, ipcMain, dialog, app } = require('electron');
-const db = require('./db');
-const config = require('./config');
+const db = require('./db.cjs');
+const config = require('./config.cjs');
 const fs = require("fs");
 const path = require('path');
+const dbSchema = require('./schema.cjs');
 
+const configFilePath = path.join(config.getUserDataPath(), "slippod.config")
 module.exports = {
     registerWindowHandlers: function (windowMgr) {
         ipcMain.handle("reloadAll", async (event, ...args) => {
@@ -24,7 +26,7 @@ module.exports = {
             if (dbPath != undefined) {
                 try {
                     db.reloadDB(dbPath[0]);
-                    config.writeDBPathConfig(dbPath[0]);
+                    config.saveDBPathToConfigFile(configFilePath, dbPath[0]);
                     mainWindow.reload();
                 } catch (err) {
                     dialog.showMessageBoxSync(mainWindow, { message: err.message });
@@ -38,7 +40,7 @@ module.exports = {
         })
 
         ipcMain.handle("getDBPath", async (event, ...args) => {
-            return config.readDBPathConfig();
+            return config.readDBPathFromConfigFile(configFilePath);
         });
 
     },
@@ -53,15 +55,16 @@ module.exports = {
         const appPath = app.getAppPath();
         const extPath = config.getExtensionPath(appPath);
         const dictPath = config.getDictPath(appPath);
-        let dbPath = config.readDBPathConfig();
+        const dbPath = config.readDBPathFromConfigFile(configFilePath);
+        //如果数据库路径不存在就初始化它
         if (dbPath == "" || !fs.existsSync(dbPath)) {
-            dbPath = path.join(config.getAppDataPath(), "slippod.db");
-            config.writeDBPathConfig(dbPath);
-            db.initialize(extPath, dictPath, dbPath);
-            db.updateSchema();
+            const defaultDBPath = path.join(config.getUserDataPath(), "slippod.db");
+            config.saveDBPathToConfigFile(configFilePath, defaultDBPath);
+            db.connect(extPath, dictPath, defaultDBPath);
+            db.loadSchema(dbSchema.schema);
             require("./db_init.cjs").insertSampleData();
         } else {
-            db.initialize(extPath, dictPath, dbPath);
+            db.connect(extPath, dictPath, dbPath);
         }
     }
 };
