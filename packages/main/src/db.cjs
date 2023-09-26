@@ -1,4 +1,4 @@
-const schema = require("./schema");
+const { table } = require("console");
 const sqlite3 = require("better-sqlite3");
 
 const tagPattern = /#([a-zA-Z0-9\u4e00-\u9fff/\\_-]+)(?![a-zA-Z0-9\u4e00-\u9fff/\\_-]*;)/g;
@@ -7,7 +7,7 @@ const linkAtPattern = /@(\d+)/g;
 let db = null;
 let existedIDs = new Set();
 const configs = {
-    isInitlized: false,
+    isConnectd: false,
     extPath: "",
     dictPath: "",
 }
@@ -24,17 +24,6 @@ function getLinkAtRegex(){
     return linkAtPattern
 }
 
-function checkDBSchema(checkDB){
-    const tables = checkDB.prepare(`SELECT name FROM sqlite_master WHERE type='table'`).pluck().all()
-    const setTables = new Set(tables)
-    for(t of schema.tables){
-        if (!setTables.has(t)){
-            return false
-        }
-    }
-    return true
-}
-
 function openDB(extPath, dictPath, dbPath){
     let newDB = null;
     newDB = sqlite3(dbPath, {verbose: console.log})
@@ -45,41 +34,55 @@ function openDB(extPath, dictPath, dbPath){
     return newDB
 }
 
+function checkDBDifference(newDB, oldDB){
+    const oldTables = oldDB.prepare(`SELECT name FROM sqlite_master WHERE type='table'`).pluck().all()
+    const oldTablesSet = new Set(oldTables)
+
+    const newTables = newDB.prepare(`SELECT name FROM sqlite_master WHERE type='table'`).pluck().all()
+
+    for(let t of newTables){
+        if (!oldTablesSet.has(t)){
+            return false
+        }
+    }
+    return true
+}
+
 function reloadDB(newDbPath){
-    if (!configs.isInitlized){
+    if (!configs.isConnectd){
         throw new Error("db is not initialized");
     }
     let newDB = openDB(configs.extPath, configs.dictPath, newDbPath)
-    if(checkDBSchema(newDB) == false){
-        throw new Error("db is invalidated");
+    if(!checkDBDifference(newDB, db)){
+        throw new Error("db version is not same");
     }
     db = newDB;
 }
 
-function initialize(extPath, dictPath, dbPath){
-    if (configs.isInitlized){
+function connect(extPath, dictPath, dbPath){
+    if (configs.isConnectd){
         return
     }
     db = openDB(extPath, dictPath, dbPath)
     configs.dictPath = dictPath;
     configs.extPath = extPath;
-    configs.isInitlized = true
+    configs.isConnectd = true
 }
 
-function updateSchema(){
-    return db.exec(schema.schema);
+function loadSchema(sqlSchema){
+    return db.exec(sqlSchema);
 }
 
 //for test use
-function initializeMemoryDB(extPath, dictPath){
-    if (configs.isInitlized){
+function initializeMemoryDB(extPath, dictPath, schemaSQL){
+    if (configs.isConnectd){
         return
     }
     db = openDB(extPath, dictPath, ":memory:")
-    updateSchema()
+    loadSchema(schemaSQL)
     configs.dictPath = dictPath;
     configs.extPath = extPath;
-    configs.isInitlized = true
+    configs.isConnectd = true
 }
 
 function getMaxCardID(){
@@ -404,7 +407,7 @@ function countDifferentCards(){
 }
 
 module.exports = {
-    updateSchema,
+    loadSchema,
     reloadDB,
     getAllTags,
     getAllCards,
@@ -413,7 +416,7 @@ module.exports = {
     getCardsByTag,
     getCardByID,
     updateCardEntryByID,
-    initialize,
+    connect,
     initializeMemoryDB,
     getCardDetails,
     searchCards,

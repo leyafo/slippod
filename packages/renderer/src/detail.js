@@ -25,49 +25,6 @@ function displayCard(card, parentElement) {
 
 window.addEventListener('DOMContentLoaded', function() {
     const urlParams = new URLSearchParams(window.location.search);
-    const id = urlParams.get('cardID');
-
-    headerBarTitle.textContent = `Note @${id} Details`;
-
-    db.getCardDetails(id).then(function(cardDetail) {
-        window.cardDetail = cardDetail;
-        const cardItem = displayCard(cardDetail.card, mainCardArea);
-
-        if (cardItem) {
-            let backlinkTabLabel = backlinkTab.querySelector('.label');
-            backlinkTabLabel.textContent = `Backlinks(${cardDetail.referencesBy.length})`;
-
-            // select backlinkTab by default
-            backlinkTab.classList.add('selected');
-
-            let outgoingLinkTabLabel = outgoingLinkTab.querySelector('.label');
-            outgoingLinkTabLabel.textContent = `Outgoinglinks(${cardDetail.references.length})`;
-
-            CM.toggleElementShown(linkedCardsTab);
-        }
-        
-        if (cardDetail.referencesBy.length > 0) {
-            for(let refCard of cardDetail.referencesBy) {
-                // displayCard(refCard, linkedCards);
-                displayCard(refCard, backlinksCards);
-            }
-        } else {
-            let noBacklinkMessage = document.createElement('div');
-            noBacklinkMessage.classList.add('noLinkMessage');
-            noBacklinkMessage.textContent = "No backlinks";
-            backlinksCards.appendChild(noBacklinkMessage);
-        }
-        if (cardDetail.references.length > 0) {
-            for(let refCard of cardDetail.references) {
-                displayCard(refCard, outgoingLinksCards);
-            }
-        } else {
-            let noOutgoingLinkMessage = document.createElement('div');
-            noOutgoingLinkMessage.classList.add('noLinkMessage');
-            noOutgoingLinkMessage.textContent = "No outgoing links";
-            outgoingLinksCards.appendChild(noOutgoingLinkMessage);
-        }
-    })
 })
 
 CM.clickHandle("#backlinkTab", function() {
@@ -84,4 +41,50 @@ CM.clickHandle("#outgoingLinkTab", function() {
 
     outgoingLinksCards.classList.remove('hidden');
     backlinksCards.classList.add('hidden');
+});
+
+
+window.backendBridge.displayCardDetail(function(event, cardDetail){
+    const id = cardDetail.card.id
+
+    headerBarTitle.textContent = `Note @${id} Details`;
+
+    window.cardDetail = cardDetail;
+    const cardItem = displayCard(cardDetail.card, mainCardArea);
+
+    if (cardItem) {
+        let backlinkTabLabel = backlinkTab.querySelector('.label');
+        backlinkTabLabel.textContent = `Backlinks(${cardDetail.referencesBy.length})`;
+
+        // select backlinkTab by default
+        backlinkTab.classList.add('selected');
+
+        let outgoingLinkTabLabel = outgoingLinkTab.querySelector('.label');
+        outgoingLinkTabLabel.textContent = `Outgoinglinks(${cardDetail.references.length})`;
+
+        CM.toggleElementShown(linkedCardsTab);
+    }
+    
+    if (cardDetail.referencesBy.length > 0) {
+        for(let refCard of cardDetail.referencesBy) {
+            // displayCard(refCard, linkedCards);
+            displayCard(refCard, backlinksCards);
+        }
+    } else {
+        let noBacklinkMessage = document.createElement('div');
+        noBacklinkMessage.classList.add('noLinkMessage');
+        noBacklinkMessage.textContent = "No backlinks";
+        backlinksCards.appendChild(noBacklinkMessage);
+    }
+    if (cardDetail.references.length > 0) {
+        for(let refCard of cardDetail.references) {
+            displayCard(refCard, outgoingLinksCards);
+        }
+    } else {
+        let noOutgoingLinkMessage = document.createElement('div');
+        noOutgoingLinkMessage.classList.add('noLinkMessage');
+        noOutgoingLinkMessage.textContent = "No outgoing links";
+        outgoingLinksCards.appendChild(noOutgoingLinkMessage);
+    }
+
 });

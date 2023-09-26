@@ -26,7 +26,8 @@ module.exports = async function () {
 
     // Specify linux target just for disabling snap compilation
     linux: {
-      target: "AppImage"
+      target: "AppImage",
+      icon: "icon.png"
     },    
     mac: {
       target: "dmg"
