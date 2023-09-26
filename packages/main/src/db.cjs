@@ -119,7 +119,7 @@ function getTrashCards(offset, limit){
     const trashCards =  db.prepare(`select * from trash order by card_id desc limit ?, ?`).all(N(offset), 
                     N(limit));
     let cards = [];
-    for (tc of trashCards){
+    for (let tc of trashCards){
         cards.push({
             id: tc.card_id,
             trash_id: tc.id,
@@ -156,7 +156,7 @@ function createNewCard(cardEntry) {
 function parseTags(cardEntry){
     const tags = new Set();
     const matches = cardEntry.matchAll(tagPattern);
-    for (m of matches){
+    for (let m of matches){
         let matchedString = m[0].trim()
         if(matchedString[0] == '#'){
             tags.add(matchedString.slice(1));
@@ -169,7 +169,7 @@ function parseTags(cardEntry){
 function parseLinks(cardEntry){
     const links = new Set();
     const matches = cardEntry.matchAll(linkAtPattern);
-    for (m of matches){
+    for (let m of matches){
         let matchedString = m[0].trim()
         if(matchedString[0] == '@'){
             const linkID = N(matchedString.slice(1));
@@ -362,7 +362,7 @@ function searchCards(keyWord, offset, limit){
     const sql = `SELECT rowid, entry FROM cards_fts WHERE entry MATCH simple_query('${keyWord}', 0) ORDER BY rank limit ?, ?;`;
     const result =  db.prepare(sql).all(offset, limit)
     let cards = [];
-    for(r of result){
+    for(let r of result){
         cards.push({
             id: r.rowid,
             entry: r.entry,
@@ -378,7 +378,7 @@ function searchCardsWithStyle(keyWord, offset, limit){
                   entry MATCH simple_query('${keyWord}', '0') ORDER BY rank limit ?, ?;`;
     const result =  db.prepare(sql).all(offset, limit)
     let cards = [];
-    for(r of result){
+    for(let r of result){
         cards.push({
             id: r.rowid,
             entry: r.result,
