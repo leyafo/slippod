@@ -176,6 +176,12 @@ export function deleteCard(li) {
     } else {
         db.moveCardToTrash(cardID).then(function() {
             cardsList.removeChild(li);
+
+            db.getAllTags().then(function(tags){
+                let tree = buildTagTree(tags)
+                let tagListHTML = buildTagHtml(tree)
+                CM.tagList.innerHTML = tagListHTML
+            })
         })
     }
 }

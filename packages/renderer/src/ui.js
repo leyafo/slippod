@@ -128,6 +128,25 @@ function editCard(li) {
     });
 }
 
+function deleteCard(li) {
+    const cardID = li.dataset.id
+    if(li.dataset.is_trash) {
+        db.removeCardPermanently(li.dataset.trash_id).then(function(){
+            CM.cardsList.removeChild(li);
+        })
+    } else {
+        db.moveCardToTrash(cardID).then(function() {
+            CM.cardsList.removeChild(li);
+
+            db.getAllTags().then(function(tags){
+                let tree = buildTagTree(tags)
+                let tagListHTML = buildTagHtml(tree)
+                CM.tagList.innerHTML = tagListHTML
+            })
+        })
+    }
+}
+
 function restoreCard(li){
     if(li.dataset.is_trash){
         db.restoreCard(li.dataset.trash_id).then(function(){
@@ -361,7 +380,7 @@ function addCardEventListeners(li) {
         editCard(li)
     })
     cardMenuOptions.querySelector(".deleteOption").addEventListener('click', function(event) {
-        CM.deleteCard(li)
+        deleteCard(li)
     })
     cardMenuOptions.querySelector(".restoreOption").addEventListener('click', function(event) {
         restoreCard(li)
@@ -835,5 +854,6 @@ export {
     clearSearch,
     insertCardToList,
     editCard,
+    deleteCard,
     activateNewItemEditor,
 }

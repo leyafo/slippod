@@ -46,7 +46,7 @@ document.addEventListener("keydown", function (event) {
         CM.unHighlightItem("selected", CM.cardsList);
     } else if (event.key === "d" && ctrlCmdKey(event)){
         const li = CM.getHighlightedCardItem()
-        CM.deleteCard(li);
+        UI.deleteCard(li);
     }else if (event.key === "Enter"){
         const li = CM.getHighlightedCardItem()
         if(li){
