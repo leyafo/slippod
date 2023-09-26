@@ -167,6 +167,26 @@ export function fillingCardItem(parentItem, card){
     updateTimeSpan.textContent = "Updated: "+ timeAgo(card.updated_at);
 }
 
+export function deleteCard(li) {
+    const cardID = li.dataset.id
+    if(li.dataset.is_trash) {
+        db.removeCardPermanently(li.dataset.trash_id).then(function(){
+            cardsList.removeChild(li);
+        })
+    } else {
+        db.moveCardToTrash(cardID).then(function() {
+            cardsList.removeChild(li);
+
+            db.getAllTags().then(function(tags){
+                let tree = buildTagTree(tags)
+                let tagListHTML = buildTagHtml(tree)
+                CM.tagList.innerHTML = tagListHTML
+            })
+        })
+    }
+}
+
+
 export function getHighlightedCardItem(){
     const highlightedLi = cardsList.querySelector("li.selected")
     return highlightedLi
