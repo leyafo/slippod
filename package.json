@@ -1,7 +1,7 @@
 {
   "name": "slippod",
-  "description": "",
-  "version": "0.0.4",
+  "description": "just for fun",
+  "version": "beta-0.0.1",
   "private": true,
   "update_schema": "node tasks/update_schema.js",
   "author": {
@@ -14,6 +14,7 @@
     "build:preload": "cd ./packages/preload && vite build",
     "build:renderer": "vite build --config ./packages/renderer/vite.config.js",
     "compile": "cross-env MODE=production npm run build && electron-builder build --config .electron-builder.config.js --dir --config.asar=false",
+    "pack":"DEBUG=electron-builder cross-env MODE=production electron-builder build --config .electron-builder.config.js --dir --config.asar=false",
     "watch": "node scripts/watch.mjs",
     "lint": "eslint . --ext js,mjs,cjs,vue",
     "postinstall": "cross-env ELECTRON_RUN_AS_NODE=1 electron scripts/update-electron-vendors.mjs",
@@ -30,6 +31,7 @@
     "electron-builder": "23.6.0",
     "electron-context-menu": "^3.6.1",
     "electron-squirrel-startup": "^1.0.0",
+    "esbuild": "0.19.3",
     "eslint": "8.50.0",
     "eslint-plugin-vue": "9.17.0",
     "happy-dom": "12.1.6",

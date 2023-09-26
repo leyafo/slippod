@@ -75,6 +75,9 @@ function cancelUpdate(li) {
 }
 
 function editCard(li) {
+    if(li == undefined){
+        return
+    }
     let getEditingCardPromise = db.getCardByID(li.dataset.id);
 
     getEditingCardPromise.then(function(card) {
@@ -322,6 +325,12 @@ function createNewCardHandle(e) {
             CM.newItemCtrlPanel.classList.add('inactive');
         });
     });
+
+    db.getAllTags().then(function(tags){
+        let tree = buildTagTree(tags)
+        let tagListHTML = buildTagHtml(tree)
+        CM.tagList.innerHTML = tagListHTML
+    })
 }
 
 CM.clickHandle(".btnCreateNewCard", createNewCardHandle)

@@ -28,6 +28,7 @@ contextBridge.exposeInMainWorld('pages', {
 //black magic
 contextBridge.exposeInMainWorld('backendBridge', {
     displayCardCounts: (callback) => ipcRenderer.on("displayCardCounts", (callback)),
+    displayCardDetail: (callback) => ipcRenderer.on("displayCardDetail", (callback))
 });
 
 (function () {

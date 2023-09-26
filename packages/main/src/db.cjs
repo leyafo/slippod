@@ -1,4 +1,4 @@
-const schema = require("./schema");
+const { table } = require("console");
 const sqlite3 = require("better-sqlite3");
 
 const tagPattern = /#([a-zA-Z0-9\u4e00-\u9fff/\\_-]+)(?![a-zA-Z0-9\u4e00-\u9fff/\\_-]*;)/g;
@@ -7,7 +7,7 @@ const linkAtPattern = /@(\d+)/g;
 let db = null;
 let existedIDs = new Set();
 const configs = {
-    isInitlized: false,
+    isConnectd: false,
     extPath: "",
     dictPath: "",
 }
@@ -24,17 +24,6 @@ function getLinkAtRegex(){
     return linkAtPattern
 }
 
-function checkDBSchema(checkDB){
-    const tables = checkDB.prepare(`SELECT name FROM sqlite_master WHERE type='table'`).pluck().all()
-    const setTables = new Set(tables)
-    for(t of schema.tables){
-        if (!setTables.has(t)){
-            return false
-        }
-    }
-    return true
-}
-
 function openDB(extPath, dictPath, dbPath){
     let newDB = null;
     newDB = sqlite3(dbPath, {verbose: console.log})
@@ -45,41 +34,55 @@ function openDB(extPath, dictPath, dbPath){
     return newDB
 }
 
+function checkDBDifference(newDB, oldDB){
+    const oldTables = oldDB.prepare(`SELECT name FROM sqlite_master WHERE type='table'`).pluck().all()
+    const oldTablesSet = new Set(oldTables)
+
+    const newTables = newDB.prepare(`SELECT name FROM sqlite_master WHERE type='table'`).pluck().all()
+
+    for(let t of newTables){
+        if (!oldTablesSet.has(t)){
+            return false
+        }
+    }
+    return true
+}
+
 function reloadDB(newDbPath){
-    if (!configs.isInitlized){
+    if (!configs.isConnectd){
         throw new Error("db is not initialized");
     }
     let newDB = openDB(configs.extPath, configs.dictPath, newDbPath)
-    if(checkDBSchema(newDB) == false){
-        throw new Error("db is invalidated");
+    if(!checkDBDifference(newDB, db)){
+        throw new Error("db version is not same");
     }
     db = newDB;
 }
 
-function initialize(extPath, dictPath, dbPath){
-    if (configs.isInitlized){
+function connect(extPath, dictPath, dbPath){
+    if (configs.isConnectd){
         return
     }
     db = openDB(extPath, dictPath, dbPath)
     configs.dictPath = dictPath;
     configs.extPath = extPath;
-    configs.isInitlized = true
+    configs.isConnectd = true
 }
 
-function updateSchema(){
-    return db.exec(schema.schema);
+function loadSchema(sqlSchema){
+    return db.exec(sqlSchema);
 }
 
 //for test use
-function initializeMemoryDB(extPath, dictPath){
-    if (configs.isInitlized){
+function initializeMemoryDB(extPath, dictPath, schemaSQL){
+    if (configs.isConnectd){
         return
     }
     db = openDB(extPath, dictPath, ":memory:")
-    updateSchema()
+    loadSchema(schemaSQL)
     configs.dictPath = dictPath;
     configs.extPath = extPath;
-    configs.isInitlized = true
+    configs.isConnectd = true
 }
 
 function getMaxCardID(){
@@ -116,7 +119,7 @@ function getTrashCards(offset, limit){
     const trashCards =  db.prepare(`select * from trash order by card_id desc limit ?, ?`).all(N(offset), 
                     N(limit));
     let cards = [];
-    for (tc of trashCards){
+    for (let tc of trashCards){
         cards.push({
             id: tc.card_id,
             trash_id: tc.id,
@@ -153,7 +156,7 @@ function createNewCard(cardEntry) {
 function parseTags(cardEntry){
     const tags = new Set();
     const matches = cardEntry.matchAll(tagPattern);
-    for (m of matches){
+    for (let m of matches){
         let matchedString = m[0].trim()
         if(matchedString[0] == '#'){
             tags.add(matchedString.slice(1));
@@ -166,7 +169,7 @@ function parseTags(cardEntry){
 function parseLinks(cardEntry){
     const links = new Set();
     const matches = cardEntry.matchAll(linkAtPattern);
-    for (m of matches){
+    for (let m of matches){
         let matchedString = m[0].trim()
         if(matchedString[0] == '@'){
             const linkID = N(matchedString.slice(1));
@@ -359,7 +362,7 @@ function searchCards(keyWord, offset, limit){
     const sql = `SELECT rowid, entry FROM cards_fts WHERE entry MATCH simple_query('${keyWord}', 0) ORDER BY rank limit ?, ?;`;
     const result =  db.prepare(sql).all(offset, limit)
     let cards = [];
-    for(r of result){
+    for(let r of result){
         cards.push({
             id: r.rowid,
             entry: r.entry,
@@ -375,7 +378,7 @@ function searchCardsWithStyle(keyWord, offset, limit){
                   entry MATCH simple_query('${keyWord}', '0') ORDER BY rank limit ?, ?;`;
     const result =  db.prepare(sql).all(offset, limit)
     let cards = [];
-    for(r of result){
+    for(let r of result){
         cards.push({
             id: r.rowid,
             entry: r.result,
@@ -404,7 +407,7 @@ function countDifferentCards(){
 }
 
 module.exports = {
-    updateSchema,
+    loadSchema,
     reloadDB,
     getAllTags,
     getAllCards,
@@ -413,7 +416,7 @@ module.exports = {
     getCardsByTag,
     getCardByID,
     updateCardEntryByID,
-    initialize,
+    connect,
     initializeMemoryDB,
     getCardDetails,
     searchCards,
