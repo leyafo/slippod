@@ -25,6 +25,8 @@ function getUserDataPath() {
 }
 
 function getExtensionPath(appDir){
+    //get the same resource dir
+    appDir = path.dirname(appDir);
     if(os.platform == "win32"){
         return path.join(appDir, "libsimple", "libsimple.dll") 
     }else{
