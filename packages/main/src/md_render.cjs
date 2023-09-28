@@ -1,5 +1,5 @@
 const marked = require("marked")
-const db = require("./db")
+const db = require("./db.cjs")
 
 function createMarkdownRender(){
     let linkAtRegex = db.getLinkAtRegex()
@@ -7,7 +7,11 @@ function createMarkdownRender(){
 
     const renderer = new marked.Renderer();
     renderer.text = function (text) {
-        text = text.replace(tagRegex, '<a href="/tags/$1" class="cm-hashtag">#$1</a>');
+        text = text.replace(tagRegex, function(matchedTag){
+            const tagText = matchedTag.slice(1)
+            return `<a href="/tags/${tagText}" class="cm-hashtag">#${tagText}</a>`;
+        })
+        console.log(text);
         return text.replace(linkAtRegex, function(matchedLink){
             const linkID = matchedLink.slice(1)
             if(db.cardIsExisted(linkID)){
