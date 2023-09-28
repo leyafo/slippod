@@ -430,7 +430,12 @@ function reloadCardList(cards, headerTitle = 'All Cards', order = CM.listInsertB
         insertCardToList(card, order)
     });
 
-    let creationTipText = window.platform === "darwin" ? "Press ⌘+O to create a new card": "Press Ctrl+O to create a new card";
+    let creationTipText ='';
+    if (CM.listArea.classList.contains("trashList")) {
+        creationTipText = "Trash can is empty";
+    } else {
+        creationTipText = window.platform === "darwin" ? "Press ⌘+O to create a new card": "Press Ctrl+O to create a new card";
+    }
     CM.creationTip.innerText = creationTipText;
 
     if (CM.cardsList.children.length > 0) {
