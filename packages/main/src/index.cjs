@@ -32,12 +32,12 @@ app.whenReady().then(() => {
         }
     });
 
-    globalShortcut.register("CommandOrControl+R", () => {
-        const focusedWindow = BrowserWindow.getFocusedWindow()
-        if(focusedWindow != null){
-            focusedWindow.reload(); 
-        }
-    });
+    // globalShortcut.register("CommandOrControl+R", () => {
+    //     const focusedWindow = BrowserWindow.getFocusedWindow()
+    //     if(focusedWindow != null){
+    //         focusedWindow.reload(); 
+    //     }
+    // });
 });
 
 
