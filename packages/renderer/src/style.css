@@ -83,6 +83,10 @@ body {
     line-height: 0;
 }
 
+.tagContainer:hover {
+    background: #EDF1F6;
+}
+
 .tagContainer.selected {
     background: #DDE0E6;
 }

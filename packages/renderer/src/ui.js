@@ -147,15 +147,15 @@ function deleteCard(li) {
     }
 }
 
-function restoreCard(li){
+function restoreCard(li) {
     if(li.dataset.is_trash){
-        db.restoreCard(li.dataset.trash_id).then(function(){
+        db.restoreCard(li.dataset.trash_id).then(function() {
             CM.cardsList.removeChild(li);
         })
     }
 }
 
-CM.clickHandle(".tagClick", function(e){
+CM.clickHandle(".tagContainer", function(e) {
     e.preventDefault();
 
     const tagContainer = e.target.closest(".tagContainer");
