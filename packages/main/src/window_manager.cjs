@@ -46,6 +46,10 @@ class WindowManager{
     }
 
     getIconPath(){
+        if (import.meta.env.DEV) {
+            //use default icon for difference environment
+            return ""
+        }
         let iconPath = "";
         switch (process.platform) {
             case "darwin": {
