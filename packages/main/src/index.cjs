@@ -1,5 +1,5 @@
 // main.js
-const {clipboard, globalShortcut,ipcMain, app, Menu, BrowserWindow } = require("electron");
+const {shell, clipboard, globalShortcut,ipcMain, app, Menu, BrowserWindow } = require("electron");
 const WindowManager = require("./window_manager");
 const ipcHandler = require("./ipc_handlers");
 const {menuTemplate} = require("./menu");
@@ -75,4 +75,8 @@ ipcMain.handle("pasteTextFromClipboard", async function(event){
 
 ipcMain.handle("platform", async function(event){
     return process.platform
+})
+
+ipcMain.handle("openExternalURL", async function(event, url){
+    return shell.openExternal(url);
 })

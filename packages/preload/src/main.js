@@ -14,6 +14,9 @@ contextBridge.exposeInMainWorld('utils', {
     platform: function(){
         return ipcRenderer.invoke("platform");
     },
+    openExternalURL: function (url) {
+        return ipcRenderer.invoke('openExternalURL', url)
+    }
 });
 
 contextBridge.exposeInMainWorld('pages', {

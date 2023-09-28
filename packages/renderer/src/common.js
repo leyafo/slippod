@@ -221,5 +221,12 @@ export function linkClick(event){
     });
 } 
 
+clickHandle('a[href^="http"]', function(event){
+    event.preventDefault();
+    const href = event.target.href
+    console.log(href);
+    utils.openExternalURL(href);
+})
+
 window.testHotKey = function() {
 }
