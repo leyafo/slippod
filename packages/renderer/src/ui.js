@@ -731,7 +731,6 @@ document.addEventListener('scroll', handleScroll());
 
 function buildTagTree(tagList) {
   const tree = {};
-  console.log(tagList);
   tagList.forEach(tagItem => {
     let node = tree;
     tagItem.tag.split('/').forEach(part => {
@@ -821,9 +820,8 @@ let displayCardCounts = async function () {
     }
 }
 
-let removeSplashScreen = function() {
+let removeSplashScreen = function () {
     let splashScreen = document.getElementById('splashScreen');
-    console.log(splashScreen);
     splashScreen.remove();
 }
 
@@ -836,12 +834,12 @@ window.addEventListener('DOMContentLoaded', function() {
 
     //load tags
     db.getAllTags().then(function(tags) {
-        let tree = buildTagTree(tags)
-        let tagListHTML = buildTagHtml(tree)
-        CM.tagList.innerHTML = tagListHTML
-        removeSplashScreen();
+        let tree = buildTagTree(tags);
+        let tagListHTML = buildTagHtml(tree);
+        CM.tagList.innerHTML = tagListHTML;
     })
     displayCardCounts();
+    removeSplashScreen();
 });
 
 //This is a black magic, from an India youtube brother. Youtube: 70-p0mq-w5g

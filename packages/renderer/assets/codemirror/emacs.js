@@ -155,11 +155,19 @@
   }
 
   function moveAndSelection(by, dir){
-    let f = function(cm){
-      cm.extendSelection(findEnd(cm, cm.getCursor(), by, dir), cm.getCursor('head'));
-    }
-    f.motion = true
-    return f;
+    // let f = function(cm){
+    //     cm.extendSelection(findEnd(cm, cm.getCursor(), by, dir), cm.getCursor('head'), { extend: true });
+    // }
+    // f.motion = true
+    // return f;
+    return function(cm) {
+        const head = cm.getCursor('head'); // Gets the “head” side of the selection.
+        const anchor = cm.getCursor('anchor'); // Gets the “anchor” side of the selection.
+        
+        const newHead = findEnd(cm, head, by, dir); // Find the new “head” based on the moving direction.
+        
+        cm.setSelection(anchor, newHead, {scroll: false}); // Extend the selection from “anchor” to the new “head”.
+    };
   }
 
   function killTo(cm, by, dir, ring) {
