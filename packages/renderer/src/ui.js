@@ -23,7 +23,8 @@ function updateCard(li, needCloseEditor=true) {
     const entry = content.firstChild.CodeMirror.getValue();
 
     db.updateCardEntryByID(cardID, entry).then((result) => {
-        console.log(result.id, result.updated_at);
+        const updateTimeSpan = li.querySelector("span.itemUpdateTime");
+        updateTimeSpan.textContent = "Updated: "+ CM.timeAgo(result.updated_at);
         //ctrl-s will not close the editor
         if(needCloseEditor){
             const markdownHtml = document.createElement('div');
@@ -434,7 +435,7 @@ function reloadCardList(cards, headerTitle = 'All Cards', order = CM.listInsertB
     if (CM.listArea.classList.contains("trashList")) {
         creationTipText = "Trash can is empty";
     } else {
-        creationTipText = window.platform === "darwin" ? "Press ⌘+O to create a new card": "Press Ctrl+O to create a new card";
+        creationTipText = env.platform === "darwin" ? "Press ⌘+O to create a new card": "Press Ctrl+O to create a new card";
     }
     CM.creationTip.innerText = creationTipText;
 

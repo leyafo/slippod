@@ -8,7 +8,7 @@ function startingSearch(){
 }
 
 function ctrlCmdKey(event){
-    switch (window.platform){
+    switch (env.platform){
     case "darwin":
         return event.metaKey
     default:
