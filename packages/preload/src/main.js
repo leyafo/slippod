@@ -1,6 +1,9 @@
 // preload.js
 import {contextBridge, ipcRenderer } from 'electron';
 
+contextBridge.exposeInMainWorld('env', {
+    platform: process.platform,
+})
 contextBridge.exposeInMainWorld('utils', {
     reloadAll: (...args) => ipcRenderer.invoke("reloadAll", ...args),
     uploadCardEditing: (id, entry) => ipcRenderer.invoke("uploadCardEditing", id, entry),
@@ -16,7 +19,7 @@ contextBridge.exposeInMainWorld('utils', {
     },
     openExternalURL: function (url) {
         return ipcRenderer.invoke('openExternalURL', url)
-    }
+    },
 });
 
 contextBridge.exposeInMainWorld('pages', {
