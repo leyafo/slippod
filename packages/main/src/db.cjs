@@ -50,6 +50,7 @@ function checkDBDifference(newDB, oldDB){
     return true
 }
 
+
 function reloadDB(newDbPath){
     if (!configs.isConnectd){
         throw new Error("db is not initialized");
@@ -408,6 +409,22 @@ function countDifferentCards(){
     }
 }
 
+function renameTag(newTag, oldTag){
+    const limit = 100;
+    let offset = 0;
+    for(;;){
+        let cards = getCardsByTag(oldTag, offset, limit);
+        for(let card of cards){
+            let newEntry = card.entry.replaceAll(oldTag, newTag);
+            updateCardEntryByID(card.id, newEntry);
+        }
+        if (cards.length < limit){
+            break;
+        }
+        offset+=limit
+    }
+}
+
 module.exports = {
     loadSchema,
     reloadDB,
@@ -426,6 +443,7 @@ module.exports = {
     cardIsExisted,
     getCardsByMiddleID,
     getMaxCardID,
+    renameTag,
 
     //trash functions
     getTrashCards,
