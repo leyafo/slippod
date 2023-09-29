@@ -73,10 +73,6 @@ ipcMain.handle("pasteTextFromClipboard", async function(event){
     return clipboard.readText();
 })
 
-ipcMain.handle("platform", async function(event){
-    return process.platform
-})
-
 ipcMain.handle("openExternalURL", async function(event, url){
     return shell.openExternal(url);
 })

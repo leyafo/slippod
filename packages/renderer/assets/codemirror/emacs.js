@@ -501,8 +501,7 @@
   // Actual keymap
   let keymap = []
 
-  utils.platform().then(function(platform){
-    if (platform === 'darwin'){
+    if (env.platform === 'darwin') {
         keymap = CodeMirror.keyMap.emacs = CodeMirror.normalizeKeyMap({
             "Cmd-C": "killRingSave",
             "Cmd-V": "yank",
@@ -514,10 +513,10 @@
 
             //selection
             "Cmd-A": "selectAll",
-            "Ctrl-Shift-F":"forwardCharSelection",
-            "Ctrl-Shift-B":"backwardCharSelection",
-            "Alt-Shift-F":"forwardWordSelection",
-            "Alt-Shift-B":"backwardWordSelection",
+            "Ctrl-Shift-F": "forwardCharSelection",
+            "Ctrl-Shift-B": "backwardCharSelection",
+            "Alt-Shift-F": "forwardWordSelection",
+            "Alt-Shift-B": "backwardWordSelection",
             "Ctrl-Shift-A": "goLineStartSelection",
             "Ctrl-Shift-E": "goLineEndSelection",
 
@@ -545,7 +544,7 @@
             "fallthrough": "basic"
         });
         console.log(keymap);
-    }else{
+    } else {
         keymap = CodeMirror.keyMap.emacs = CodeMirror.normalizeKeyMap({
             "Ctrl-C": "killRingSave",
             "Ctrl-V": "yank",
@@ -554,16 +553,16 @@
             "Left": "backwardChar",
             "Ctrl-Z": "undoRepeatable",
             "Shift-Ctrl-Z": "redo",
-    
+
             //selection
             "Alt-A": "selectAll",
-            "Ctrl-Shift-F":"forwardCharSelection",
-            "Ctrl-Shift-B":"backwardCharSelection",
-            "Alt-Shift-F":"forwardWordSelection",
-            "Alt-Shift-B":"backwardWordSelection",
+            "Ctrl-Shift-F": "forwardCharSelection",
+            "Ctrl-Shift-B": "backwardCharSelection",
+            "Alt-Shift-F": "forwardWordSelection",
+            "Alt-Shift-B": "backwardWordSelection",
             "Ctrl-Shift-A": "goLineStartSelection",
             "Ctrl-Shift-E": "goLineEndSelection",
-    
+
             //moving 
             //https://github.com/leyafo/slippod/assets/1463701/ab3f114b-0624-4c86-85b0-d029e9d23683
             "Ctrl-A": "goLineStart",
@@ -574,7 +573,7 @@
             "Alt-F": "forwardWord",
             "Ctrl-P": "previousLine",
             "Ctrl-N": "nextLine",
-    
+
             //erasing  
             "Ctrl-W": "backwardKillWord",
             "Alt-D": "killWord",
@@ -584,7 +583,7 @@
             "Enter": "newlineAndIndent",
             "Ctrl-H": "deleteBackwardChar",
             "Ctrl-D": "deleteChar",
-    
+
             // "Alt-W": "killRingSave",
             // "Ctrl-Y": "yank",
             // "Alt-Y": "yankPop",
@@ -651,8 +650,7 @@
             "fallthrough": "basic"
         });
         console.log(keymap);
-      }
-  });
+    }
 
 //   var prefixMap = {"Ctrl-G": clearPrefix};
 //   function regPrefix(d) {

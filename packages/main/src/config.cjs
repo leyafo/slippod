@@ -37,6 +37,9 @@ function getExtensionPath(appDir){
 }
 
 function getDictPath(appDir){
+    if (!import.meta.env.DEV) {
+        appDir = path.dirname(appDir);
+    }
     return path.join(appDir, "libsimple", "dict")
 }
 
