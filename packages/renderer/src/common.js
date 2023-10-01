@@ -92,9 +92,19 @@ export function highlightUpOrDownItem(arrowDirection, highlightedClass, parentEl
     return highLightedItem
 }
 
+export function highlightUpOrDownItemScreen(arrowDirection, highlightedClass, parentElement){
+    const selector = `.${highlightedClass}`
+    let highLightedItem = parentElement.querySelector(selector)
+    if(!highLightedItem){
+        //get the first item in the screen
+        return
+    }
+    return highlightUpOrDownItem(arrowDirection, highlightedClass, parentElement);
+}
+
 export function highlightItem( highlightedClass, item, parentElement) {
-    unHighlightItem(highlightedClass, parentElement)
-    item.classList.add(highlightedClass)
+    unHighlightItem(highlightedClass, parentElement);
+    item.classList.add(highlightedClass);
 }
 
 export function unHighlightItem(highlightedClass, parentElement){

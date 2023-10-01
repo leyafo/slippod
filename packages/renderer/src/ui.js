@@ -115,9 +115,16 @@ function editCard(li) {
         editor.keydownMap({
             "commit":function(cm, event){
                 updateCard(li, true);
+                setTimeout(function(){ //这里的高亮冲突暂时还未找到。
+                    CM.highlightItem("selected", li, CM.cardsList);
+                }, 100);
+                CM.highlightItem("selected", li, CM.cardsList)
             },
             "cancel":function(cm, event){
                 cancelUpdate(li);
+                setTimeout(function(){ //这里会有view模式下按esc的冲突，所以延迟设置。
+                    CM.highlightItem("selected", li, CM.cardsList)
+                }, 100);
             },
             "save": function(cm, event){
                 updateCard(li, false);
@@ -249,12 +256,17 @@ function editorOnChange(editor) {
 
 function editorOnFocus(editor) {
     return function(cm, event) {
-        console.log('onfocus');
         const editorDiv = editor.display.wrapper;
         const editorWrapper = editorDiv.parentNode;
 
         if (editorWrapper.id === "newItemEditor") {
             CM.newItemContainer.dataset.editing = 'true';
+            CM.toggleElementShown(CM.newItemCtrlPanel);
+            db.getDraft().then(function(draftContent){
+                editor.setValue(draftContent);
+                //set cursor to the end of doc
+                editor.setCursor(editor.lineCount(), 0);
+            });
         }
 
         globalState.setEditing();
@@ -268,14 +280,25 @@ function editorOnBlur(editor) {
 
         if (editorWrapper.id === "newItemEditor") {
             CM.newItemContainer.dataset.editing = 'false';
+            const editorContent = editor.getValue();
+            //After commit the editor's content, we will clear editor's content and draft
+            //we don't need to update again
+            if (editorContent != ''){
+                db.updateDraft(editor.getValue());
+            }
         }
         globalState.setViewing();
     }
 }
 
 function activateNewItemEditor(value) {
-    CM.newItemEditor.innerHTML = '';
+    const existedEditor = CM.newItemEditor.firstChild.CodeMirror;
+    if(existedEditor){
+        existedEditor.focus();
+        return
+    }
 
+    CM.newItemEditor.innerHTML = '';
     let editor = CodeMirror(CM.newItemEditor, {
         theme: "default",
         mode: {
@@ -296,20 +319,33 @@ function activateNewItemEditor(value) {
     editor.on("focus", editorOnFocus(editor))
 
     editor.keydownMap({
+        "save": function(cm, event){
+            db.updateDraft(editor.getValue());
+        },
         "commit": function (cm, event) {
-            console.log(cm, event)
             createNewCardHandle(event);
         },
         "cancel": function (cm, event) {
+            db.updateDraft(editor.getValue());
+            CM.toggleElementHidden(CM.newItemCtrlPanel);
         }
     })
-
     CM.newItemEditor.classList.remove('inactive');
     CM.newItemCtrlPanel.classList.remove('inactive');
     editor.setValue(value);
     editor.setCursor(editor.lineCount(), 0);
     editor.focus()
     CM.setScrollbarToTop()
+
+    let generation = editor.changeGeneration(true);
+    //we don't need to remove this time tick
+    setInterval(function(){
+        if (!editor.isClean(generation)){
+            generation = editor.changeGeneration(true);
+            db.updateDraft(editor.getValue());
+        }
+    }, 5000)//5s; auto save every 5 seconds
+
     return editor
 }
 
@@ -336,6 +372,8 @@ function createNewCardHandle(e) {
     editorPlaceholder.classList.add('editorPlaceholder');
 
     db.createNewCard(entry).then((newCardID) => {
+        editor.setValue('');//clear editor
+        db.updateDraft('');//clear draft
         db.getCardByID(newCardID).then((card) => {
             const li = insertCardToList(card, CM.listInsertBeforeFirst);
             CM.newItemEditor.innerHTML = '';
@@ -364,8 +402,7 @@ function addCardEventListeners(li) {
 
     li.addEventListener('click', function() {
         if (li.dataset.editing === 'false') {
-            CM.unHighlightItem("selected", CM.cardsList)
-            li.classList.add('selected');
+            CM.highlightItem("selected", li, CM.cardsList)
         }
     });
     const cardMenuContainer = li.querySelector(".itemMenuContainer")

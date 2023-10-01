@@ -41,8 +41,11 @@ document.addEventListener("keydown", function (event) {
             return
         }
     }else if (event.key === "o" && ctrlCmdKey(event)){
-        UI.activateNewItemEditor('')
+        db.getDraft().then(function(draftContent){
+            UI.activateNewItemEditor(draftContent);
+        })
     }else if (event.key === "Escape"){
+        // 这里加esc好像不太合适
         CM.unHighlightItem("selected", CM.cardsList);
     } else if (event.key === "d" && ctrlCmdKey(event)){
         const li = CM.getHighlightedCardItem()
@@ -75,11 +78,6 @@ CM.searchBox.addEventListener("keydown", function (event) {
         CM.highlightUpOrDownItem(CM.highlightUp, "highlighted", CM.suggestionResults)
         event.preventDefault();
     } else if (event.key === "Enter") {
-        if (event.ctrlKey) {
-            event.stopPropagation();
-            return;
-        }
-
         const highlightedSuggestion = document.querySelector(
             "#suggestionResults .highlighted"
         );
@@ -89,7 +87,12 @@ CM.searchBox.addEventListener("keydown", function (event) {
             globalState.setViewing();
         }else{
             const input = CM.searchBox.value
-            UI.activateNewItemEditor(input);
+            db.createNewCard(input).then((newCardID) => {
+                db.getCardByID(newCardID).then((card) => {
+                    const li = UI.insertCardToList(card, CM.listInsertBeforeFirst);
+                    UI.editCard(li);
+                });
+            });
             globalState.setEditing();
         }
         event.stopPropagation();
@@ -111,7 +114,8 @@ CodeMirror.defineExtension("keydownMap", function(eventMap){
             eventMap.commit(cm, event)
             globalState.setViewing();
         }else if(event.key == 'Escape'){
-            eventMap.cancel(cm, event)
+            cm.getInputField().blur();
+            eventMap.cancel(cm, event);
             globalState.setViewing();
         }else if(ctrlCmdKey(event) && event.key === "s"){
             eventMap.save(cm, event)

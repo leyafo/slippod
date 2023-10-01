@@ -11,7 +11,6 @@ function createMarkdownRender(){
             const tagText = matchedTag.slice(1)
             return `<a href="/tags/${tagText}" class="cm-hashtag">#${tagText}</a>`;
         })
-        console.log(text);
         return text.replace(linkAtRegex, function(matchedLink){
             const linkID = matchedLink.slice(1)
             if(db.cardIsExisted(linkID)){

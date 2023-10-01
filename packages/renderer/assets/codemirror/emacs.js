@@ -507,6 +507,9 @@
             "Cmd-V": "yank",
             "Cmd-X": "cut",
             "Cmd-Z": "undoRepeatable",
+            "Cmd-Up": "goDocStart",
+            "Cmd-Down": "goDocEnd",
+
             "Shift-Cmd-Z": "redo",
             "Right": "forwardChar",
             "Left": "backwardChar",
@@ -564,6 +567,8 @@
             "Alt-Shift-B": "backwardWordSelection",
             "Ctrl-Shift-A": "goLineStartSelection",
             "Ctrl-Shift-E": "goLineEndSelection",
+            "Ctrl-Up": "goDocStart",
+            "Ctrl-Down": "goDocEnd",
 
             //moving 
             //https://github.com/leyafo/slippod/assets/1463701/ab3f114b-0624-4c86-85b0-d029e9d23683
