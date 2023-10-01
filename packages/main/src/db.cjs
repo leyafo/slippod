@@ -5,6 +5,7 @@ const sqlite3 = require("better-sqlite3");
 const tagPattern = /(?<=^|\s|#)#[a-zA-Z0-9\u4e00-\u9fff/\\_-]+(?![a-zA-Z0-9\u4e00-\u9fff/\\_-]*;)/g
 
 const linkAtPattern = /@(\d+)/g;
+const draftKey = "draft_prevent_conflict_key";
 
 let db = null;
 let existedIDs = new Set();
@@ -425,6 +426,15 @@ function renameTag(newTag, oldTag){
     }
 }
 
+function getDraft(){
+    const row = db.prepare(`select value from configurations where key=?`).get(draftKey);
+    return row.value
+}
+
+function updateDraft(content){
+    return db.prepare(`INSERT INTO configurations (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = ?`).run(draftKey, content, content);
+}
+
 module.exports = {
     loadSchema,
     reloadDB,
@@ -444,6 +454,8 @@ module.exports = {
     getCardsByMiddleID,
     getMaxCardID,
     renameTag,
+    updateDraft,
+    getDraft,
 
     //trash functions
     getTrashCards,

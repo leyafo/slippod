@@ -3,6 +3,12 @@ import {contextBridge, ipcRenderer } from 'electron';
 
 contextBridge.exposeInMainWorld('env', {
     platform: process.platform,
+    "isDev": function(){
+        return import.meta.env.DEV
+    },
+    "app":function(){
+        return import.meta.env
+    }
 })
 contextBridge.exposeInMainWorld('utils', {
     reloadAll: (...args) => ipcRenderer.invoke("reloadAll", ...args),
@@ -66,6 +72,9 @@ contextBridge.exposeInMainWorld('backendBridge', {
         "getCardSearchSuggestions",
         "countDifferentCards",
         "countTaggedCards",
+        "renameTag",
+        "updateDraft",
+        "getDraft",
     ]
     const needRecount = new Set([
         "removeCardFromTrash",
