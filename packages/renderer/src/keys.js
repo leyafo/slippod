@@ -29,17 +29,19 @@ document.addEventListener("keydown", function (event) {
     }
 
     if (event.key === "ArrowUp" || (event.key === "p" && event.ctrlKey) ){ //ctrl-p
-        if (CM.cardsList.querySelectorAll("li").length > 0) {
-            CM.highlightUpOrDownItem(CM.highlightUp, "selected", CM.cardsList)
+        if (CM.cardsList.querySelector("li")) {
+            UI.highlightCardUpOrDownScreen(CM.highlightUp, "selected", CM.cardsList)
             event.preventDefault();
             return
         }
     }else if (event.key === "ArrowDown" || (event.key === "n" && event.ctrlKey)){ //ctrl-n
-        if (CM.cardsList.querySelectorAll("li").length > 0) {
-            CM.highlightUpOrDownItem(CM.highlightDown, "selected", CM.cardsList)
+        if (CM.cardsList.querySelector("li")) {
+            UI.highlightCardUpOrDownScreen(CM.highlightDown, "selected", CM.cardsList)
             event.preventDefault();
             return
         }
+    }else if (event.key === "r" && ctrlCmdKey(event)){
+        pages.reloadAll();
     }else if (event.key === "o" && ctrlCmdKey(event)){
         db.getDraft().then(function(draftContent){
             UI.activateNewItemEditor(draftContent);
@@ -47,6 +49,12 @@ document.addEventListener("keydown", function (event) {
     }else if (event.key === "Escape"){
         // 这里加esc好像不太合适
         CM.unHighlightItem("selected", CM.cardsList);
+    }else if (event.key === "v"){
+        const li = CM.getHighlightedCardItem()
+        if(li){
+            pages.showCardDetail(li.dataset.id);
+        }
+        event.preventDefault();
     } else if (event.key === "d" && ctrlCmdKey(event)){
         const li = CM.getHighlightedCardItem()
         UI.deleteCard(li);
