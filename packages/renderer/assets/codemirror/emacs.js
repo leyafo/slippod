@@ -533,8 +533,8 @@
             "Alt-F": "forwardWord",
             "Ctrl-P": "previousLine",
             "Ctrl-N": "nextLine",
-            "Shift-Alt-,": "goDocStart",
-            "Shift-Alt-.": "goDocEnd",
+            // "Shift-Alt-,": "goDocStart",
+            // "Shift-Alt-.": "goDocEnd",
 
             //erasing  
             "Ctrl-W": "backwardKillWord",

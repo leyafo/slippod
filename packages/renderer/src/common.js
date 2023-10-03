@@ -82,18 +82,27 @@ export function highlightUpOrDownItem(arrowDirection, highlightedClass, parentEl
         parentElement.firstChild.classList.add(highlightedClass);
         return
     }
-    highLightedItem.classList.remove(highlightedClass)
     if(arrowDirection == highlightUp){
         highLightedItem = highLightedItem.previousElementSibling || parentElement.lastChild 
     }else if(arrowDirection === highlightDown){
         highLightedItem = highLightedItem.nextElementSibling || parentElement.firstChild 
     }
-    highLightedItem.scrollIntoView({block: "nearest" });
-    highLightedItem.classList.add(highlightedClass)
-    if(highLightedItem == parentElement.firstChild){
-        setScrollbarToTop()
-    }
+    highLightedItemWithScrolling(highlightedClass, highLightedItem, parentElement)
     return highLightedItem
+}
+
+export function highLightedItemWithScrolling(highlightedClass, item, parentElement){
+    highlightItem(highlightedClass, item, parentElement);
+    if(item == parentElement.firstChild){
+        setScrollbarToTop()
+    }else{
+        item.scrollIntoView({block: "nearest" });
+    }
+}
+
+export function highlightItem( highlightedClass, item, parentElement) {
+    unHighlightItem(highlightedClass, parentElement);
+    item.classList.add(highlightedClass);
 }
 
 export function isInViewport(element) {
@@ -106,10 +115,6 @@ export function isInViewport(element) {
     );
 }
 
-export function highlightItem( highlightedClass, item, parentElement) {
-    unHighlightItem(highlightedClass, parentElement);
-    item.classList.add(highlightedClass);
-}
 
 export function unHighlightItem(highlightedClass, parentElement){
     const items = parentElement.querySelectorAll(`.${highlightedClass}`)

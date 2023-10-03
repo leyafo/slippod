@@ -523,14 +523,13 @@ const topCardObserver = new IntersectionObserver(entries => {
   }
 }, {
   root: null, // Viewport
-  //(top, right, bottom, left)
   /*when a card in the top, it will trigger the above's callback. 
-  |-----|//top card -100%
+  |-----|//top card in (-90%)
   |     |
   |     |
-  |     |
+  |     | 
   */
-  rootMargin: '0px 0px -90% 0px',
+  rootMargin: '0px 0px -90% 0px',//(top, right, bottom, left)
   threshold: 0 // Adjust this value to control how much of the item has to be visible
 });
 
@@ -541,14 +540,12 @@ function highlightCardUpOrDownScreen(arrowDirection, highlightedClass, parentEle
         highLightedItem = viewportTopcard
         if(!highLightedItem){
             highLightedItem = parentElement.firstChild 
-            CM.setScrollbarToTop();
         }else{
             if(arrowDirection == CM.highlightDown){
                 highLightedItem = highLightedItem.nextElementSibling
             }
-            highLightedItem.scrollIntoView({block: "nearest" });
         }
-        CM.highlightItem(highlightedClass, highLightedItem, CM.cardsList);
+        CM.highLightedItemWithScrolling(highlightedClass, highLightedItem, parentElement)
         return
     }
     return CM.highlightUpOrDownItem(arrowDirection, highlightedClass, parentElement);
