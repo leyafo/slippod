@@ -540,10 +540,6 @@ function highlightCardUpOrDownScreen(arrowDirection, highlightedClass, parentEle
         highLightedItem = viewportTopcard
         if(!highLightedItem){
             highLightedItem = parentElement.firstChild 
-        }else{
-            if(arrowDirection == CM.highlightDown){
-                highLightedItem = highLightedItem.nextElementSibling
-            }
         }
         CM.highLightedItemWithScrolling(highlightedClass, highLightedItem, parentElement)
         return
