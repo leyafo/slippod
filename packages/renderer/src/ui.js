@@ -5,6 +5,7 @@ const hrefTagAll = "/tag_all"
 const hrefTagTrash = "/tag_trash"
 const hrefTagNo = "/tag_no"
 
+
 function highlightSidebarLink(href) {
     const className = "selected" 
     //remove previous highlight
@@ -174,7 +175,7 @@ CM.clickHandle(".tagContainer", function(e) {
     
     switch (href) {
         case hrefTagAll:
-            utils.reloadAll();
+            pages.reloadAll();
             break;
         case hrefTagTrash:
             db.getTrashCards(0, CM.limitItems).then(cards => reloadCardList(cards, "Trash", CM.listInsertAfterLast));
@@ -263,9 +264,11 @@ function editorOnFocus(editor) {
             CM.newItemContainer.dataset.editing = 'true';
             CM.toggleElementShown(CM.newItemCtrlPanel);
             db.getDraft().then(function(draftContent){
-                editor.setValue(draftContent);
-                //set cursor to the end of doc
-                editor.setCursor(editor.lineCount(), 0);
+                if(draftContent != ''){
+                    editor.setValue(draftContent);
+                    //set cursor to the end of doc
+                    editor.setCursor(editor.lineCount(), 0);
+                }
             });
         }
 
@@ -332,7 +335,20 @@ function activateNewItemEditor(value) {
     })
     CM.newItemEditor.classList.remove('inactive');
     CM.newItemCtrlPanel.classList.remove('inactive');
-    editor.setValue(value);
+    // 加入了草稿功能以及自动保存后，设置编辑器的值开始变得复杂了。
+    // value = value.trim();
+    // console.log(value);
+    // if(value.match(value) || value == ''){
+    //     const tagDiv = CM.tagList.querySelector('.selected') 
+    //     console.log(value);
+    //     if (tagDiv){
+    //         const tagContainer = tagDiv.querySelector('.tagClick');
+    //         editor.setValue(`#${tagContainer.dataset.tag} \n`)
+    //     }
+    // }else{
+        editor.setValue(value);
+    // }
+
     editor.setCursor(editor.lineCount(), 0);
     editor.focus()
     CM.setScrollbarToTop()
@@ -366,7 +382,7 @@ function createNewCardHandle(e) {
         return;
     }
 
-    const editor = CM.newItemEditor.firstChild.CodeMirror;
+    const editor = CM.newItemEditor.irstChild.CodeMirror;
     const entry = editor.getValue();
     const editorPlaceholder = document.createElement('div');
     editorPlaceholder.classList.add('editorPlaceholder');
@@ -496,6 +512,48 @@ function insertCardToList(card, order){
     return li
 }
 
+// Create an Intersection Observer
+let viewportTopcard;
+const topCardObserver = new IntersectionObserver(entries => {
+  for (const entry of entries) {
+    // Check if the item is in the viewport
+    if (entry.isIntersecting) {
+        viewportTopcard = entry.target;
+    }
+  }
+}, {
+  root: null, // Viewport
+  //(top, right, bottom, left)
+  /*when a card in the top, it will trigger the above's callback. 
+  |-----|//top card -100%
+  |     |
+  |     |
+  |     |
+  */
+  rootMargin: '0px 0px -90% 0px',
+  threshold: 0 // Adjust this value to control how much of the item has to be visible
+});
+
+function highlightCardUpOrDownScreen(arrowDirection, highlightedClass, parentElement){
+    const selector = `.${highlightedClass}`
+    let highLightedItem = parentElement.querySelector(selector)
+    if(!highLightedItem || !CM.isInViewport(highLightedItem)){
+        highLightedItem = viewportTopcard
+        if(!highLightedItem){
+            highLightedItem = parentElement.firstChild 
+            CM.setScrollbarToTop();
+        }else{
+            if(arrowDirection == CM.highlightDown){
+                highLightedItem = highLightedItem.nextElementSibling
+            }
+            highLightedItem.scrollIntoView({block: "nearest" });
+        }
+        CM.highlightItem(highlightedClass, highLightedItem, CM.cardsList);
+        return
+    }
+    return CM.highlightUpOrDownItem(arrowDirection, highlightedClass, parentElement);
+}
+
 function createCardElementFromObject(card) {
     const li = document.createElement('li');
     const listItem = CM.itemTemplate.content.cloneNode(true);
@@ -514,6 +572,7 @@ function createCardElementFromObject(card) {
     }
 
     addCardEventListeners(li);
+    topCardObserver.observe(li);  //observing the card when it scrolling in the top 
 
     return li;
 }
@@ -897,4 +956,5 @@ export {
     editCard,
     deleteCard,
     activateNewItemEditor,
+    highlightCardUpOrDownScreen 
 }

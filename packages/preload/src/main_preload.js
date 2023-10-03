@@ -11,7 +11,6 @@ contextBridge.exposeInMainWorld('env', {
     }
 })
 contextBridge.exposeInMainWorld('utils', {
-    reloadAll: (...args) => ipcRenderer.invoke("reloadAll", ...args),
     uploadCardEditing: (id, entry) => ipcRenderer.invoke("uploadCardEditing", id, entry),
     markdownRender: (rawText) => ipcRenderer.invoke("markdownRender", rawText),
     copyTextToClipboard:function(text){
@@ -29,6 +28,7 @@ contextBridge.exposeInMainWorld('utils', {
 });
 
 contextBridge.exposeInMainWorld('pages', {
+    reloadAll: (...args) => ipcRenderer.invoke("reloadAll", ...args),
     showCardDetail: function(cardID) {
         return ipcRenderer.invoke("showCardDetail", cardID)
     },

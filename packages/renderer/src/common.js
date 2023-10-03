@@ -22,6 +22,7 @@ export const allCardsTag = document.getElementById("allCards")
 export const cardsNoTag = document.getElementById("noTag")
 export const cardsTrash = document.getElementById("trashCards")
 export const endTip = document.getElementById("endTip")
+
 export const limitItems= 20;
 export const listInsertBeforeFirst= 1;
 export const listInsertAfterLast= 2;
@@ -71,6 +72,9 @@ export function setScrollbarToTop(){
     document.documentElement.scrollTop = 0; // Reset the scroll position to the top
 }
 
+//这里如果从第一个跳到最后一个时，会出现跳转到中间的错觉。
+//实际上根据分页的机制，如果第一次加载的是[60...49]，当从60向上滚动时会跳动49。
+//然后代码会检测当前已经跳到了底部，会加载[48...19] 的数据，看起来就会像是滚动到了中间。
 export function highlightUpOrDownItem(arrowDirection, highlightedClass, parentElement) {
     const selector = `.${highlightedClass}`
     let highLightedItem = parentElement.querySelector(selector)
@@ -84,22 +88,22 @@ export function highlightUpOrDownItem(arrowDirection, highlightedClass, parentEl
     }else if(arrowDirection === highlightDown){
         highLightedItem = highLightedItem.nextElementSibling || parentElement.firstChild 
     }
+    highLightedItem.scrollIntoView({block: "nearest" });
+    highLightedItem.classList.add(highlightedClass)
     if(highLightedItem == parentElement.firstChild){
         setScrollbarToTop()
     }
-    highLightedItem.classList.add(highlightedClass)
-    highLightedItem.scrollIntoView({ block: "nearest" });
     return highLightedItem
 }
 
-export function highlightUpOrDownItemScreen(arrowDirection, highlightedClass, parentElement){
-    const selector = `.${highlightedClass}`
-    let highLightedItem = parentElement.querySelector(selector)
-    if(!highLightedItem){
-        //get the first item in the screen
-        return
-    }
-    return highlightUpOrDownItem(arrowDirection, highlightedClass, parentElement);
+export function isInViewport(element) {
+    const rect = element.getBoundingClientRect();
+    return (
+        rect.top < (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.left < (window.innerWidth || document.documentElement.clientWidth) &&
+        rect.bottom > 0 &&
+        rect.right > 0
+    );
 }
 
 export function highlightItem( highlightedClass, item, parentElement) {
