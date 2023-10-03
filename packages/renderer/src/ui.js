@@ -294,9 +294,19 @@ function editorOnBlur(editor) {
     }
 }
 
-function activateNewItemEditor(value) {
+function activateNewItemEditor(content) {
+    content = content.trim()
+    if (content == ''){
+        const tagDiv = CM.tagList.querySelector('.selected') 
+        if (tagDiv){
+            const tagClicker = tagDiv.querySelector('.tagClick');
+            content = `#${tagClicker.dataset.tag} \n`
+        }
+    }
     const existedEditor = CM.newItemEditor.firstChild.CodeMirror;
     if(existedEditor){
+        existedEditor.setValue(content)
+        existedEditor.setCursor(existedEditor.lineCount(), 0);
         existedEditor.focus();
         return
     }
@@ -335,20 +345,7 @@ function activateNewItemEditor(value) {
     })
     CM.newItemEditor.classList.remove('inactive');
     CM.newItemCtrlPanel.classList.remove('inactive');
-    // 加入了草稿功能以及自动保存后，设置编辑器的值开始变得复杂了。
-    // value = value.trim();
-    // console.log(value);
-    // if(value.match(value) || value == ''){
-    //     const tagDiv = CM.tagList.querySelector('.selected') 
-    //     console.log(value);
-    //     if (tagDiv){
-    //         const tagContainer = tagDiv.querySelector('.tagClick');
-    //         editor.setValue(`#${tagContainer.dataset.tag} \n`)
-    //     }
-    // }else{
-        editor.setValue(value);
-    // }
-
+    editor.setValue(content);
     editor.setCursor(editor.lineCount(), 0);
     editor.focus()
     CM.setScrollbarToTop()
@@ -369,7 +366,9 @@ CM.clickHandle("#newItemEditor", function(e) {
     if (!CM.newItemEditor.classList.contains('inactive')) {
         return;
     }
-    activateNewItemEditor('');
+    db.getDraft().then(function(draftContent){
+        activateNewItemEditor(draftContent);
+    })
 })
 
 function createNewCardHandle(e) {
@@ -533,18 +532,19 @@ const topCardObserver = new IntersectionObserver(entries => {
   threshold: 0 // Adjust this value to control how much of the item has to be visible
 });
 
-function highlightCardUpOrDownScreen(arrowDirection, highlightedClass, parentElement){
+function highlightCardUpOrDownScreen(arrowDirection ){
+    const highlightedClass = "selected"
     const selector = `.${highlightedClass}`
-    let highLightedItem = parentElement.querySelector(selector)
+    let highLightedItem = CM.cardsList.querySelector(selector)
     if(!highLightedItem || !CM.isInViewport(highLightedItem)){
         highLightedItem = viewportTopcard
         if(!highLightedItem){
-            highLightedItem = parentElement.firstChild 
+            highLightedItem = CM.cardsList.firstChild 
         }
-        CM.highLightedItemWithScrolling(highlightedClass, highLightedItem, parentElement)
+        CM.highLightedItemWithScrolling(highlightedClass, highLightedItem, CM.cardsList)
         return
     }
-    return CM.highlightUpOrDownItem(arrowDirection, highlightedClass, parentElement);
+    return CM.highlightUpOrDownItem(arrowDirection, highlightedClass, CM.cardsList);
 }
 
 function createCardElementFromObject(card) {

@@ -30,13 +30,13 @@ document.addEventListener("keydown", function (event) {
 
     if (event.key === "ArrowUp" || (event.key === "p" && event.ctrlKey) ){ //ctrl-p
         if (CM.cardsList.querySelector("li")) {
-            UI.highlightCardUpOrDownScreen(CM.highlightUp, "selected", CM.cardsList)
+            UI.highlightCardUpOrDownScreen(CM.highlightUp)
             event.preventDefault();
             return
         }
     }else if (event.key === "ArrowDown" || (event.key === "n" && event.ctrlKey)){ //ctrl-n
         if (CM.cardsList.querySelector("li")) {
-            UI.highlightCardUpOrDownScreen(CM.highlightDown, "selected", CM.cardsList)
+            UI.highlightCardUpOrDownScreen(CM.highlightDown)
             event.preventDefault();
             return
         }
