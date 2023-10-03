@@ -85,7 +85,6 @@ CodeMirror.defineMode("gfm", function(config, modeConfig) {
 
         if (stream.sol() || state.ateSpace) {
             state.ateSpace = false;
-            console.log(modeConfig.gitHubSpice);
             if (modeConfig.gitHubSpice !== false) {
                 //   if(stream.match(/^(?:[a-zA-Z0-9\-_]+\/)?(?:[a-zA-Z0-9\-_]+@)?(?=.{0,6}\d)(?:[a-f0-9]{7,40}\b)/)) {
                 //     // User/Project@SHA
