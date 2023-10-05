@@ -656,7 +656,6 @@
             // "Ctrl-Q Tab": "quotedInsertTab",
             "fallthrough": "basic"
         });
-        console.log(keymap);
     }
 
 //   var prefixMap = {"Ctrl-G": clearPrefix};
