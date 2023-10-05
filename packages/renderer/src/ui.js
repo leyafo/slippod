@@ -119,7 +119,6 @@ function editCard(li) {
                 setTimeout(function(){ //这里的高亮冲突暂时还未找到。
                     CM.highlightItem("selected", li, CM.cardsList);
                 }, 100);
-                CM.highlightItem("selected", li, CM.cardsList)
             },
             "cancel":function(cm, event){
                 cancelUpdate(li);
@@ -295,12 +294,13 @@ function editorOnBlur(editor) {
 }
 
 function activateNewItemEditor(content) {
+    CM.setScrollbarToTop()
     content = content.trim()
     if (content == ''){
         const tagDiv = CM.tagList.querySelector('.selected') 
         if (tagDiv){
             const tagClicker = tagDiv.querySelector('.tagClick');
-            content = `#${tagClicker.dataset.tag} \n`
+            content = `#${tagClicker.dataset.tag}  \n`
         }
     }
     const existedEditor = CM.newItemEditor.firstChild.CodeMirror;
@@ -348,7 +348,6 @@ function activateNewItemEditor(content) {
     editor.setValue(content);
     editor.setCursor(editor.lineCount(), 0);
     editor.focus()
-    CM.setScrollbarToTop()
 
     let generation = editor.changeGeneration(true);
     //we don't need to remove this time tick
@@ -381,7 +380,7 @@ function createNewCardHandle(e) {
         return;
     }
 
-    const editor = CM.newItemEditor.irstChild.CodeMirror;
+    const editor = CM.newItemEditor.firstChild.CodeMirror;
     const entry = editor.getValue();
     const editorPlaceholder = document.createElement('div');
     editorPlaceholder.classList.add('editorPlaceholder');
@@ -518,6 +517,7 @@ const topCardObserver = new IntersectionObserver(entries => {
     // Check if the item is in the viewport
     if (entry.isIntersecting) {
         viewportTopcard = entry.target;
+        console.log(viewportTopcard);
     }
   }
 }, {
@@ -542,9 +542,12 @@ function highlightCardUpOrDownScreen(arrowDirection ){
             highLightedItem = CM.cardsList.firstChild 
         }
         CM.highLightedItemWithScrolling(highlightedClass, highLightedItem, CM.cardsList)
-        return
+    }else{
+        highLightedItem = CM.highlightUpOrDownItem(arrowDirection, highlightedClass, CM.cardsList);
     }
-    return CM.highlightUpOrDownItem(arrowDirection, highlightedClass, CM.cardsList);
+    if (highLightedItem == CM.cardsList.firstChild){
+        viewportTopcard = CM.cardsList.firstChild
+    }
 }
 
 function createCardElementFromObject(card) {
