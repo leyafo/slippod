@@ -1,7 +1,7 @@
 {
-  "name": "Slippod",
+  "name": "slippod",
   "description": "just for fun",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "private": true,
   "update_schema": "node tasks/update_schema.js",
   "author": {
