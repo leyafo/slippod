@@ -5,6 +5,7 @@ const hrefTagAll = "/tag_all"
 const hrefTagTrash = "/tag_trash"
 const hrefTagNo = "/tag_no"
 
+
 function highlightSidebarLink(href) {
     const className = "selected" 
     //remove previous highlight
@@ -23,7 +24,8 @@ function updateCard(li, needCloseEditor=true) {
     const entry = content.firstChild.CodeMirror.getValue();
 
     db.updateCardEntryByID(cardID, entry).then((result) => {
-        console.log(result.id, result.updated_at);
+        const updateTimeSpan = li.querySelector("span.itemUpdateTime");
+        updateTimeSpan.textContent = "Updated: "+ CM.timeAgo(result.updated_at);
         //ctrl-s will not close the editor
         if(needCloseEditor){
             const markdownHtml = document.createElement('div');
@@ -114,9 +116,15 @@ function editCard(li) {
         editor.keydownMap({
             "commit":function(cm, event){
                 updateCard(li, true);
+                setTimeout(function(){ //这里的高亮冲突暂时还未找到。
+                    CM.highlightItem("selected", li, CM.cardsList);
+                }, 100);
             },
             "cancel":function(cm, event){
                 cancelUpdate(li);
+                setTimeout(function(){ //这里会有view模式下按esc的冲突，所以延迟设置。
+                    CM.highlightItem("selected", li, CM.cardsList)
+                }, 100);
             },
             "save": function(cm, event){
                 updateCard(li, false);
@@ -128,15 +136,34 @@ function editCard(li) {
     });
 }
 
-function restoreCard(li){
+function deleteCard(li) {
+    const cardID = li.dataset.id
+    if(li.dataset.is_trash) {
+        db.removeCardPermanently(li.dataset.trash_id).then(function(){
+            CM.cardsList.removeChild(li);
+        })
+    } else {
+        db.moveCardToTrash(cardID).then(function() {
+            CM.cardsList.removeChild(li);
+
+            db.getAllTags().then(function(tags){
+                let tree = buildTagTree(tags)
+                let tagListHTML = buildTagHtml(tree)
+                CM.tagList.innerHTML = tagListHTML
+            })
+        })
+    }
+}
+
+function restoreCard(li) {
     if(li.dataset.is_trash){
-        db.restoreCard(li.dataset.trash_id).then(function(){
+        db.restoreCard(li.dataset.trash_id).then(function() {
             CM.cardsList.removeChild(li);
         })
     }
 }
 
-CM.clickHandle(".tagClick", function(e){
+CM.clickHandle(".tagContainer", function(e) {
     e.preventDefault();
 
     const tagContainer = e.target.closest(".tagContainer");
@@ -147,7 +174,7 @@ CM.clickHandle(".tagClick", function(e){
     
     switch (href) {
         case hrefTagAll:
-            utils.reloadAll();
+            pages.reloadAll();
             break;
         case hrefTagTrash:
             db.getTrashCards(0, CM.limitItems).then(cards => reloadCardList(cards, "Trash", CM.listInsertAfterLast));
@@ -229,12 +256,19 @@ function editorOnChange(editor) {
 
 function editorOnFocus(editor) {
     return function(cm, event) {
-        console.log('onfocus');
         const editorDiv = editor.display.wrapper;
         const editorWrapper = editorDiv.parentNode;
 
         if (editorWrapper.id === "newItemEditor") {
             CM.newItemContainer.dataset.editing = 'true';
+            CM.toggleElementShown(CM.newItemCtrlPanel);
+            db.getDraft().then(function(draftContent){
+                if(draftContent != ''){
+                    editor.setValue(draftContent);
+                    //set cursor to the end of doc
+                    editor.setCursor(editor.lineCount(), 0);
+                }
+            });
         }
 
         globalState.setEditing();
@@ -248,14 +282,36 @@ function editorOnBlur(editor) {
 
         if (editorWrapper.id === "newItemEditor") {
             CM.newItemContainer.dataset.editing = 'false';
+            const editorContent = editor.getValue();
+            //After commit the editor's content, we will clear editor's content and draft
+            //we don't need to update again
+            if (editorContent != ''){
+                db.updateDraft(editor.getValue());
+            }
         }
         globalState.setViewing();
     }
 }
 
-function activateNewItemEditor(value) {
-    CM.newItemEditor.innerHTML = '';
+function activateNewItemEditor(content) {
+    CM.setScrollbarToTop()
+    content = content.trim()
+    if (content == ''){
+        const tagDiv = CM.tagList.querySelector('.selected') 
+        if (tagDiv){
+            const tagClicker = tagDiv.querySelector('.tagClick');
+            content = `#${tagClicker.dataset.tag}  \n`
+        }
+    }
+    const existedEditor = CM.newItemEditor.firstChild.CodeMirror;
+    if(existedEditor){
+        existedEditor.setValue(content)
+        existedEditor.setCursor(existedEditor.lineCount(), 0);
+        existedEditor.focus();
+        return
+    }
 
+    CM.newItemEditor.innerHTML = '';
     let editor = CodeMirror(CM.newItemEditor, {
         theme: "default",
         mode: {
@@ -276,20 +332,32 @@ function activateNewItemEditor(value) {
     editor.on("focus", editorOnFocus(editor))
 
     editor.keydownMap({
+        "save": function(cm, event){
+            db.updateDraft(editor.getValue());
+        },
         "commit": function (cm, event) {
-            console.log(cm, event)
             createNewCardHandle(event);
         },
         "cancel": function (cm, event) {
+            db.updateDraft(editor.getValue());
+            CM.toggleElementHidden(CM.newItemCtrlPanel);
         }
     })
-
     CM.newItemEditor.classList.remove('inactive');
     CM.newItemCtrlPanel.classList.remove('inactive');
-    editor.setValue(value);
+    editor.setValue(content);
     editor.setCursor(editor.lineCount(), 0);
     editor.focus()
-    CM.setScrollbarToTop()
+
+    let generation = editor.changeGeneration(true);
+    //we don't need to remove this time tick
+    setInterval(function(){
+        if (!editor.isClean(generation)){
+            generation = editor.changeGeneration(true);
+            db.updateDraft(editor.getValue());
+        }
+    }, 5000)//5s; auto save every 5 seconds
+
     return editor
 }
 
@@ -297,7 +365,9 @@ CM.clickHandle("#newItemEditor", function(e) {
     if (!CM.newItemEditor.classList.contains('inactive')) {
         return;
     }
-    activateNewItemEditor('');
+    db.getDraft().then(function(draftContent){
+        activateNewItemEditor(draftContent);
+    })
 })
 
 function createNewCardHandle(e) {
@@ -316,6 +386,8 @@ function createNewCardHandle(e) {
     editorPlaceholder.classList.add('editorPlaceholder');
 
     db.createNewCard(entry).then((newCardID) => {
+        editor.setValue('');//clear editor
+        db.updateDraft('');//clear draft
         db.getCardByID(newCardID).then((card) => {
             const li = insertCardToList(card, CM.listInsertBeforeFirst);
             CM.newItemEditor.innerHTML = '';
@@ -344,8 +416,7 @@ function addCardEventListeners(li) {
 
     li.addEventListener('click', function() {
         if (li.dataset.editing === 'false') {
-            CM.unHighlightItem("selected", CM.cardsList)
-            li.classList.add('selected');
+            CM.highlightItem("selected", li, CM.cardsList)
         }
     });
     const cardMenuContainer = li.querySelector(".itemMenuContainer")
@@ -361,7 +432,7 @@ function addCardEventListeners(li) {
         editCard(li)
     })
     cardMenuOptions.querySelector(".deleteOption").addEventListener('click', function(event) {
-        CM.deleteCard(li)
+        deleteCard(li)
     })
     cardMenuOptions.querySelector(".restoreOption").addEventListener('click', function(event) {
         restoreCard(li)
@@ -411,7 +482,12 @@ function reloadCardList(cards, headerTitle = 'All Cards', order = CM.listInsertB
         insertCardToList(card, order)
     });
 
-    let creationTipText = window.platform === "darwin" ? "Press ⌘+O to create a new card": "Press Ctrl+O to create a new card";
+    let creationTipText ='';
+    if (CM.listArea.classList.contains("trashList")) {
+        creationTipText = "Trash can is empty";
+    } else {
+        creationTipText = env.platform === "darwin" ? "Press ⌘+O to create a new card": "Press Ctrl+O to create a new card";
+    }
     CM.creationTip.innerText = creationTipText;
 
     if (CM.cardsList.children.length > 0) {
@@ -434,6 +510,46 @@ function insertCardToList(card, order){
     return li
 }
 
+// Create an Intersection Observer
+let viewportTopcard;
+const topCardObserver = new IntersectionObserver(entries => {
+  for (const entry of entries) {
+    // Check if the item is in the viewport
+    if (entry.isIntersecting) {
+        viewportTopcard = entry.target;
+        console.log(viewportTopcard);
+    }
+  }
+}, {
+  root: null, // Viewport
+  /*when a card in the top, it will trigger the above's callback. 
+  |-----|//top card in (-90%)
+  |     |
+  |     |
+  |     | 
+  */
+  rootMargin: '0px 0px -90% 0px',//(top, right, bottom, left)
+  threshold: 0 // Adjust this value to control how much of the item has to be visible
+});
+
+function highlightCardUpOrDownScreen(arrowDirection ){
+    const highlightedClass = "selected"
+    const selector = `.${highlightedClass}`
+    let highLightedItem = CM.cardsList.querySelector(selector)
+    if(!highLightedItem || !CM.isInViewport(highLightedItem)){
+        highLightedItem = viewportTopcard
+        if(!highLightedItem){
+            highLightedItem = CM.cardsList.firstChild 
+        }
+        CM.highLightedItemWithScrolling(highlightedClass, highLightedItem, CM.cardsList)
+    }else{
+        highLightedItem = CM.highlightUpOrDownItem(arrowDirection, highlightedClass, CM.cardsList);
+    }
+    if (highLightedItem == CM.cardsList.firstChild){
+        viewportTopcard = CM.cardsList.firstChild
+    }
+}
+
 function createCardElementFromObject(card) {
     const li = document.createElement('li');
     const listItem = CM.itemTemplate.content.cloneNode(true);
@@ -452,6 +568,7 @@ function createCardElementFromObject(card) {
     }
 
     addCardEventListeners(li);
+    topCardObserver.observe(li);  //observing the card when it scrolling in the top 
 
     return li;
 }
@@ -712,7 +829,6 @@ document.addEventListener('scroll', handleScroll());
 
 function buildTagTree(tagList) {
   const tree = {};
-  console.log(tagList);
   tagList.forEach(tagItem => {
     let node = tree;
     tagItem.tag.split('/').forEach(part => {
@@ -802,9 +918,8 @@ let displayCardCounts = async function () {
     }
 }
 
-let removeSplashScreen = function() {
+let removeSplashScreen = function () {
     let splashScreen = document.getElementById('splashScreen');
-    console.log(splashScreen);
     splashScreen.remove();
 }
 
@@ -817,12 +932,12 @@ window.addEventListener('DOMContentLoaded', function() {
 
     //load tags
     db.getAllTags().then(function(tags) {
-        let tree = buildTagTree(tags)
-        let tagListHTML = buildTagHtml(tree)
-        CM.tagList.innerHTML = tagListHTML
-        removeSplashScreen();
+        let tree = buildTagTree(tags);
+        let tagListHTML = buildTagHtml(tree);
+        CM.tagList.innerHTML = tagListHTML;
     })
     displayCardCounts();
+    removeSplashScreen();
 });
 
 //This is a black magic, from an India youtube brother. Youtube: 70-p0mq-w5g
@@ -835,5 +950,7 @@ export {
     clearSearch,
     insertCardToList,
     editCard,
+    deleteCard,
     activateNewItemEditor,
+    highlightCardUpOrDownScreen 
 }

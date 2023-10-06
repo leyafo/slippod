@@ -271,7 +271,7 @@
 
         if (completion.options.closeOnUnfocus) {
             var closingOnBlur;
-            // cm.on("blur", this.onBlur = function () { closingOnBlur = setTimeout(function () { completion.close(); }, 100); });
+            cm.on("blur", this.onBlur = function () { closingOnBlur = setTimeout(function () { completion.close(); }, 100); });
             cm.on("focus", this.onFocus = function () { clearTimeout(closingOnBlur); });
         }
 
