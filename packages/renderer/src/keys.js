@@ -8,7 +8,7 @@ function startingSearch(){
 }
 
 function ctrlCmdKey(event){
-    switch (window.platform){
+    switch (env.platform){
     case "darwin":
         return event.metaKey
     default:
@@ -29,24 +29,35 @@ document.addEventListener("keydown", function (event) {
     }
 
     if (event.key === "ArrowUp" || (event.key === "p" && event.ctrlKey) ){ //ctrl-p
-        if (CM.cardsList.querySelectorAll("li").length > 0) {
-            CM.highlightUpOrDownItem(CM.highlightUp, "selected", CM.cardsList)
+        if (CM.cardsList.querySelector("li")) {
+            UI.highlightCardUpOrDownScreen(CM.highlightUp)
             event.preventDefault();
             return
         }
     }else if (event.key === "ArrowDown" || (event.key === "n" && event.ctrlKey)){ //ctrl-n
-        if (CM.cardsList.querySelectorAll("li").length > 0) {
-            CM.highlightUpOrDownItem(CM.highlightDown, "selected", CM.cardsList)
+        if (CM.cardsList.querySelector("li")) {
+            UI.highlightCardUpOrDownScreen(CM.highlightDown)
             event.preventDefault();
             return
         }
+    }else if (event.key === "r" && ctrlCmdKey(event)){
+        pages.reloadAll();
     }else if (event.key === "o" && ctrlCmdKey(event)){
-        UI.activateNewItemEditor('')
+        db.getDraft().then(function(draftContent){
+            UI.activateNewItemEditor(draftContent);
+        })
     }else if (event.key === "Escape"){
+        // 这里加esc好像不太合适
         CM.unHighlightItem("selected", CM.cardsList);
+    }else if (event.key === "v"){
+        const li = CM.getHighlightedCardItem()
+        if(li){
+            pages.showCardDetail(li.dataset.id);
+        }
+        event.preventDefault();
     } else if (event.key === "d" && ctrlCmdKey(event)){
         const li = CM.getHighlightedCardItem()
-        CM.deleteCard(li);
+        UI.deleteCard(li);
     }else if (event.key === "Enter"){
         const li = CM.getHighlightedCardItem()
         if(li){
@@ -75,11 +86,6 @@ CM.searchBox.addEventListener("keydown", function (event) {
         CM.highlightUpOrDownItem(CM.highlightUp, "highlighted", CM.suggestionResults)
         event.preventDefault();
     } else if (event.key === "Enter") {
-        if (event.ctrlKey) {
-            event.stopPropagation();
-            return;
-        }
-
         const highlightedSuggestion = document.querySelector(
             "#suggestionResults .highlighted"
         );
@@ -89,7 +95,12 @@ CM.searchBox.addEventListener("keydown", function (event) {
             globalState.setViewing();
         }else{
             const input = CM.searchBox.value
-            UI.activateNewItemEditor(input);
+            db.createNewCard(input).then((newCardID) => {
+                db.getCardByID(newCardID).then((card) => {
+                    const li = UI.insertCardToList(card, CM.listInsertBeforeFirst);
+                    UI.editCard(li);
+                });
+            });
             globalState.setEditing();
         }
         event.stopPropagation();
@@ -111,7 +122,8 @@ CodeMirror.defineExtension("keydownMap", function(eventMap){
             eventMap.commit(cm, event)
             globalState.setViewing();
         }else if(event.key == 'Escape'){
-            eventMap.cancel(cm, event)
+            cm.getInputField().blur();
+            eventMap.cancel(cm, event);
             globalState.setViewing();
         }else if(ctrlCmdKey(event) && event.key === "s"){
             eventMap.save(cm, event)

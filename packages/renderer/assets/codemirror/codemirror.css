@@ -160,7 +160,8 @@
   }
   
   .CodeMirror-scroll {
-    overflow: scroll !important; /* Things will break if this is overridden */
+    /*overflow: scroll !important;*/ /* Things will break if this is overridden */
+    overflow: hidden;
     /* 50px is the magic margin used to hide the element's real scrollbars */
     /* See overflow: hidden in .CodeMirror */
     margin-bottom: -50px; margin-right: -50px;

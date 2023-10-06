@@ -155,11 +155,19 @@
   }
 
   function moveAndSelection(by, dir){
-    let f = function(cm){
-      cm.extendSelection(findEnd(cm, cm.getCursor(), by, dir), cm.getCursor('head'));
-    }
-    f.motion = true
-    return f;
+    // let f = function(cm){
+    //     cm.extendSelection(findEnd(cm, cm.getCursor(), by, dir), cm.getCursor('head'), { extend: true });
+    // }
+    // f.motion = true
+    // return f;
+    return function(cm) {
+        const head = cm.getCursor('head'); // Gets the “head” side of the selection.
+        const anchor = cm.getCursor('anchor'); // Gets the “anchor” side of the selection.
+        
+        const newHead = findEnd(cm, head, by, dir); // Find the new “head” based on the moving direction.
+        
+        cm.setSelection(anchor, newHead, {scroll: false}); // Extend the selection from “anchor” to the new “head”.
+    };
   }
 
   function killTo(cm, by, dir, ring) {
@@ -492,155 +500,163 @@
 
   // Actual keymap
   let keymap = []
-  if (CodeMirror.mac){
-    keymap = CodeMirror.keyMap.emacs = CodeMirror.normalizeKeyMap({
-        "Cmd-C": "killRingSave",
-        "Cmd-V": "yank",
-        "Cmd-X": "cut",
-        "Cmd-Z": "undoRepeatable",
-        "Shift-Cmd-Z": "redo",
-        "Right": "forwardChar",
-        "Left": "backwardChar",
 
-        //selection
-        "Cmd-A": "selectAll",
-        "Ctrl-Shift-F":"forwardCharSelection",
-        "Ctrl-Shift-B":"backwardCharSelection",
-        "Alt-Shift-F":"forwardWordSelection",
-        "Alt-Shift-B":"backwardWordSelection",
-        "Ctrl-Shift-A": "goLineStartSelection",
-        "Ctrl-Shift-E": "goLineEndSelection",
+    if (env.platform === 'darwin') {
+        keymap = CodeMirror.keyMap.emacs = CodeMirror.normalizeKeyMap({
+            "Cmd-C": "killRingSave",
+            "Cmd-V": "yank",
+            "Cmd-X": "cut",
+            "Cmd-Z": "undoRepeatable",
+            "Cmd-Up": "goDocStart",
+            "Cmd-Down": "goDocEnd",
 
-        //moving 
-        //https://github.com/leyafo/slippod/assets/1463701/ab3f114b-0624-4c86-85b0-d029e9d23683
-        "Ctrl-A": "goLineStart",
-        "Ctrl-E": "goLineEnd",
-        "Ctrl-B": "backwardChar",
-        "Ctrl-F": "forwardChar",
-        "Alt-B": "backwardWord",
-        "Alt-F": "forwardWord",
-        "Ctrl-P": "previousLine",
-        "Ctrl-N": "nextLine",
+            "Shift-Cmd-Z": "redo",
+            "Right": "forwardChar",
+            "Left": "backwardChar",
 
-        //erasing  
-        "Ctrl-W": "backwardKillWord",
-        "Alt-D": "killWord",
-        "Ctrl-U": "killLineStart",
-        "Ctrl-K": "killLineEmacs",
-        "Backspace": "deleteBackwardChar",
-        "Enter": "newlineAndIndent",
-        "Ctrl-H": "deleteBackwardChar",
-        "Ctrl-D": "deleteChar",
+            //selection
+            "Cmd-A": "selectAll",
+            "Ctrl-Shift-F": "forwardCharSelection",
+            "Ctrl-Shift-B": "backwardCharSelection",
+            "Alt-Shift-F": "forwardWordSelection",
+            "Alt-Shift-B": "backwardWordSelection",
+            "Ctrl-Shift-A": "goLineStartSelection",
+            "Ctrl-Shift-E": "goLineEndSelection",
 
-        "fallthrough": "basic"
-    });
-  }else{
-    keymap = CodeMirror.keyMap.emacs = CodeMirror.normalizeKeyMap({
-        "Ctrl-C": "killRingSave",
-        "Ctrl-V": "yank",
-        "Ctrl-X": "cut",
-        "Right": "forwardChar",
-        "Left": "backwardChar",
-        "Ctrl-Z": "undoRepeatable",
-        "Shift-Ctrl-Z": "redo",
+            //moving 
+            //https://github.com/leyafo/slippod/assets/1463701/ab3f114b-0624-4c86-85b0-d029e9d23683
+            "Ctrl-A": "goLineStart",
+            "Ctrl-E": "goLineEnd",
+            "Ctrl-B": "backwardChar",
+            "Ctrl-F": "forwardChar",
+            "Alt-B": "backwardWord",
+            "Alt-F": "forwardWord",
+            "Ctrl-P": "previousLine",
+            "Ctrl-N": "nextLine",
+            // "Shift-Alt-,": "goDocStart",
+            // "Shift-Alt-.": "goDocEnd",
 
-        //selection
-        "Alt-A": "selectAll",
-        "Ctrl-Shift-F":"forwardCharSelection",
-        "Ctrl-Shift-B":"backwardCharSelection",
-        "Alt-Shift-F":"forwardWordSelection",
-        "Alt-Shift-B":"backwardWordSelection",
-        "Ctrl-Shift-A": "goLineStartSelection",
-        "Ctrl-Shift-E": "goLineEndSelection",
+            //erasing  
+            "Ctrl-W": "backwardKillWord",
+            "Alt-D": "killWord",
+            "Ctrl-U": "killLineStart",
+            "Ctrl-K": "killLineEmacs",
+            "Backspace": "deleteBackwardChar",
+            "Enter": "newlineAndIndent",
+            "Ctrl-H": "deleteBackwardChar",
+            "Ctrl-D": "deleteChar",
 
-        //moving 
-        //https://github.com/leyafo/slippod/assets/1463701/ab3f114b-0624-4c86-85b0-d029e9d23683
-        "Ctrl-A": "goLineStart",
-        "Ctrl-E": "goLineEnd",
-        "Ctrl-B": "backwardChar",
-        "Ctrl-F": "forwardChar",
-        "Alt-B": "backwardWord",
-        "Alt-F": "forwardWord",
-        "Ctrl-P": "previousLine",
-        "Ctrl-N": "nextLine",
+            "fallthrough": "basic"
+        });
+        console.log(keymap);
+    } else {
+        keymap = CodeMirror.keyMap.emacs = CodeMirror.normalizeKeyMap({
+            "Ctrl-C": "killRingSave",
+            "Ctrl-V": "yank",
+            "Ctrl-X": "cut",
+            "Right": "forwardChar",
+            "Left": "backwardChar",
+            "Ctrl-Z": "undoRepeatable",
+            "Shift-Ctrl-Z": "redo",
 
-        //erasing  
-        "Ctrl-W": "backwardKillWord",
-        "Alt-D": "killWord",
-        "Ctrl-U": "killLineStart",
-        "Ctrl-K": "killLineEmacs",
-        "Backspace": "deleteBackwardChar",
-        "Enter": "newlineAndIndent",
-        "Ctrl-H": "deleteBackwardChar",
-        "Ctrl-D": "deleteChar",
+            //selection
+            "Alt-A": "selectAll",
+            "Ctrl-Shift-F": "forwardCharSelection",
+            "Ctrl-Shift-B": "backwardCharSelection",
+            "Alt-Shift-F": "forwardWordSelection",
+            "Alt-Shift-B": "backwardWordSelection",
+            "Ctrl-Shift-A": "goLineStartSelection",
+            "Ctrl-Shift-E": "goLineEndSelection",
+            "Ctrl-Up": "goDocStart",
+            "Ctrl-Down": "goDocEnd",
 
-        // "Alt-W": "killRingSave",
-        // "Ctrl-Y": "yank",
-        // "Alt-Y": "yankPop",
-        // "Ctrl-Space": "setMark",
-        // "Ctrl-Shift-2": "setMark",
-        // "Delete": "deleteForwardChar",
-        // "Ctrl-H": "deleteBackwardChar",
-        // "Alt-Right": "forwardWord",
-        // "Alt-Left": "backwardWord",
-        // "Alt-Backspace": "backwardKillWord",
-        // "Down": "nextLine",
-        // "Up": "previousLine",
-        // "End": "goLineEnd",
-        // "Home": "goLineStart",
-        // "Alt-V": "scrollDownCommand",
-        // "PageUp": "scrollDownCommand",
-        // "PageDown": "scrollUpCommand",
-        // "Ctrl-Up": "backwardParagraph",
-        // "Ctrl-Down": "forwardParagraph",
-        // "Alt-{": "backwardParagraph",
-        // "Alt-}": "forwardParagraph",
-        // "Alt-A": "backwardSentence",
-        // "Alt-E": "forwardSentence",
-        // "Alt-K": "killSentence",
-        // "Ctrl-X Delete": "backwardKillSentence",
-        // "Ctrl-Alt-K": "killSexp",
-        // "Ctrl-Alt-Backspace": "backwardKillSexp",
-        // "Ctrl-Alt-F": "forwardSexp",
-        // "Ctrl-Alt-B": "backwardSexp",
-        // "Shift-Ctrl-Alt-2": "markSexp",
-        // "Ctrl-Alt-T": "transposeSexps",
-        // "Ctrl-Alt-U": "backwardUpList",
-        // "Alt-Space": "justOneSpace",
-        // "Ctrl-O": "openLine",
-        // "Ctrl-T": "transposeCharsRepeatable",
-        // "Alt-C": "capitalizeWord",
-        // "Alt-U": "upcaseWord",
-        // "Alt-L": "downcaseWord",
-        // "Alt-;": "toggleComment",
-        // "Ctrl-/": "undoRepeatable",
-        // "Shift-Ctrl--": "undoRepeatable",
-        // "Ctrl-Z": "undoRepeatable",
-        // "Cmd-Z": "undoRepeatable",
-        // "Ctrl-X U": "undoRepeatable",
-        // "Shift-Alt-,": "goDocStart",
-        // "Shift-Alt-.": "goDocEnd",
-        // "Ctrl-S": "findPersistentNext",
-        // "Ctrl-R": "findPersistentPrev",
-        // "Ctrl-G": "keyboardQuit",
-        // "Shift-Alt-5": "replace",
-        // "Alt-/": "autocomplete",
-        // "Ctrl-J": "newline",
-        // "Tab": "indentAuto",
-        // "Alt-G G": "gotoLine",
-        // "Ctrl-X Tab": "indentRigidly",
-        // "Ctrl-X Ctrl-X": "exchangePointAndMark",
-        // "Ctrl-S": "save",
-        // "Ctrl-X Ctrl-W": "save",
-        // "Ctrl-X S": "saveAll",
-        // "Ctrl-X F": "open",
-        // "Ctrl-X K": "close",
-        // "Ctrl-X H": "selectAll",
-        // "Ctrl-Q Tab": "quotedInsertTab",
-        "fallthrough": "basic"
-    });
-  }
-  console.log(keymap)
+            //moving 
+            //https://github.com/leyafo/slippod/assets/1463701/ab3f114b-0624-4c86-85b0-d029e9d23683
+            "Ctrl-A": "goLineStart",
+            "Ctrl-E": "goLineEnd",
+            "Ctrl-B": "backwardChar",
+            "Ctrl-F": "forwardChar",
+            "Alt-B": "backwardWord",
+            "Alt-F": "forwardWord",
+            "Ctrl-P": "previousLine",
+            "Ctrl-N": "nextLine",
+
+            //erasing  
+            "Ctrl-W": "backwardKillWord",
+            "Alt-D": "killWord",
+            "Ctrl-U": "killLineStart",
+            "Ctrl-K": "killLineEmacs",
+            "Backspace": "deleteBackwardChar",
+            "Enter": "newlineAndIndent",
+            "Ctrl-H": "deleteBackwardChar",
+            "Ctrl-D": "deleteChar",
+
+            // "Alt-W": "killRingSave",
+            // "Ctrl-Y": "yank",
+            // "Alt-Y": "yankPop",
+            // "Ctrl-Space": "setMark",
+            // "Ctrl-Shift-2": "setMark",
+            // "Delete": "deleteForwardChar",
+            // "Ctrl-H": "deleteBackwardChar",
+            // "Alt-Right": "forwardWord",
+            // "Alt-Left": "backwardWord",
+            // "Alt-Backspace": "backwardKillWord",
+            // "Down": "nextLine",
+            // "Up": "previousLine",
+            // "End": "goLineEnd",
+            // "Home": "goLineStart",
+            // "Alt-V": "scrollDownCommand",
+            // "PageUp": "scrollDownCommand",
+            // "PageDown": "scrollUpCommand",
+            // "Ctrl-Up": "backwardParagraph",
+            // "Ctrl-Down": "forwardParagraph",
+            // "Alt-{": "backwardParagraph",
+            // "Alt-}": "forwardParagraph",
+            // "Alt-A": "backwardSentence",
+            // "Alt-E": "forwardSentence",
+            // "Alt-K": "killSentence",
+            // "Ctrl-X Delete": "backwardKillSentence",
+            // "Ctrl-Alt-K": "killSexp",
+            // "Ctrl-Alt-Backspace": "backwardKillSexp",
+            // "Ctrl-Alt-F": "forwardSexp",
+            // "Ctrl-Alt-B": "backwardSexp",
+            // "Shift-Ctrl-Alt-2": "markSexp",
+            // "Ctrl-Alt-T": "transposeSexps",
+            // "Ctrl-Alt-U": "backwardUpList",
+            // "Alt-Space": "justOneSpace",
+            // "Ctrl-O": "openLine",
+            // "Ctrl-T": "transposeCharsRepeatable",
+            // "Alt-C": "capitalizeWord",
+            // "Alt-U": "upcaseWord",
+            // "Alt-L": "downcaseWord",
+            // "Alt-;": "toggleComment",
+            // "Ctrl-/": "undoRepeatable",
+            // "Shift-Ctrl--": "undoRepeatable",
+            // "Ctrl-Z": "undoRepeatable",
+            // "Cmd-Z": "undoRepeatable",
+            // "Ctrl-X U": "undoRepeatable",
+            // "Shift-Alt-,": "goDocStart",
+            // "Shift-Alt-.": "goDocEnd",
+            // "Ctrl-S": "findPersistentNext",
+            // "Ctrl-R": "findPersistentPrev",
+            // "Ctrl-G": "keyboardQuit",
+            // "Shift-Alt-5": "replace",
+            // "Alt-/": "autocomplete",
+            // "Ctrl-J": "newline",
+            // "Tab": "indentAuto",
+            // "Alt-G G": "gotoLine",
+            // "Ctrl-X Tab": "indentRigidly",
+            // "Ctrl-X Ctrl-X": "exchangePointAndMark",
+            // "Ctrl-S": "save",
+            // "Ctrl-X Ctrl-W": "save",
+            // "Ctrl-X S": "saveAll",
+            // "Ctrl-X F": "open",
+            // "Ctrl-X K": "close",
+            // "Ctrl-X H": "selectAll",
+            // "Ctrl-Q Tab": "quotedInsertTab",
+            "fallthrough": "basic"
+        });
+    }
 
 //   var prefixMap = {"Ctrl-G": clearPrefix};
 //   function regPrefix(d) {

@@ -1,5 +1,5 @@
 // main.js
-const {clipboard, globalShortcut,ipcMain, app, Menu, BrowserWindow } = require("electron");
+const {shell, clipboard, globalShortcut,ipcMain, app, Menu, BrowserWindow } = require("electron");
 const WindowManager = require("./window_manager");
 const ipcHandler = require("./ipc_handlers");
 const {menuTemplate} = require("./menu");
@@ -10,7 +10,7 @@ const windowMgr = new WindowManager();
 /**
  * Disable Hardware Acceleration to save more system resources.
  */
-// app.disableHardwareAcceleration();
+//app.disableHardwareAcceleration();
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -29,13 +29,6 @@ app.whenReady().then(() => {
         // dock icon is clicked and there are no other windows open.
         if (BrowserWindow.getAllWindows().length === 0) {
             mainWindow = windowMgr.createMainWindow();
-        }
-    });
-
-    globalShortcut.register("CommandOrControl+R", () => {
-        const focusedWindow = BrowserWindow.getFocusedWindow()
-        if(focusedWindow != null){
-            focusedWindow.reload(); 
         }
     });
 });
@@ -73,6 +66,6 @@ ipcMain.handle("pasteTextFromClipboard", async function(event){
     return clipboard.readText();
 })
 
-ipcMain.handle("platform", async function(event){
-    return process.platform
+ipcMain.handle("openExternalURL", async function(event, url){
+    return shell.openExternal(url);
 })

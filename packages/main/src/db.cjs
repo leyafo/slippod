@@ -1,8 +1,11 @@
 const { table } = require("console");
 const sqlite3 = require("better-sqlite3");
 
-const tagPattern = /#([a-zA-Z0-9\u4e00-\u9fff/\\_-]+)(?![a-zA-Z0-9\u4e00-\u9fff/\\_-]*;)/g;
+// const tagPattern = /(?<=^|\s|#)#([a-zA-Z0-9\u4e00-\u9fff/\\_-]+)(?![a-zA-Z0-9\u4e00-\u9fff/\\_-]*;)/g;
+const tagPattern = /(?<=^|\s|#)#[a-zA-Z0-9\u4e00-\u9fff/\\_-]+(?![a-zA-Z0-9\u4e00-\u9fff/\\_-]*;)/g
+
 const linkAtPattern = /@(\d+)/g;
+const draftKey = "draft_prevent_conflict_key";
 
 let db = null;
 let existedIDs = new Set();
@@ -47,6 +50,7 @@ function checkDBDifference(newDB, oldDB){
     }
     return true
 }
+
 
 function reloadDB(newDbPath){
     if (!configs.isConnectd){
@@ -406,6 +410,31 @@ function countDifferentCards(){
     }
 }
 
+function renameTag(newTag, oldTag){
+    const limit = 100;
+    let offset = 0;
+    for(;;){
+        let cards = getCardsByTag(oldTag, offset, limit);
+        for(let card of cards){
+            let newEntry = card.entry.replaceAll(oldTag, newTag);
+            updateCardEntryByID(card.id, newEntry);
+        }
+        if (cards.length < limit){
+            break;
+        }
+        offset+=limit
+    }
+}
+
+function getDraft(){
+    const row = db.prepare(`select value from configurations where key=?`).get(draftKey);
+    return row.value
+}
+
+function updateDraft(content){
+    return db.prepare(`INSERT INTO configurations (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = ?`).run(draftKey, content, content);
+}
+
 module.exports = {
     loadSchema,
     reloadDB,
@@ -424,6 +453,9 @@ module.exports = {
     cardIsExisted,
     getCardsByMiddleID,
     getMaxCardID,
+    renameTag,
+    updateDraft,
+    getDraft,
 
     //trash functions
     getTrashCards,

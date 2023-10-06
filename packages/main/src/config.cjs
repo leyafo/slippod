@@ -25,8 +25,10 @@ function getUserDataPath() {
 }
 
 function getExtensionPath(appDir){
-    //get the same resource dir
-    appDir = path.dirname(appDir);
+    //get the same resource dir if is in production
+    if (!import.meta.env.DEV) {
+        appDir = path.dirname(appDir);
+    }
     if(os.platform == "win32"){
         return path.join(appDir, "libsimple", "libsimple.dll") 
     }else{
@@ -35,6 +37,9 @@ function getExtensionPath(appDir){
 }
 
 function getDictPath(appDir){
+    if (!import.meta.env.DEV) {
+        appDir = path.dirname(appDir);
+    }
     return path.join(appDir, "libsimple", "dict")
 }
 

@@ -21,13 +21,13 @@ const config = {
         assetsDir: '.',
         minify: process.env.MODE !== 'development',
         lib: {
-            entry: 'src/main.ts',
+            entry: 'src/main_preload.js',
             formats: ['cjs'],
         },
         rollupOptions: {
             input: {
-                main: join(PACKAGE_ROOT, 'src/main.js'),
-                settings: join(PACKAGE_ROOT, 'src/settings.js'),
+                main_preload: join(PACKAGE_ROOT, 'src/main_preload.js'),
+                settings_preload: join(PACKAGE_ROOT, 'src/settings_preload.js'),
             },
             output: {
                 entryFileNames: '[name].cjs',

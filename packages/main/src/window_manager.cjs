@@ -46,6 +46,10 @@ class WindowManager{
     }
 
     getIconPath(){
+        if (import.meta.env.DEV) {
+            //use default icon for difference environment
+            return ""
+        }
         let iconPath = "";
         switch (process.platform) {
             case "darwin": {
@@ -78,7 +82,7 @@ class WindowManager{
             titleBarStyle: "hidden",
             icon: this.getIconPath(),
             webPreferences: {
-                preload: path.join(app.getAppPath(), 'packages/preload/dist/main.cjs'),
+                preload: path.join(app.getAppPath(), 'packages/preload/dist/main_preload.cjs'),
                 scrollBounce: true
             },
         };
@@ -120,7 +124,7 @@ class WindowManager{
             minHeight: 400,
             icon: this.getIconPath(),
             webPreferences: {
-                preload: path.join(app.getAppPath(), 'packages/preload/dist/settings.cjs'),
+                preload: path.join(app.getAppPath(), 'packages/preload/dist/settings_preload.cjs'),
                 scrollBounce: true
             },
             parent: this.mainWindow,
@@ -158,7 +162,7 @@ class WindowManager{
                 icon: this.getIconPath(),
                 titleBarStyle: "hidden",
                 webPreferences: {
-                    preload: path.join(app.getAppPath(), 'packages/preload/dist/main.cjs'),
+                    preload: path.join(app.getAppPath(), 'packages/preload/dist/main_preload.cjs'),
                     scrollBounce: true
                 },
             });

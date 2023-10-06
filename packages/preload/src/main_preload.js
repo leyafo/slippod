@@ -1,8 +1,16 @@
 // preload.js
 import {contextBridge, ipcRenderer } from 'electron';
 
+contextBridge.exposeInMainWorld('env', {
+    platform: process.platform,
+    "isDev": function(){
+        return import.meta.env.DEV
+    },
+    "app":function(){
+        return import.meta.env
+    }
+})
 contextBridge.exposeInMainWorld('utils', {
-    reloadAll: (...args) => ipcRenderer.invoke("reloadAll", ...args),
     uploadCardEditing: (id, entry) => ipcRenderer.invoke("uploadCardEditing", id, entry),
     markdownRender: (rawText) => ipcRenderer.invoke("markdownRender", rawText),
     copyTextToClipboard:function(text){
@@ -14,9 +22,13 @@ contextBridge.exposeInMainWorld('utils', {
     platform: function(){
         return ipcRenderer.invoke("platform");
     },
+    openExternalURL: function (url) {
+        return ipcRenderer.invoke('openExternalURL', url)
+    },
 });
 
 contextBridge.exposeInMainWorld('pages', {
+    reloadAll: (...args) => ipcRenderer.invoke("reloadAll", ...args),
     showCardDetail: function(cardID) {
         return ipcRenderer.invoke("showCardDetail", cardID)
     },
@@ -60,6 +72,9 @@ contextBridge.exposeInMainWorld('backendBridge', {
         "getCardSearchSuggestions",
         "countDifferentCards",
         "countTaggedCards",
+        "renameTag",
+        "updateDraft",
+        "getDraft",
     ]
     const needRecount = new Set([
         "removeCardFromTrash",
