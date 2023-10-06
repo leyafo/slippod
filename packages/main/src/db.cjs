@@ -428,6 +428,9 @@ function renameTag(newTag, oldTag){
 
 function getDraft(){
     const row = db.prepare(`select value from configurations where key=?`).get(draftKey);
+    if(row == undefined){
+        return '';
+    }
     return row.value
 }
 
