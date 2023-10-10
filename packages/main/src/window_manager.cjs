@@ -3,7 +3,6 @@ const path = require('path');
 const db = require('./db');
 const { platform } = require('os');
 
-console.log(import.meta.env.DEV);
 class WindowManager{
     constructor(){
         this.mainWindow = null

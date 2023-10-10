@@ -29,7 +29,11 @@ function getLinkAtRegex(){
 
 function openDB(extPath, dictPath, dbPath){
     let newDB = null;
-    newDB = sqlite3(dbPath, {verbose: console.log})
+    if(console.log(import.meta.env.DEV)){
+        newDB = sqlite3(dbPath, {verbose: console.log});
+    }else{
+        newDB = sqlite3(dbPath, {verbose: null});
+    }
     newDB.loadExtension(extPath);
     newDB.pragma("trusted_schema = 1");
     //set jieba dict path
