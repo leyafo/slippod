@@ -841,15 +841,14 @@ function buildTagTree(tagList) {
   return tree;
 }
 
-function buildTagHtml(tree, prefix = '') {
-  let html = '';
-  for (const [key, value] of Object.entries(tree)) {
-    const fullTag = prefix ? `${prefix}/${key}` : key;
-    //folder
-    if(Object.keys(value).length > 0) {
-        html += `<li>
+function tagTemplate(hasSubTag, key, fullTag) {
+    let innerHTML = hasSubTag 
+        ? `<span class="foldIcon open"></span>`
+        : '';
+
+    return `<li>
                 <div class="tagContainer">
-                    <span class="foldIcon open"></span>
+                    ${innerHTML}
                     <div class="tagClick" href="/tags/${fullTag}" data-tag="${fullTag}">
                         <div class="left-group">
                             <span class="tagIcon"></span>
@@ -858,23 +857,17 @@ function buildTagHtml(tree, prefix = '') {
                         <span class="count"></span>
                     </div>
                 </div>`;
-                //the closed li is below
-    }else{
-        // file
-        html += `<li>
-                    <div class="tagContainer">
-                        <div class="tagClick" href="/tags/${fullTag}" data-tag="${fullTag}">
-                            <div class="left-group">
-                                <span class="tagIcon"></span>
-                                <span class="label">${key}</span>
-                            </div>
-                            <span class="count"></span>
-                        </div>
-                    </div>`;
-                //the closed li is below
-    }
+}
 
-    if (Object.keys(value).length > 0) {
+function buildTagHtml(tree, prefix = '') {
+  let html = '';
+  for (const [key, value] of Object.entries(tree)) {
+    const fullTag = prefix ? `${prefix}/${key}` : key;
+    const hasSubTag = Object.keys(value).length > 0;
+    
+    html += tagTemplate(hasSubTag, key, fullTag);
+
+    if (hasSubTag) {
       html += '<ul>';
       html += buildTagHtml(value, fullTag);
       html += '</ul>';
@@ -883,6 +876,7 @@ function buildTagHtml(tree, prefix = '') {
   }
   return html;
 }
+
 
 document.addEventListener('click', CM.linkClick) 
 
