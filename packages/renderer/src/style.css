@@ -80,7 +80,7 @@ body {
 .tagContainer {
     position: relative;
     @apply px-3 py-1 rounded;
-    line-height: 0;
+    line-height: 1rem;
 }
 
 .tagContainer:hover {
@@ -97,13 +97,25 @@ body {
     align-items: center;
 }
 
+.tagContainer .tagClick .left-group {
+    width: 90%;
+}
+
+.tagContainer .tagClick .left-group .label {
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 79%;
+}
+
 #tagsList {
     @apply pt-6;
 }
 
-#tagsList li ul .tagContainer {
+/* #tagsList li ul .tagContainer {
     position: relative;
-}
+} */
 
 #tagsList li ul  {
     @apply pl-3;
@@ -141,6 +153,7 @@ body {
     height: 20px;
     text-align: center;
     line-height: 20px;
+    vertical-align: bottom;
 }
 
 #tagsList li .tagIcon::before {
@@ -380,6 +393,10 @@ body {
     font-weight: 700;
     display: inline-block;
     line-height: 24px;
+    width: 92%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 #cardsList {
