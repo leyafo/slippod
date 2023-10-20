@@ -30,6 +30,16 @@ export const highlightUp = 1;
 export const highlightDown = 2;
 export const limitSugesstionItmes = 10;
 
+export function eventHandle(selector, eventType, handle) {
+    document.addEventListener(eventType, function(event) {
+        if (!event.target.closest(selector)) {
+            return;
+        }
+        handle(event);
+    });
+}
+
+// this should be removed later.
 export function clickHandle(selector, handle) {
     document.addEventListener("click", function(event) {
         if (!event.target.closest(selector)) {
@@ -240,7 +250,7 @@ export function linkClick(event){
     });
 } 
 
-clickHandle('a[href^="http"]', function(event){
+eventHandle('a[href^="http"]', 'click', function(event){
     event.preventDefault();
     const href = event.target.href
     console.log(href);

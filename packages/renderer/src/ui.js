@@ -5,7 +5,6 @@ const hrefTagAll = "/tag_all"
 const hrefTagTrash = "/tag_trash"
 const hrefTagNo = "/tag_no"
 
-
 function highlightSidebarLink(href) {
     const className = "selected" 
     //remove previous highlight
@@ -163,7 +162,7 @@ function restoreCard(li) {
     }
 }
 
-CM.clickHandle(".tagContainer", function(e) {
+CM.eventHandle('.tagContainer', 'click', function(e) {
     e.preventDefault();
 
     const tagContainer = e.target.closest(".tagContainer");
@@ -199,7 +198,7 @@ CM.clickHandle(".tagContainer", function(e) {
     CM.highlightItem("selected", tagContainer, CM.sideNavContainer);
 });
 
-CM.clickHandle(".foldIcon", function(e){
+CM.eventHandle('.foldIcon', 'click', function(e){
     e.preventDefault()
     const span = e.target;
     const li = span.closest('li');
@@ -219,7 +218,7 @@ CM.clickHandle(".foldIcon", function(e){
     }
 })
 
-CM.clickHandle("#btnDuplicateWindow", function(e) {
+CM.eventHandle('#btnDuplicateWindow', 'click', function(e) {
     pages.duplicateWindow();
 })
 
@@ -361,7 +360,7 @@ function activateNewItemEditor(content) {
     return editor
 }
 
-CM.clickHandle("#newItemEditor", function(e) {
+CM.eventHandle('#newItemEditor', 'click', function(e) {
     if (!CM.newItemEditor.classList.contains('inactive')) {
         return;
     }
@@ -405,7 +404,7 @@ function createNewCardHandle(e) {
     })
 }
 
-CM.clickHandle(".btnCreateNewCard", createNewCardHandle)
+CM.eventHandle('.btnCreateNewCard', 'click', createNewCardHandle);
 
 function addCardEventListeners(li) {
     li.addEventListener('dblclick', function() {
@@ -439,13 +438,13 @@ function addCardEventListeners(li) {
     })
 }
 
-CM.clickHandle(".btnUpdateCard", function(ev) {
+CM.eventHandle('.btnUpdateCard', 'click', function(ev) {
     if (ev.target.closest(".btnUpdateCard").disabled) { return; }
     const li = ev.target.closest("li");
     updateCard(li);
 })
 
-CM.clickHandle(".btnCancelCard", function(ev) {
+CM.eventHandle('.btnCancelCard', 'click', function(ev) {
     const li = ev.target.closest("li");
     cancelUpdate(li);
 })
@@ -842,19 +841,24 @@ function buildTagTree(tagList) {
 }
 
 function tagTemplate(hasSubTag, key, fullTag) {
-    let innerHTML = hasSubTag 
-        ? `<span class="foldIcon open"></span>`
-        : '';
-
     return `<li>
                 <div class="tagContainer">
-                    ${innerHTML}
+                    ${hasSubTag ? `<span class="foldIcon open"></span>` : ''}
                     <div class="tagClick" href="/tags/${fullTag}" data-tag="${fullTag}">
                         <div class="left-group">
                             <span class="tagIcon"></span>
                             <span class="label">${key}</span>
                         </div>
                         <span class="count"></span>
+                        <div class="tagMenuContainer hidden">
+                            <span class="tagMenu"></span>
+                            <div class="tagMenuOptions z-30 hidden">
+                                <div class="editOption">
+                                    <span class="icon"></span>
+                                    <span class="label">Edit tag name</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>`;
 }
@@ -947,4 +951,10 @@ export {
     deleteCard,
     activateNewItemEditor,
     highlightCardUpOrDownScreen 
+}
+
+function renameTag(newTag, oldTag) {
+    db.renameTag(newTag, oldTag).then(function(results){
+        console.log(results);
+    })
 }
