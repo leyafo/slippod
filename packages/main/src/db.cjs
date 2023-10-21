@@ -29,7 +29,7 @@ function getLinkAtRegex(){
 
 function openDB(extPath, dictPath, dbPath){
     let newDB = null;
-    if(console.log(import.meta.env.DEV)){
+    if(import.meta.env.DEV){
         newDB = sqlite3(dbPath, {verbose: console.log});
     }else{
         newDB = sqlite3(dbPath, {verbose: null});
@@ -431,15 +431,23 @@ function renameTag(newTag, oldTag){
 }
 
 function getDraft(){
-    const row = db.prepare(`select value from configurations where key=?`).get(draftKey);
+    return getConfig(draftKey);
+}
+
+function updateDraft(content){
+    return db.prepare(`INSERT INTO configurations (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = ?`).run(draftKey, content, content);
+}
+
+function getConfig(configKey){
+    const row = db.prepare(`select value from configurations where key=?`).get(configKey);
     if(row == undefined){
         return '';
     }
     return row.value
 }
 
-function updateDraft(content){
-    return db.prepare(`INSERT INTO configurations (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = ?`).run(draftKey, content, content);
+function setConfig(configKey, content){
+    return db.prepare(`INSERT INTO configurations (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = ?`).run(configKey, content, content);
 }
 
 module.exports = {
@@ -479,4 +487,8 @@ module.exports = {
     getCardSearchSuggestions,
     countDifferentCards,
     countTaggedCards,
+
+
+    getConfig,
+    setConfig,
 };
