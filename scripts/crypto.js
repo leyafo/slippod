@@ -1,27 +1,31 @@
 const crypto = require('crypto')
 
-const { privateKey, publicKey } = crypto.generateKeyPairSync('ed25519')
-const signingKey =
-  privateKey.export({ type: 'pkcs8', format: 'der' }).toString('hex')
-const verifyKey =
-  publicKey.export({ type: 'spki', format: 'der' }).toString('hex')
+function genKey(){
+    const { privateKey, publicKey } = crypto.generateKeyPairSync('ed25519');
+    const publicKeyDer = publicKey.export({ type: 'spki', format: 'der' });
+    console.log(publicKeyDer.toString('base64'));
+}
 
-console.log({ signingKey, verifyKey })
-// Some data we're going to embed into the license key
-const data = 'leyafo@gmail.com'
+function verifySignature() {
+    const publicKeyBase64 = 'NIziXC5F+9yRYq78dGR7imyLdJ/4z7LL/unVNrX9Pmg='
+    const signatureBase64 = 'wQ48ufSSXzL8zt2OMPs4HNVQZZ5NJ6j0/QrBGx8JlRcZbuu+aHPxPujowX5Uuuky4ONIsvm//Tt4WWrU8yY1AQ=='
+    const message = 'Hello, world!';
 
-// Generate a signature of the data
-const signature = crypto.sign(null, Buffer.from(data), privateKey)
+    const key = Buffer.concat([
+        Buffer.from('302a300506032b6570032100', 'hex'), // Static value
+        Buffer.from(publicKeyBase64, 'base64'),
+    ])
+ 
+    const verifyKey = crypto.createPublicKey({
+        format: 'der',
+        type: 'spki',
+        key,
+    })
 
-// Encode the signature and the dataset using our signing key
-const encodedSignature = signature.toString('base64')
-const encodedData = Buffer.from(data).toString('base64')
+    // const publicKey = Buffer.from(publicKeyBase64, 'base64');
+    const signatureData = Buffer.from(signatureBase64, 'base64');
+    
+    return crypto.verify(null, Buffer.from(message), verifyKey, signatureData);
+}
 
-// Combine the encoded data and signature to create a license key
-const licenseKey = `${encodedData}.${encodedSignature}`
-console.log({ licenseKey })
-
-const valid = crypto.verify(null, Buffer.from(data), publicKey, signature)
-console.log({ valid, data })
-// => { valid: true, data: 'user@customer.example' }
-
+console.log(verifySignature());  // This should print either true (if signature is valid) or false
