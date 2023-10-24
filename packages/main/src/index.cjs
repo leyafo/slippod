@@ -19,20 +19,23 @@ console.log = function() {
 };
 */
 let mainWindow = null;
-app.whenReady().then(() => {
-    const hasLicense = checkLicense()
-    if (!hasLicense){
+app.whenReady().then(async() => {
+    checkLicense().then(function(hasLicense){
+        if(!hasLicense){
+            let regWindow = windowMgr.createRegisterWindow()
+        }else{
+            mainWindow = windowMgr.createMainWindow();
+            const menu = Menu.buildFromTemplate(menuTemplate(windowMgr));
+            Menu.setApplicationMenu(menu);
+            app.on("activate", () => {
+                if (BrowserWindow.getAllWindows().length === 0) {
+                    mainWindow = windowMgr.createMainWindow();
+                }
+            });
+        }
+    }).catch(function(err){
         let regWindow = windowMgr.createRegisterWindow()
-    }else{
-        mainWindow = windowMgr.createMainWindow();
-        const menu = Menu.buildFromTemplate(menuTemplate(windowMgr));
-        Menu.setApplicationMenu(menu);
-        app.on("activate", () => {
-            if (BrowserWindow.getAllWindows().length === 0) {
-                mainWindow = windowMgr.createMainWindow();
-            }
-        });
-    }
+    })
 
 
     app.on("window-all-closed", () => {
