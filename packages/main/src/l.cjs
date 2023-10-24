@@ -1,6 +1,6 @@
-
 const db = require('./db.cjs')
 const {post, get} = require('./http.cjs')
+const { app } = require("electron");
 const si = require("systeminformation")
 const crypto = require('crypto');
 
@@ -27,7 +27,7 @@ async function checkLicense(){
 function verify(publicKey, signature, sysinfo, email) {
     const publicKeyData = Buffer.from(publicKey, 'base64');
     const key = Buffer.concat([
-        Buffer.from('302a300506032b6570032100', 'hex'), // Static value
+        Buffer.from('302a300506032b6570032100', 'hex'), 
         Buffer.from(publicKeyData, 'base64'),
     ])
     const verifyKey = crypto.createPublicKey({
@@ -46,7 +46,7 @@ async function fingerprint() {
     const cpu = await si.cpu();
     const osInfo = await si.osInfo();
 
-    let info = "";
+    let info = uuid.os;
     for (let mac of uuid.macs) {
         info += mac;
     }
@@ -75,15 +75,14 @@ async function register(key){
         "description": info.osInfo
     })
     let response = await post("https://dooku.littletunnel.com/register", {}, rawBody)
-    console.log(response)
     if(response.statusCode == 200){
         let body = JSON.parse(response.body)
         let isvaliad = verify(key, body.data.Signature, info, body.data.Email)
         if(isvaliad){
-            console.log('200 ok')
             db.setConfig(licenseKey, `${key}:${body.data.Signature}`)
             db.setConfig(emailKey, body.data.Email)
-            console.log(db.getConfig(licenseKey))
+            app.relaunch();
+            app.exit(0);
         }else{
             console.Error("not valid")
         }

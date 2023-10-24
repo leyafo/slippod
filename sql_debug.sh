@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define the path to the file containing the database path
-DB_PATH_FILE="$HOME/.slippod/slippod.config"
+DB_PATH_FILE="./slippod.config"
 
 # Check if the file exists
 if [[ ! -f "$DB_PATH_FILE" ]]; then
