@@ -885,7 +885,6 @@ document.addEventListener('click', CM.linkClick)
 
 //tag click
 document.addEventListener('click', function(event) {
-    console.log("hello");
     if (event.target.tagName !== 'A') {
         return;
     }
