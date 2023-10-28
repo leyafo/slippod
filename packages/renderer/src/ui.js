@@ -198,7 +198,7 @@ CM.eventHandle('.tagContainer', 'click', function(e) {
     CM.highlightItem("selected", tagContainer, CM.sideNavContainer);
 });
 
-CM.eventHandle('.foldIcon', 'click', function(e){
+CM.eventHandle('.foldIcon', 'click', function(e) {
     e.preventDefault()
     const span = e.target;
     const li = span.closest('li');
@@ -881,24 +881,70 @@ function buildTagHtml(tree, prefix = '') {
   return html;
 }
 
-
 document.addEventListener('click', CM.linkClick) 
 
 //tag click
-document.addEventListener('click', function(event){
+document.addEventListener('click', function(event) {
+    console.log("hello");
     if (event.target.tagName !== 'A') {
         return;
     }
     
     const href = event.target.getAttribute('href');
-    const tag = CM.getSuffix(href, "/tags/")
-    if(tag == ""){
+    const tag = CM.getSuffix(href, "/tags/");
+    if(tag == "") {
         return
     }
     event.preventDefault();
     db.getCardsByTag(tag, 0, CM.limitItems).then(cards => reloadCardList(cards, tag));
     highlightSidebarLink(href)
 })
+
+function createEditTagModal(existingTagName = '') {
+    const modalHTML = `
+        <div id="modalOverlay">
+            <div id="editTagModal" class="modal">
+                <div class="modalBody">
+                    <div class="formHeader">
+                        <p>Use <b>tag/subtag</b> format for multilevel tags</p>
+                    </div>
+                    <div class="formBody">
+                        <input type="text" id="tagNameInput" placeholder="Enter a new tag name" value="${existingTagName}">
+                    </div>
+                    <div class="formControl">
+                        <button id="cancelEditTagBtn" class="secBtn">Cancel</button><button id="saveEditTagBtn" class="mainBtn">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeBegin', modalHTML);
+    if (!document.body.classList.contains('overflow-hidden')) {
+        document.body.classList.add('overflow-hidden');
+    }
+
+    document.getElementById('cancelEditTagBtn').addEventListener('click', () => {
+        document.getElementById('modalOverlay').remove();
+        
+        if (document.documentElement.clientWidth >= 768) {
+            document.body.classList.remove('overflow-hidden');
+        }
+    });
+
+    document.getElementById('saveEditTagBtn').addEventListener('click', () => {
+        const newTagName = document.getElementById('tagNameInput').value;
+
+        // Logic to handle the saving of the new tag name
+        db.renameTag(existingTagName, newTagName).then(() => {
+            console.log('Tag renamed successfully');
+        });
+
+        if (document.documentElement.clientWidth >= 768) {
+            document.body.classList.remove('overflow-hidden');
+        }
+    });
+}
 
 let displayCardCounts = async function () {
     try {
@@ -933,6 +979,19 @@ window.addEventListener('DOMContentLoaded', function() {
         let tree = buildTagTree(tags);
         let tagListHTML = buildTagHtml(tree);
         CM.tagList.innerHTML = tagListHTML;
+
+        document.querySelectorAll('.tagMenuOptions .editOption').forEach(btn => {
+            btn.addEventListener('click', (event) => {
+                event.stopPropagation();
+
+                const existingTagName = btn.closest('.tagClick').getAttribute('data-tag');
+                if (!document.getElementById('editTagModal')) {
+                    createEditTagModal(existingTagName);
+                } else {
+                    return;
+                }
+            });
+        });
     })
     displayCardCounts();
     removeSplashScreen();
@@ -951,10 +1010,4 @@ export {
     deleteCard,
     activateNewItemEditor,
     highlightCardUpOrDownScreen 
-}
-
-function renameTag(newTag, oldTag) {
-    db.renameTag(newTag, oldTag).then(function(results){
-        console.log(results);
-    })
 }
