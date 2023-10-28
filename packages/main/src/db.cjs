@@ -403,7 +403,7 @@ function countTaggedCards(tag){
     return taggedCards.count
 }
 
-function countDifferentCards(){
+function countDifferentCards() {
     const allCards = db.prepare(`select count(1) as count from cards`).get();
     const notagCards = db.prepare("SELECT count(1) as count FROM cards LEFT JOIN tags ON cards.id = tags.card_id WHERE tags.card_id IS NULL").get()
     const trashCards = db.prepare(`select count(1) as count from trash`).get();
@@ -414,7 +414,7 @@ function countDifferentCards(){
     }
 }
 
-function renameTag(newTag, oldTag){
+function renameTag(newTag, oldTag) {
     const limit = 100;
     let offset = 0;
     for(;;){

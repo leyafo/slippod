@@ -47,6 +47,7 @@ body {
     height: 20px;
     text-align: center;
     line-height: 20px;
+    vertical-align: text-bottom;
 }
 
 #allCards .icon::before {
@@ -87,7 +88,7 @@ body {
     background: #EDF1F6;
 }
 
-.tagContainer:hover .count {
+#tagsList .tagContainer:hover .count {
     display: none;
 }
 
