@@ -43,11 +43,7 @@ function updateCard(li, needCloseEditor=true) {
             itemHeader.classList.remove("hidden");
         }
 
-        db.getAllTags().then(function(tags){
-            let tree = buildTagTree(tags)
-            let tagListHTML = buildTagHtml(tree)
-            CM.tagList.innerHTML = tagListHTML
-        })
+        db.getAllTags().then(refreshTagTree)
     });
     li.dataset.editing = 'false';
 }
@@ -145,11 +141,7 @@ function deleteCard(li) {
         db.moveCardToTrash(cardID).then(function() {
             CM.cardsList.removeChild(li);
 
-            db.getAllTags().then(function(tags){
-                let tree = buildTagTree(tags)
-                let tagListHTML = buildTagHtml(tree)
-                CM.tagList.innerHTML = tagListHTML
-            })
+            db.getAllTags().then(refreshTagTree)
         })
     }
 }
@@ -397,11 +389,7 @@ function createNewCardHandle(e) {
         });
     });
 
-    db.getAllTags().then(function(tags){
-        let tree = buildTagTree(tags)
-        let tagListHTML = buildTagHtml(tree)
-        CM.tagList.innerHTML = tagListHTML
-    })
+    db.getAllTags().then(refreshTagTree)
 }
 
 CM.eventHandle('.btnCreateNewCard', 'click', createNewCardHandle);
@@ -881,6 +869,26 @@ function buildTagHtml(tree, prefix = '') {
   return html;
 }
 
+function refreshTagTree(tags) {
+    let tree = buildTagTree(tags);
+    let tagListHTML = buildTagHtml(tree);
+    CM.tagList.innerHTML = tagListHTML;
+
+    document.querySelectorAll('.tagMenuOptions .editOption').forEach(btn => {
+        btn.addEventListener('click', (event) => {
+            event.stopPropagation();
+
+            const existingTagName = btn.closest('.tagClick').getAttribute('data-tag');
+            console.log(document.getElementById('editTagModal'));
+            if (!document.getElementById('editTagModal')) {
+                createEditTagModal(existingTagName);
+            } else {
+                return;
+            }
+        });
+    });
+}
+
 document.addEventListener('click', CM.linkClick) 
 
 //tag click
@@ -943,10 +951,27 @@ function createEditTagModal(existingTagName = '') {
 
         const newTagName = document.getElementById('tagNameInput').value;
 
-        console.log('Existing tag name:', existingTagName);
         console.log('New tag name:', newTagName);
+        console.log('Existing tag name:', existingTagName);
         // Logic to handle the saving of the new tag name
         db.renameTag(newTagName, existingTagName).then(() => {
+            db.getAllTags().then(refreshTagTree);
+
+            if (CM.listArea.classList.contains("tagList")) {
+                console.log(CM.listArea);
+                let currentListTag = document.getElementById("listTitle").textContent;
+                db.getCardsByTag(currentListTag, 0, CM.limitItems).then(cards => reloadCardList(cards, currentListTag));
+            }
+
+            if (CM.listArea.classList.contains("allCardsList")) {
+                db.getCards(0, CM.limitItems).then(cards => reloadCardList(cards, "All Cards"));
+            }
+            
+            document.getElementById('modalOverlay').remove();
+        
+            if (document.documentElement.clientWidth >= 768) {
+                document.body.classList.remove('overflow-hidden');
+            }
             console.log('Tag renamed successfully');
         });
 
@@ -995,25 +1020,7 @@ window.addEventListener('DOMContentLoaded', function() {
     });
 
     //load tags
-    db.getAllTags().then(function(tags) {
-        let tree = buildTagTree(tags);
-        let tagListHTML = buildTagHtml(tree);
-        CM.tagList.innerHTML = tagListHTML;
-
-        document.querySelectorAll('.tagMenuOptions .editOption').forEach(btn => {
-            btn.addEventListener('click', (event) => {
-                event.stopPropagation();
-
-                const existingTagName = btn.closest('.tagClick').getAttribute('data-tag');
-                console.log(document.getElementById('editTagModal'));
-                if (!document.getElementById('editTagModal')) {
-                    createEditTagModal(existingTagName);
-                } else {
-                    return;
-                }
-            });
-        });
-    })
+    db.getAllTags().then(refreshTagTree)
     displayCardCounts();
     removeSplashScreen();
 });
