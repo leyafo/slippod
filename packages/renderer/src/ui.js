@@ -911,7 +911,7 @@ function createEditTagModal(existingTagName = '') {
                         <input type="text" id="tagNameInput" placeholder="Enter a new tag name" value="${existingTagName}">
                     </div>
                     <div class="formControl">
-                        <button id="cancelEditTagBtn" class="secBtn">Cancel</button><button id="saveEditTagBtn" class="mainBtn">Save</button>
+                        <button id="cancelEditTagBtn" class="secBtn"><span class="icon"></span><span class="label">Cancel</span></button><button id="saveEditTagBtn" class="mainBtn" disabled><span class="icon"></span><span class="label">Save</span></button>
                     </div>
                 </div>
             </div>
@@ -923,7 +923,11 @@ function createEditTagModal(existingTagName = '') {
         document.body.classList.add('overflow-hidden');
     }
 
-    document.getElementById('cancelEditTagBtn').addEventListener('click', () => {
+    const modalSaveBtn = document.getElementById('saveEditTagBtn');
+    const modalCancelBtn = document.getElementById('cancelEditTagBtn');
+    const modalTagNameInput = document.getElementById('tagNameInput');
+
+    modalCancelBtn.addEventListener('click', () => {
         document.getElementById('modalOverlay').remove();
         
         if (document.documentElement.clientWidth >= 768) {
@@ -931,9 +935,16 @@ function createEditTagModal(existingTagName = '') {
         }
     });
 
-    document.getElementById('saveEditTagBtn').addEventListener('click', () => {
+    modalSaveBtn.addEventListener('click', () => {
+        modalCancelBtn.disabled = true;
+        modalTagNameInput.disabled = true;
+        modalSaveBtn.disabled = true;
+        modalSaveBtn.classList.add('saving');
+
         const newTagName = document.getElementById('tagNameInput').value;
 
+        console.log('Existing tag name:', existingTagName);
+        console.log('New tag name:', newTagName);
         // Logic to handle the saving of the new tag name
         db.renameTag(newTagName, existingTagName).then(() => {
             console.log('Tag renamed successfully');
@@ -941,6 +952,16 @@ function createEditTagModal(existingTagName = '') {
 
         if (document.documentElement.clientWidth >= 768) {
             document.body.classList.remove('overflow-hidden');
+        }
+    });
+
+    modalTagNameInput.addEventListener('keyup', (event) => {
+        if (event.target.value === '') {
+            modalSaveBtn.disabled = true;
+        } else if (event.target.value === existingTagName) {
+            modalSaveBtn.disabled = true;
+        } else {
+            modalSaveBtn.disabled = false;
         }
     });
 }
