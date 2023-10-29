@@ -951,8 +951,6 @@ function createEditTagModal(existingTagName = '') {
 
         const newTagName = document.getElementById('tagNameInput').value;
 
-        console.log('New tag name:', newTagName);
-        console.log('Existing tag name:', existingTagName);
         // Logic to handle the saving of the new tag name
         db.renameTag(newTagName, existingTagName).then(() => {
             db.getAllTags().then(refreshTagTree);
@@ -972,12 +970,7 @@ function createEditTagModal(existingTagName = '') {
             if (document.documentElement.clientWidth >= 768) {
                 document.body.classList.remove('overflow-hidden');
             }
-            console.log('Tag renamed successfully');
         });
-
-        if (document.documentElement.clientWidth >= 768) {
-            document.body.classList.remove('overflow-hidden');
-        }
     });
 
     modalTagNameInput.addEventListener('keyup', (event) => {
