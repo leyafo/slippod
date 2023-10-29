@@ -10,14 +10,6 @@ const windowMgr = new WindowManager();
 ipcHandler.registerDBFunctions();
 ipcHandler.registerWindowHandlers(windowMgr);
 
-/*
-var log = console.log;
-console.log = function() {
-    log.apply(console, arguments);
-    // Print the stack trace
-    console.trace();
-};
-*/
 let mainWindow = null;
 app.whenReady().then(async() => {
     // checkLicense().then(function(hasLicense){
