@@ -92,4 +92,5 @@ async function register(key){
 module.exports = {
     checkLicense,
     register,
+    fingerprint,
 }
