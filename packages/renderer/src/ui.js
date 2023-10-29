@@ -262,6 +262,8 @@ function editorOnFocus(editor) {
             });
         }
 
+        CM.unHighlightItem("selected", CM.cardsList);
+
         globalState.setEditing();
     }
 }
