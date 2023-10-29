@@ -20,10 +20,10 @@ console.log = function() {
 */
 let mainWindow = null;
 app.whenReady().then(async() => {
-    checkLicense().then(function(hasLicense){
-        if(!hasLicense){
-            let regWindow = windowMgr.createRegisterWindow()
-        }else{
+    // checkLicense().then(function(hasLicense){
+        // if(!hasLicense){
+        //     let regWindow = windowMgr.createRegisterWindow()
+        // }else{
             mainWindow = windowMgr.createMainWindow();
             const menu = Menu.buildFromTemplate(menuTemplate(windowMgr));
             Menu.setApplicationMenu(menu);
@@ -32,10 +32,10 @@ app.whenReady().then(async() => {
                     mainWindow = windowMgr.createMainWindow();
                 }
             });
-        }
-    }).catch(function(err){
-        let regWindow = windowMgr.createRegisterWindow()
-    })
+        // }
+    // }).catch(function(err){
+    //     let regWindow = windowMgr.createRegisterWindow()
+    // })
 
 
     app.on("window-all-closed", () => {
