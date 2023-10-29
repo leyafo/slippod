@@ -29,7 +29,11 @@ function getLinkAtRegex(){
 
 function openDB(extPath, dictPath, dbPath){
     let newDB = null;
-    newDB = sqlite3(dbPath, {verbose: console.log})
+    if(import.meta.env.DEV){
+        newDB = sqlite3(dbPath, {verbose: console.log});
+    }else{
+        newDB = sqlite3(dbPath, {verbose: null});
+    }
     newDB.loadExtension(extPath);
     newDB.pragma("trusted_schema = 1");
     //set jieba dict path
@@ -399,7 +403,7 @@ function countTaggedCards(tag){
     return taggedCards.count
 }
 
-function countDifferentCards(){
+function countDifferentCards() {
     const allCards = db.prepare(`select count(1) as count from cards`).get();
     const notagCards = db.prepare("SELECT count(1) as count FROM cards LEFT JOIN tags ON cards.id = tags.card_id WHERE tags.card_id IS NULL").get()
     const trashCards = db.prepare(`select count(1) as count from trash`).get();
@@ -410,7 +414,7 @@ function countDifferentCards(){
     }
 }
 
-function renameTag(newTag, oldTag){
+function renameTag(newTag, oldTag) {
     const limit = 100;
     let offset = 0;
     for(;;){
@@ -436,6 +440,18 @@ function getDraft(){
 
 function updateDraft(content){
     return db.prepare(`INSERT INTO configurations (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = ?`).run(draftKey, content, content);
+}
+
+function getConfig(configKey){
+    const row = db.prepare(`select value from configurations where key=?`).get(configKey);
+    if(row == undefined){
+        return '';
+    }
+    return row.value
+}
+
+function setConfig(configKey, content){
+    return db.prepare(`INSERT INTO configurations (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = ?`).run(configKey, content, content);
 }
 
 module.exports = {
@@ -475,4 +491,8 @@ module.exports = {
     getCardSearchSuggestions,
     countDifferentCards,
     countTaggedCards,
+
+
+    getConfig,
+    setConfig,
 };

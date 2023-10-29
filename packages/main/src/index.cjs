@@ -1,45 +1,43 @@
 // main.js
-const {shell, clipboard, globalShortcut,ipcMain, app, Menu, BrowserWindow } = require("electron");
-const WindowManager = require("./window_manager");
-const ipcHandler = require("./ipc_handlers");
-const {menuTemplate} = require("./menu");
-const createMarkdownRender = require("./md_render").createMarkdownRender  
+const {shell, clipboard, ipcMain, app, Menu, BrowserWindow } = require("electron");
+const WindowManager = require("./window_manager.cjs");
+const ipcHandler = require("./ipc_handlers.cjs");
+const {menuTemplate} = require("./menu.cjs");
+const { checkLicense, register } = require("./l.cjs");
+const createMarkdownRender = require("./md_render.cjs").createMarkdownRender  
 
 const windowMgr = new WindowManager();
+ipcHandler.registerDBFunctions();
+ipcHandler.registerWindowHandlers(windowMgr);
 
-/**
- * Disable Hardware Acceleration to save more system resources.
- */
-//app.disableHardwareAcceleration();
-
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
 let mainWindow = null;
-app.whenReady().then(() => {
-    mainWindow = windowMgr.createMainWindow();
-    const menu = Menu.buildFromTemplate(menuTemplate(windowMgr));
-    Menu.setApplicationMenu(menu);
-
-    ipcHandler.registerDBFunctions();
-    ipcHandler.registerWindowHandlers(windowMgr);
-
-    app.on("activate", () => {
-        // On macOS it's common to re-create a window in the app when the
-        // dock icon is clicked and there are no other windows open.
-        if (BrowserWindow.getAllWindows().length === 0) {
+app.whenReady().then(async() => {
+    // checkLicense().then(function(hasLicense){
+        // if(!hasLicense){
+        //     let regWindow = windowMgr.createRegisterWindow()
+        // }else{
             mainWindow = windowMgr.createMainWindow();
-        }
+            const menu = Menu.buildFromTemplate(menuTemplate(windowMgr));
+            Menu.setApplicationMenu(menu);
+            app.on("activate", () => {
+                if (BrowserWindow.getAllWindows().length === 0) {
+                    mainWindow = windowMgr.createMainWindow();
+                }
+            });
+        // }
+    // }).catch(function(err){
+    //     let regWindow = windowMgr.createRegisterWindow()
+    // })
+
+
+    app.on("window-all-closed", () => {
+        // Quit when all windows are closed, except on macOS. There, it's common
+        // for applications and their menu bar to stay active until the user quits
+        // explicitly with Cmd + Q.
+        if (process.platform !== "darwin") app.quit();
     });
 });
 
-
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
-app.on("window-all-closed", () => {
-    if (process.platform !== "darwin") app.quit();
-});
 
 ipcMain.handle("duplicateWindow", async (event, ...args) => {
     const windowMgr = new WindowManager();
@@ -68,4 +66,8 @@ ipcMain.handle("pasteTextFromClipboard", async function(event){
 
 ipcMain.handle("openExternalURL", async function(event, url){
     return shell.openExternal(url);
+})
+
+ipcMain.handle("register", async function(event, key){
+    return register(key)
 })

@@ -3,7 +3,6 @@ const path = require('path');
 const db = require('./db');
 const { platform } = require('os');
 
-console.log(import.meta.env.DEV);
 class WindowManager{
     constructor(){
         this.mainWindow = null
@@ -76,7 +75,7 @@ class WindowManager{
     createMainWindow() {
         let windowConfig = {
             width: 800,
-            height: 600,
+            height: 800,
             minWidth: 400,
             minHeight: 400,
             titleBarStyle: "hidden",
@@ -188,6 +187,37 @@ class WindowManager{
         });
     
         return detailWindow;
+    }
+
+    createRegisterWindow(){
+        let registerWindow = new BrowserWindow({
+            width: 800,
+            height: 600,
+            minWidth: 400,
+            minHeight: 400,
+            icon: this.getIconPath(),
+            titleBarStyle: "hidden",
+            webPreferences: {
+                preload: path.join(app.getAppPath(), 'packages/preload/dist/register_preload.cjs'),
+                scrollBounce: true
+            },
+        });
+        if (!registerWindow) {
+            // Handle the case where detailWindow is not initialized
+            return null;
+        }
+    
+        this.#loadEntryPoint(registerWindow, `register.html`);
+
+        registerWindow.once("ready-to-show", () => {
+            registerWindow.show();
+        });
+    
+        registerWindow.on("closed", () => {
+            registerWindow = null;
+        });
+    
+        return registerWindow;
     }
 
 }

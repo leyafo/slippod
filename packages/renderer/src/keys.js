@@ -44,7 +44,7 @@ document.addEventListener("keydown", function (event) {
         pages.reloadAll();
     }else if (event.key === "o" && ctrlCmdKey(event)){
         db.getDraft().then(function(draftContent){
-            UI.activateNewItemEditor(draftContent);
+            UI.activateNewItemEditor(draftContent).focus();
         })
     }else if (event.key === "Escape"){
         // 这里加esc好像不太合适

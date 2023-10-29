@@ -5,7 +5,6 @@ const hrefTagAll = "/tag_all"
 const hrefTagTrash = "/tag_trash"
 const hrefTagNo = "/tag_no"
 
-
 function highlightSidebarLink(href) {
     const className = "selected" 
     //remove previous highlight
@@ -14,7 +13,7 @@ function highlightSidebarLink(href) {
         lastHighlightDiv.classList.remove(className);
     }
     const div = CM.sideNavContainer.querySelector(`div[href="${href}"]`);
-    const tagContainer = div.closest(".tagContainer")
+    const tagContainer = div.closest(".tagContainer");
     tagContainer.classList.add(className);
 }
 
@@ -44,11 +43,7 @@ function updateCard(li, needCloseEditor=true) {
             itemHeader.classList.remove("hidden");
         }
 
-        db.getAllTags().then(function(tags){
-            let tree = buildTagTree(tags)
-            let tagListHTML = buildTagHtml(tree)
-            CM.tagList.innerHTML = tagListHTML
-        })
+        db.getAllTags().then(refreshTagTree)
     });
     li.dataset.editing = 'false';
 }
@@ -146,11 +141,7 @@ function deleteCard(li) {
         db.moveCardToTrash(cardID).then(function() {
             CM.cardsList.removeChild(li);
 
-            db.getAllTags().then(function(tags){
-                let tree = buildTagTree(tags)
-                let tagListHTML = buildTagHtml(tree)
-                CM.tagList.innerHTML = tagListHTML
-            })
+            db.getAllTags().then(refreshTagTree)
         })
     }
 }
@@ -163,7 +154,7 @@ function restoreCard(li) {
     }
 }
 
-CM.clickHandle(".tagContainer", function(e) {
+CM.eventHandle('.tagContainer', 'click', function(e) {
     e.preventDefault();
 
     const tagContainer = e.target.closest(".tagContainer");
@@ -199,7 +190,7 @@ CM.clickHandle(".tagContainer", function(e) {
     CM.highlightItem("selected", tagContainer, CM.sideNavContainer);
 });
 
-CM.clickHandle(".foldIcon", function(e){
+CM.eventHandle('.foldIcon', 'click', function(e) {
     e.preventDefault()
     const span = e.target;
     const li = span.closest('li');
@@ -219,7 +210,7 @@ CM.clickHandle(".foldIcon", function(e){
     }
 })
 
-CM.clickHandle("#btnDuplicateWindow", function(e) {
+CM.eventHandle('#btnDuplicateWindow', 'click', function(e) {
     pages.duplicateWindow();
 })
 
@@ -271,6 +262,8 @@ function editorOnFocus(editor) {
             });
         }
 
+        CM.unHighlightItem("selected", CM.cardsList);
+
         globalState.setEditing();
     }
 }
@@ -297,18 +290,18 @@ function activateNewItemEditor(content) {
     CM.setScrollbarToTop()
     content = content.trim()
     if (content == ''){
-        const tagDiv = CM.tagList.querySelector('.selected') 
-        if (tagDiv){
-            const tagClicker = tagDiv.querySelector('.tagClick');
-            content = `#${tagClicker.dataset.tag}  \n`
+        const isTagList = CM.listArea.classList.contains("tagList");
+        if (isTagList){
+            const tag = document.getElementById("listTitle").textContent;
+            content = `#${tag} `
         }
     }
     const existedEditor = CM.newItemEditor.firstChild.CodeMirror;
-    if(existedEditor){
+    if(existedEditor) {
         existedEditor.setValue(content)
         existedEditor.setCursor(existedEditor.lineCount(), 0);
-        existedEditor.focus();
-        return
+        // existedEditor.focus();
+        return existedEditor;
     }
 
     CM.newItemEditor.innerHTML = '';
@@ -347,7 +340,7 @@ function activateNewItemEditor(content) {
     CM.newItemCtrlPanel.classList.remove('inactive');
     editor.setValue(content);
     editor.setCursor(editor.lineCount(), 0);
-    editor.focus()
+    // editor.focus()
 
     let generation = editor.changeGeneration(true);
     //we don't need to remove this time tick
@@ -361,12 +354,12 @@ function activateNewItemEditor(content) {
     return editor
 }
 
-CM.clickHandle("#newItemEditor", function(e) {
+CM.eventHandle('#newItemEditor', 'click', function(e) {
     if (!CM.newItemEditor.classList.contains('inactive')) {
         return;
     }
     db.getDraft().then(function(draftContent){
-        activateNewItemEditor(draftContent);
+        activateNewItemEditor(draftContent).focus();
     })
 })
 
@@ -398,14 +391,10 @@ function createNewCardHandle(e) {
         });
     });
 
-    db.getAllTags().then(function(tags){
-        let tree = buildTagTree(tags)
-        let tagListHTML = buildTagHtml(tree)
-        CM.tagList.innerHTML = tagListHTML
-    })
+    db.getAllTags().then(refreshTagTree)
 }
 
-CM.clickHandle(".btnCreateNewCard", createNewCardHandle)
+CM.eventHandle('.btnCreateNewCard', 'click', createNewCardHandle);
 
 function addCardEventListeners(li) {
     li.addEventListener('dblclick', function() {
@@ -439,13 +428,13 @@ function addCardEventListeners(li) {
     })
 }
 
-CM.clickHandle(".btnUpdateCard", function(ev) {
+CM.eventHandle('.btnUpdateCard', 'click', function(ev) {
     if (ev.target.closest(".btnUpdateCard").disabled) { return; }
     const li = ev.target.closest("li");
     updateCard(li);
 })
 
-CM.clickHandle(".btnCancelCard", function(ev) {
+CM.eventHandle('.btnCancelCard', 'click', function(ev) {
     const li = ev.target.closest("li");
     cancelUpdate(li);
 })
@@ -841,40 +830,38 @@ function buildTagTree(tagList) {
   return tree;
 }
 
-function buildTagHtml(tree, prefix = '') {
-  let html = '';
-  for (const [key, value] of Object.entries(tree)) {
-    const fullTag = prefix ? `${prefix}/${key}` : key;
-    //folder
-    if(Object.keys(value).length > 0) {
-        html += `<li>
+function tagTemplate(hasSubTag, key, fullTag) {
+    return `<li>
                 <div class="tagContainer">
-                    <span class="foldIcon open"></span>
+                    ${hasSubTag ? `<span class="foldIcon open"></span>` : ''}
                     <div class="tagClick" href="/tags/${fullTag}" data-tag="${fullTag}">
                         <div class="left-group">
                             <span class="tagIcon"></span>
                             <span class="label">${key}</span>
                         </div>
                         <span class="count"></span>
+                        <div class="tagMenuContainer hidden">
+                            <span class="tagMenu"></span>
+                            <div class="tagMenuOptions z-30 hidden">
+                                <div class="editOption">
+                                    <span class="icon"></span>
+                                    <span class="label">Edit tag name</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>`;
-                //the closed li is below
-    }else{
-        // file
-        html += `<li>
-                    <div class="tagContainer">
-                        <div class="tagClick" href="/tags/${fullTag}" data-tag="${fullTag}">
-                            <div class="left-group">
-                                <span class="tagIcon"></span>
-                                <span class="label">${key}</span>
-                            </div>
-                            <span class="count"></span>
-                        </div>
-                    </div>`;
-                //the closed li is below
-    }
+}
 
-    if (Object.keys(value).length > 0) {
+function buildTagHtml(tree, prefix = '') {
+  let html = '';
+  for (const [key, value] of Object.entries(tree)) {
+    const fullTag = prefix ? `${prefix}/${key}` : key;
+    const hasSubTag = Object.keys(value).length > 0;
+    
+    html += tagTemplate(hasSubTag, key, fullTag);
+
+    if (hasSubTag) {
       html += '<ul>';
       html += buildTagHtml(value, fullTag);
       html += '</ul>';
@@ -884,23 +871,132 @@ function buildTagHtml(tree, prefix = '') {
   return html;
 }
 
+function refreshTagTree(tags) {
+    let tree = buildTagTree(tags);
+    let tagListHTML = buildTagHtml(tree);
+    CM.tagList.innerHTML = tagListHTML;
+
+    document.querySelectorAll('.tagMenuOptions .editOption').forEach(btn => {
+        btn.addEventListener('click', (event) => {
+            event.stopPropagation();
+
+            const existingTagName = btn.closest('.tagClick').getAttribute('data-tag');
+            console.log(document.getElementById('editTagModal'));
+            if (!document.getElementById('editTagModal')) {
+                createEditTagModal(existingTagName);
+            } else {
+                return;
+            }
+        });
+    });
+
+    if (CM.listArea.classList.contains("tagList")) {
+        const currentTagList = document.getElementById("listTitle").textContent;
+        highlightSidebarLink("/tags/" + currentTagList);
+        db.countTaggedCards(currentTagList).then(function(count){
+            if (count > 0){
+                const clickDiv = CM.tagList.querySelector(`[data-tag="${currentTagList}"]`)
+                const countSpan = clickDiv.querySelector(".count")
+                countSpan.textContent = count;
+            }
+        });
+    }
+}
+
 document.addEventListener('click', CM.linkClick) 
 
 //tag click
-document.addEventListener('click', function(event){
+document.addEventListener('click', function(event) {
     if (event.target.tagName !== 'A') {
         return;
     }
     
     const href = event.target.getAttribute('href');
-    const tag = CM.getSuffix(href, "/tags/")
-    if(tag == ""){
+    const tag = CM.getSuffix(href, "/tags/");
+    if(tag == "") {
         return
     }
     event.preventDefault();
     db.getCardsByTag(tag, 0, CM.limitItems).then(cards => reloadCardList(cards, tag));
     highlightSidebarLink(href)
 })
+
+function createEditTagModal(existingTagName = '') {
+    const modalHTML = `
+        <div id="modalOverlay">
+            <div id="editTagModal" class="modal">
+                <div class="modalBody">
+                    <div class="formHeader">
+                        <p>Use <b>tag/subtag</b> format for multilevel tags</p>
+                    </div>
+                    <div class="formBody">
+                        <input type="text" id="tagNameInput" placeholder="Enter a new tag name" value="${existingTagName}">
+                    </div>
+                    <div class="formControl">
+                        <button id="cancelEditTagBtn" class="secBtn"><span class="icon"></span><span class="label">Cancel</span></button><button id="saveEditTagBtn" class="mainBtn" disabled><span class="icon"></span><span class="label">Save</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeBegin', modalHTML);
+    if (!document.body.classList.contains('overflow-hidden')) {
+        document.body.classList.add('overflow-hidden');
+    }
+
+    const modalSaveBtn = document.getElementById('saveEditTagBtn');
+    const modalCancelBtn = document.getElementById('cancelEditTagBtn');
+    const modalTagNameInput = document.getElementById('tagNameInput');
+
+    modalCancelBtn.addEventListener('click', () => {
+        document.getElementById('modalOverlay').remove();
+        
+        if (document.documentElement.clientWidth >= 768) {
+            document.body.classList.remove('overflow-hidden');
+        }
+    });
+
+    modalSaveBtn.addEventListener('click', () => {
+        modalCancelBtn.disabled = true;
+        modalTagNameInput.disabled = true;
+        modalSaveBtn.disabled = true;
+        modalSaveBtn.classList.add('saving');
+
+        const newTagName = document.getElementById('tagNameInput').value;
+
+        // Logic to handle the saving of the new tag name
+        db.renameTag(newTagName, existingTagName).then(() => {
+            db.getAllTags().then(refreshTagTree);
+
+            if (CM.listArea.classList.contains("tagList")) {
+                console.log(CM.listArea);
+                let currentListTag = document.getElementById("listTitle").textContent;
+                db.getCardsByTag(currentListTag, 0, CM.limitItems).then(cards => reloadCardList(cards, currentListTag));
+            }
+
+            if (CM.listArea.classList.contains("allCardsList")) {
+                db.getCards(0, CM.limitItems).then(cards => reloadCardList(cards, "All Cards"));
+            }
+            
+            document.getElementById('modalOverlay').remove();
+        
+            if (document.documentElement.clientWidth >= 768) {
+                document.body.classList.remove('overflow-hidden');
+            }
+        });
+    });
+
+    modalTagNameInput.addEventListener('keyup', (event) => {
+        if (event.target.value === '') {
+            modalSaveBtn.disabled = true;
+        } else if (event.target.value === existingTagName) {
+            modalSaveBtn.disabled = true;
+        } else {
+            modalSaveBtn.disabled = false;
+        }
+    });
+}
 
 let displayCardCounts = async function () {
     try {
@@ -927,15 +1023,16 @@ window.addEventListener('DOMContentLoaded', function() {
     //load cards
     db.getCards(0, CM.limitItems).then(function(cards) {
         reloadCardList(cards, "All Cards", CM.listInsertAfterLast)
+        db.getDraft().then(function(draftContent){
+            if (draftContent != '') {
+                activateNewItemEditor(draftContent);
+            }
+        })
         highlightSidebarLink(hrefTagAll)
     });
 
     //load tags
-    db.getAllTags().then(function(tags) {
-        let tree = buildTagTree(tags);
-        let tagListHTML = buildTagHtml(tree);
-        CM.tagList.innerHTML = tagListHTML;
-    })
+    db.getAllTags().then(refreshTagTree)
     displayCardCounts();
     removeSplashScreen();
 });
