@@ -75,7 +75,7 @@ class WindowManager{
     createMainWindow() {
         let windowConfig = {
             width: 800,
-            height: 600,
+            height: 800,
             minWidth: 400,
             minHeight: 400,
             titleBarStyle: "hidden",
