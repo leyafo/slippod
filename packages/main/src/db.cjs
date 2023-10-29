@@ -422,7 +422,6 @@ function renameTag(newTag, oldTag) {
         for(let card of cards){
             let newEntry = card.entry.replaceAll(oldTag, newTag);
             updateCardEntryByID(card.id, newEntry);
-            console.log("hello");
         }
         if (cards.length < limit){
             break;
