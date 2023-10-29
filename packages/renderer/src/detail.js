@@ -27,7 +27,7 @@ window.addEventListener('DOMContentLoaded', function() {
     const urlParams = new URLSearchParams(window.location.search);
 })
 
-CM.clickHandle("#backlinkTab", function() {
+CM.eventHandle('#backlinkTab', 'click', function() {
     backlinkTab.classList.add('selected');
     outgoingLinkTab.classList.remove('selected');
 
@@ -35,7 +35,7 @@ CM.clickHandle("#backlinkTab", function() {
     outgoingLinksCards.classList.add('hidden');
 });
 
-CM.clickHandle("#outgoingLinkTab", function() {
+CM.eventHandle('#outgoingLinkTab', 'click', function() {
     outgoingLinkTab.classList.add('selected');
     backlinkTab.classList.remove('selected');
 

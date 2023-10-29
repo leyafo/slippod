@@ -47,6 +47,7 @@
   "dependencies": {
     "better-sqlite3": "^8.6.0",
     "electron-updater": "6.1.4",
-    "marked": "^5.0.2"
+    "marked": "^5.0.2",
+    "systeminformation": "^5.21.12"
   }
 }

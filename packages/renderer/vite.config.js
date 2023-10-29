@@ -38,6 +38,7 @@ const config = {
             index: join(PACKAGE_ROOT, 'index.html'),
             setting: join(PACKAGE_ROOT, 'setting.html'),
             detail: join(PACKAGE_ROOT, 'detail.html'),
+            register: join(PACKAGE_ROOT, 'register.html'),
         }
     },
     emptyOutDir: true,

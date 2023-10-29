@@ -28,6 +28,7 @@ const config = {
             input: {
                 main_preload: join(PACKAGE_ROOT, 'src/main_preload.js'),
                 settings_preload: join(PACKAGE_ROOT, 'src/settings_preload.js'),
+                register_preload: join(PACKAGE_ROOT, 'src/register_preload.js'),
             },
             output: {
                 entryFileNames: '[name].cjs',
