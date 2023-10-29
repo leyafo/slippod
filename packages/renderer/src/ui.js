@@ -935,7 +935,7 @@ function createEditTagModal(existingTagName = '') {
         const newTagName = document.getElementById('tagNameInput').value;
 
         // Logic to handle the saving of the new tag name
-        db.renameTag(existingTagName, newTagName).then(() => {
+        db.renameTag(newTagName, existingTagName).then(() => {
             console.log('Tag renamed successfully');
         });
 
@@ -984,6 +984,7 @@ window.addEventListener('DOMContentLoaded', function() {
                 event.stopPropagation();
 
                 const existingTagName = btn.closest('.tagClick').getAttribute('data-tag');
+                console.log(document.getElementById('editTagModal'));
                 if (!document.getElementById('editTagModal')) {
                     createEditTagModal(existingTagName);
                 } else {
