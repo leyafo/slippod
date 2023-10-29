@@ -13,7 +13,7 @@ function highlightSidebarLink(href) {
         lastHighlightDiv.classList.remove(className);
     }
     const div = CM.sideNavContainer.querySelector(`div[href="${href}"]`);
-    const tagContainer = div.closest(".tagContainer")
+    const tagContainer = div.closest(".tagContainer");
     tagContainer.classList.add(className);
 }
 
@@ -288,18 +288,18 @@ function activateNewItemEditor(content) {
     CM.setScrollbarToTop()
     content = content.trim()
     if (content == ''){
-        const tagDiv = CM.tagList.querySelector('.selected') 
-        if (tagDiv){
-            const tagClicker = tagDiv.querySelector('.tagClick');
-            content = `#${tagClicker.dataset.tag}  \n`
+        const isTagList = CM.listArea.classList.contains("tagList");
+        if (isTagList){
+            const tag = document.getElementById("listTitle").textContent;
+            content = `#${tag} `
         }
     }
     const existedEditor = CM.newItemEditor.firstChild.CodeMirror;
-    if(existedEditor){
+    if(existedEditor) {
         existedEditor.setValue(content)
         existedEditor.setCursor(existedEditor.lineCount(), 0);
-        existedEditor.focus();
-        return
+        // existedEditor.focus();
+        return existedEditor;
     }
 
     CM.newItemEditor.innerHTML = '';
@@ -338,7 +338,7 @@ function activateNewItemEditor(content) {
     CM.newItemCtrlPanel.classList.remove('inactive');
     editor.setValue(content);
     editor.setCursor(editor.lineCount(), 0);
-    editor.focus()
+    // editor.focus()
 
     let generation = editor.changeGeneration(true);
     //we don't need to remove this time tick
@@ -357,7 +357,7 @@ CM.eventHandle('#newItemEditor', 'click', function(e) {
         return;
     }
     db.getDraft().then(function(draftContent){
-        activateNewItemEditor(draftContent);
+        activateNewItemEditor(draftContent).focus();
     })
 })
 
@@ -887,6 +887,18 @@ function refreshTagTree(tags) {
             }
         });
     });
+
+    if (CM.listArea.classList.contains("tagList")) {
+        const currentTagList = document.getElementById("listTitle").textContent;
+        highlightSidebarLink("/tags/" + currentTagList);
+        db.countTaggedCards(currentTagList).then(function(count){
+            if (count > 0){
+                const clickDiv = CM.tagList.querySelector(`[data-tag="${currentTagList}"]`)
+                const countSpan = clickDiv.querySelector(".count")
+                countSpan.textContent = count;
+            }
+        });
+    }
 }
 
 document.addEventListener('click', CM.linkClick) 
@@ -1009,6 +1021,11 @@ window.addEventListener('DOMContentLoaded', function() {
     //load cards
     db.getCards(0, CM.limitItems).then(function(cards) {
         reloadCardList(cards, "All Cards", CM.listInsertAfterLast)
+        db.getDraft().then(function(draftContent){
+            if (draftContent != '') {
+                activateNewItemEditor(draftContent);
+            }
+        })
         highlightSidebarLink(hrefTagAll)
     });
 
