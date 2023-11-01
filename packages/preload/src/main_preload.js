@@ -62,9 +62,9 @@ function modulePreload(moduleName, functionArray, callback){
 const licenseFuncNames = [
     "register",
     "register_trial",
-    "getLicense",
     "checkTrialLicense",
     "getLicense",
+    "checkLicense",
 ]
 modulePreload("license", licenseFuncNames);
 
