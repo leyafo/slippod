@@ -25,7 +25,11 @@ contextBridge.exposeInMainWorld('utils', {
     openExternalURL: function (url) {
         return ipcRenderer.invoke('openExternalURL', url)
     },
+    register_trial: function(){
+        return ipcRenderer.invoke('register_trial')
+    }
 });
+
 
 contextBridge.exposeInMainWorld('pages', {
     reloadAll: (...args) => ipcRenderer.invoke("reloadAll", ...args),
@@ -43,6 +47,27 @@ contextBridge.exposeInMainWorld('backendBridge', {
     displayCardDetail: (callback) => ipcRenderer.on("displayCardDetail", (callback))
 });
 
+function modulePreload(moduleName, functionArray, callback){
+    let moduleFuncs = {}
+    functionArray.forEach((funcName) => {
+        moduleFuncs[funcName] = (...args) => {
+            if(callback != undefined){
+                callback(funcName, args)
+            }
+            return ipcRenderer.invoke(funcName, ...args)
+        };
+    })
+    contextBridge.exposeInMainWorld(moduleName, moduleFuncs);
+}
+const licenseFuncNames = [
+    "register",
+    "register_trial",
+    "getLicense",
+    "checkTrialLicense",
+    "getLicense",
+]
+modulePreload("license", licenseFuncNames);
+
 (function () {
     const paginatedDFFunc = [
         "getCards",
@@ -50,8 +75,7 @@ contextBridge.exposeInMainWorld('backendBridge', {
         "getTrashCards",
         "getNoTagCards",
         "getCardsByMiddleID",
-
-    ]
+    ];
     const fullsetDBFunc = [
         "getLinkAtRegex",
         "getTagRegex",
@@ -75,13 +99,14 @@ contextBridge.exposeInMainWorld('backendBridge', {
         "renameTag",
         "updateDraft",
         "getDraft",
-    ]
+    ];
     const needRecount = new Set([
         "removeCardFromTrash",
         "removeCardPermanently",
         "moveCardToTrash",
         "createNewCard",
-    ])
+    ]);
+
     let backendFunctions = {};
     paginatedDFFunc.forEach((funcName) => {
         backendFunctions[funcName] = (...args) => {
