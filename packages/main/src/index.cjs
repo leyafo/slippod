@@ -3,7 +3,8 @@ const {shell, clipboard, ipcMain, app, Menu, BrowserWindow } = require("electron
 const WindowManager = require("./window_manager.cjs");
 const ipcHandler = require("./ipc_handlers.cjs");
 const {menuTemplate} = require("./menu.cjs");
-const { checkLicense, register } = require("./l.cjs");
+const license = require("./l.cjs");
+const db = require("./db.cjs");
 const createMarkdownRender = require("./md_render.cjs").createMarkdownRender  
 
 const windowMgr = new WindowManager();
@@ -50,7 +51,6 @@ ipcMain.handle("displayCardCounts", async(event)=>{
     window.webContents.send("displayCardCounts");
 })
 
-
 let markdownRender = createMarkdownRender()
 ipcMain.handle("markdownRender", async(event, rawText)=>{
     return markdownRender(rawText)
@@ -68,6 +68,12 @@ ipcMain.handle("openExternalURL", async function(event, url){
     return shell.openExternal(url);
 })
 
-ipcMain.handle("register", async function(event, key){
-    return register(key)
+Object.keys(license).forEach((funcName) => {
+    ipcMain.handle(funcName, async (event, ...args) => {
+        return license[funcName](...args);
+    });
+});
+
+ipcMain.handle("getLicense", async function(event){
+    return db.getConfig("license");
 })

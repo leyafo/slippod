@@ -460,10 +460,8 @@ module.exports = {
     getAllTags,
     getAllCards,
     getCards,
-    createNewCard,
     getCardsByTag,
     getCardByID,
-    updateCardEntryByID,
     connect,
     initializeMemoryDB,
     getCardDetails,
@@ -472,16 +470,22 @@ module.exports = {
     cardIsExisted,
     getCardsByMiddleID,
     getMaxCardID,
-    renameTag,
-    updateDraft,
     getDraft,
 
     //trash functions
     getTrashCards,
+
+
+    //write or update functions
     moveCardToTrash,
+    updateCardEntryByID,
+    createNewCard,
+    renameTag,
+    updateDraft,
     removeCardFromTrash,
     removeCardPermanently,
     restoreCard,
+    setConfig,
 
     //for test
     parseTags,
@@ -494,5 +498,4 @@ module.exports = {
 
 
     getConfig,
-    setConfig,
 };

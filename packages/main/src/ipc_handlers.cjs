@@ -3,15 +3,16 @@ const db = require('./db.cjs');
 const config = require('./config.cjs');
 const fs = require("fs");
 const path = require('path');
+const licenseModule = require('./l.cjs');
 const dbSchema = require('./schema.cjs');
 
 const configFilePath = path.join(config.getUserDataPath(), "slippod.config")
+console.log(configFilePath)
 module.exports = {
     registerWindowHandlers: function (windowMgr) {
         ipcMain.handle("reloadAll", async (event, ...args) => {
             BrowserWindow.getFocusedWindow().reload(); 
         });
-
 
         ipcMain.handle("filePicker", async (event, ...args) => {
             let settingsWindow = windowMgr.getSettingsWindow()
@@ -46,12 +47,6 @@ module.exports = {
     },
 
     registerDBFunctions: function(){
-        const functionNames = Object.keys(db);
-        functionNames.forEach((funcName) => {
-            ipcMain.handle(funcName, async (event, ...args) => {
-                return db[funcName](...args);
-            });
-        });
         const appPath = app.getAppPath();
         const extPath = config.getExtensionPath(appPath);
         const dictPath = config.getDictPath(appPath);
@@ -66,5 +61,35 @@ module.exports = {
         } else {
             db.connect(extPath, dictPath, dbPath);
         }
+
+        const functionNames = Object.keys(db);
+        const needCheckFunctions = new Set([
+            "moveCardToTrash",
+            "updateCardEntryByID",
+            "createNewCard",
+            "renameTag",
+            "updateDraft",
+            "removeCardFromTrash",
+            "removeCardPermanently",
+            "restoreCard",
+            "setConfig",
+        ])
+        const license = JSON.parse(db.getConfig("license"))
+        const lastCreatedCard = db.getCards(0, 1)
+        let lastCreatedTime = Date.now()
+        if(lastCreatedTime.length > 0){
+            lastCreatedTime = new Date(lastCreatedCard.created_at * 1000);
+        }
+        functionNames.forEach((funcName) => {
+            ipcMain.handle(funcName, async (event, ...args) => {
+                if (needCheckFunctions.has(funcName)){
+                    let result = await licenseModule.checkLicense(license, lastCreatedTime)
+                    if (result == false){
+                        return {"error":"license is not valid"}
+                    }
+                }
+                return db[funcName](...args);
+            });
+        });
     }
 };
