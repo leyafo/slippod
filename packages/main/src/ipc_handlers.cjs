@@ -74,7 +74,12 @@ module.exports = {
             "restoreCard",
             "setConfig",
         ])
-        const license = JSON.parse(db.getConfig("license"))
+        let license = {}
+        try{
+            license = JSON.parse(db.getConfig("license"))
+        }catch(error){
+            console.error(error)
+        }
         const lastCreatedCard = db.getCards(0, 1)
         let lastCreatedTime = Date.now()
         if(lastCreatedTime.length > 0){
