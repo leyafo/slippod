@@ -454,6 +454,10 @@ function setConfig(configKey, content){
     return db.prepare(`INSERT INTO configurations (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = ?`).run(configKey, content, content);
 }
 
+function removeConfig(configKey){
+    return db.prepare(`delete from configurations where key = ?`).run(configKey);
+}
+
 module.exports = {
     loadSchema,
     reloadDB,
@@ -496,6 +500,7 @@ module.exports = {
     countDifferentCards,
     countTaggedCards,
 
-
     getConfig,
+
+    removeConfig
 };

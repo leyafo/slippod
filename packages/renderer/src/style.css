@@ -900,3 +900,42 @@ content: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcv
 a.hidden {
     display: none;
 }
+
+.notificationBar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #f5f5f5;
+    border-top: 1px solid #d4d4d4;
+    font-size: 16px;
+    z-index: 1000; /* Ensures the notification bar is always on top */
+}
+
+.unlockBtn {
+    padding: 5px 15px;
+    background-color: #007bff;
+    border: none;
+    color: #ffffff;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.unlockBtn:hover {
+    background-color: #0056b3;
+}
+
+.closeBtn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    margin-right: 15px;
+    transition: color 0.3s;
+}

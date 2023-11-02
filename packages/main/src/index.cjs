@@ -13,23 +13,14 @@ ipcHandler.registerWindowHandlers(windowMgr);
 
 let mainWindow = null;
 app.whenReady().then(async() => {
-    // checkLicense().then(function(hasLicense){
-        // if(!hasLicense){
-        //     let regWindow = windowMgr.createRegisterWindow()
-        // }else{
+    mainWindow = windowMgr.createMainWindow();
+    const menu = Menu.buildFromTemplate(menuTemplate(windowMgr));
+    Menu.setApplicationMenu(menu);
+    app.on("activate", () => {
+        if (BrowserWindow.getAllWindows().length === 0) {
             mainWindow = windowMgr.createMainWindow();
-            const menu = Menu.buildFromTemplate(menuTemplate(windowMgr));
-            Menu.setApplicationMenu(menu);
-            app.on("activate", () => {
-                if (BrowserWindow.getAllWindows().length === 0) {
-                    mainWindow = windowMgr.createMainWindow();
-                }
-            });
-        // }
-    // }).catch(function(err){
-    //     let regWindow = windowMgr.createRegisterWindow()
-    // })
-
+        }
+    });
 
     app.on("window-all-closed", () => {
         // Quit when all windows are closed, except on macOS. There, it's common
@@ -49,12 +40,12 @@ ipcMain.handle("duplicateWindow", async (event, ...args) => {
 ipcMain.handle("displayCardCounts", async(event)=>{
     const window = BrowserWindow.getFocusedWindow()
     window.webContents.send("displayCardCounts");
-})
+});
 
 let markdownRender = createMarkdownRender()
 ipcMain.handle("markdownRender", async(event, rawText)=>{
     return markdownRender(rawText)
-})
+});
 
 ipcMain.handle("copyTextToClipboard", async function(event, text){
     return clipboard.writeText(text);
@@ -62,18 +53,34 @@ ipcMain.handle("copyTextToClipboard", async function(event, text){
 
 ipcMain.handle("pasteTextFromClipboard", async function(event){
     return clipboard.readText();
-})
+});
 
 ipcMain.handle("openExternalURL", async function(event, url){
     return shell.openExternal(url);
-})
+});
+
+ipcMain.handle("showRegisterWindow", async function(event){
+    windowMgr.createRegisterWindow() 
+});
 
 Object.keys(license).forEach((funcName) => {
     ipcMain.handle(funcName, async (event, ...args) => {
-        return license[funcName](...args);
+        let result = license[funcName](...args);
+        if(funcName == 'register' || funcName == 'register_trial'){
+            result.then(function(response){
+                if(response.statusCode == 200){
+                    db.setConfig('license', response.body)
+                }
+            })
+        }
+        return result
     });
 });
 
 ipcMain.handle("getLicense", async function(event){
-    return db.getConfig("license");
+    let licenseToken = db.getConfig("license");
+    if(licenseToken == ''){
+        return {}
+    }
+    return JSON.parse(licenseToken)
 })

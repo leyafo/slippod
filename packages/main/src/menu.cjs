@@ -1,7 +1,22 @@
 const {BrowserWindow, app} = require('electron');
+const db = require('./db.cjs');
 
 // Create the Application's main menu
 function menuTemplate(windowMgr) {
+    let licenseMenu = {}
+    if (import.meta.env.DEV){
+        licenseMenu = {
+            label: 'Dev',
+            submenu: [
+                {
+                    label: 'Remove License',
+                    click: ()=>{
+                        db.removeConfig("license");
+                    }
+                }
+            ]
+        }
+    }
     return [
         {
             label: 'Slippod',
@@ -124,7 +139,8 @@ function menuTemplate(windowMgr) {
         {
             label: 'Help',
             submenu: []
-        }
+        },
+        licenseMenu,
     ];
 
 }

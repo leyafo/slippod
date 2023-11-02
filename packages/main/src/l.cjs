@@ -3,7 +3,6 @@ const util = require("util")
 const si = require("systeminformation")
 const crypto = require('crypto');
 
-
 function sha256(input) {
     const hash = crypto.createHash('sha256');
     hash.update(input);
@@ -109,7 +108,7 @@ async function register(key){
     let info = await fingerprint()
     info.p = key
 
-    return await sendEncryptionRequest("post", "/register", {}, info)
+    return sendEncryptionRequest("post", "/register", {}, info)
 }
 
 async function register_trial(){

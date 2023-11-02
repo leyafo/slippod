@@ -8,14 +8,29 @@
 </head>
 <body>
     <div class="container">
-        <h1>License Registration</h1>
-        <form id="licenseForm">
-            <label for="licenseKey">Enter your License Key:</label>
-            <input type="text" id="licenseKey" placeholder="" required>
-            <button type="submit">Submit</button>
-        </form>
-        <p id="message"></p>
+        <!-- Enter License Window -->
+        <div class="register content">
+            <div class="title-bar">
+                <span class="title">Enter License</span>
+            </div>
+            <p>Enter your license key below. You can purchase one from <a
+                    href="https://www.slippod.com/store">https://www.slippod.com/store</a></p>
+            <input id="licenseInput" type="text" placeholder="Enter license key">
+            <button id="commitBtn">Use License</button>
+        </div>
+    
+        <!-- License Info Window -->
+        <div class="info content">
+            <div class="title-bar">
+                <span class="title">License Information</span>
+            </div>
+            <label>Email address:</label>
+            <input id="emailInput" value="xiaoape@gmail.com" readonly>
+            <label>License code:</label>
+            <input id="licenseKeyInput" value="I8RwkeHFHBAN+toitV115zR55UCG1IP+6yjCpLEr+hA" readonly>
+        </div>
     </div>
     <script type="module" src="./src/register.js"></script>
+
 </body>
 </html>

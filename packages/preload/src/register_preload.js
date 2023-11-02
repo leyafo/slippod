@@ -1,5 +1,24 @@
 const { contextBridge, ipcRenderer } = require('electron')
 
-contextBridge.exposeInMainWorld('license', {
-  register: (...args) =>ipcRenderer.invoke("register", ...args),
-})
+function modulePreload(moduleName, functionArray, callback){
+    let moduleFuncs = {}
+    functionArray.forEach((funcName) => {
+        moduleFuncs[funcName] = (...args) => {
+            if(callback != undefined){
+                callback(funcName, args)
+            }
+            return ipcRenderer.invoke(funcName, ...args)
+        };
+    })
+    contextBridge.exposeInMainWorld(moduleName, moduleFuncs);
+}
+const licenseFuncNames = [
+    "register",
+    "register_trial",
+    "checkTrialLicense",
+    "getLicense",
+    "checkLicense",
+    "showRegisterWindow"
+]
+
+modulePreload("license", licenseFuncNames);
