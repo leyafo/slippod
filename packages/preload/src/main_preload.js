@@ -25,9 +25,6 @@ contextBridge.exposeInMainWorld('utils', {
     openExternalURL: function (url) {
         return ipcRenderer.invoke('openExternalURL', url)
     },
-    register_trial: function(){
-        return ipcRenderer.invoke('register_trial')
-    }
 });
 
 
@@ -65,6 +62,7 @@ const licenseFuncNames = [
     "checkTrialLicense",
     "getLicense",
     "checkLicense",
+    "showRegisterWindow"
 ]
 modulePreload("license", licenseFuncNames);
 

@@ -1019,6 +1019,76 @@ let removeSplashScreen = function () {
     splashScreen.remove();
 }
 
+function hideNotificationBar(){
+    let bar = document.querySelector(".notificationBar")
+    bar.style.display = 'none'
+}
+
+function setReadOnlyMode(){
+    let bar = document.querySelector(".notificationBar")
+    bar.style.display = 'flex'
+    let spanText = bar.querySelector(".text")
+    spanText.innerText = 'You are in the read only mode'
+}
+
+function setTrialMode(){
+    let bar = document.querySelector(".notificationBar")
+    bar.style.display = 'flex'
+    let spanText = bar.querySelector(".text")
+    var currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+    let targetDate = new Date(window.licenseToken.End);
+    // Calculate the difference in milliseconds
+    var differenceInMilliseconds = targetDate - currentDate;
+
+    var differenceInDays = Math.ceil(differenceInMilliseconds / (1000 * 60 * 60 * 24));
+    spanText.innerText = `Trial version expires in ${differenceInDays} days`;
+}
+
+function setTrialRegisterMode(){
+    let bar = document.querySelector(".notificationBar")
+    bar.style.display = 'flex'
+    let spanText = bar.querySelector(".text")
+    spanText.textContent = `Free Trial To register`;
+    bar.querySelector(".unlockBtn").textContent = "Try Free"
+}
+
+license.getLicense().then(function(licenseToken){
+    window.licenseToken = licenseToken
+    if (licenseToken == {}){
+        setTrialRegisterMode()
+        return
+    }
+    license.checkLicense(licenseToken).then(function(isValid){
+        window.LicenseIsValid = isValid
+        if (isValid){
+            if(licenseToken.Type == 'trial'){
+                setTrialMode()
+            }else{ //license is OK, hidden the notification bar
+                hideNotificationBar()
+            }
+        }else{
+            setReadOnlyMode()
+        }
+    })
+})
+
+CM.clickHandle(".notificationBar .closeBtn", function(e){
+    hideNotificationBar();
+})
+
+CM.clickHandle(".notificationBar .unlockBtn", function(e){
+    if (window.licenseToken == {}){
+        license.register_trial().then(function(response){
+            if(response.statusCode == 200){
+                pages.reloadAll()
+            }
+        });
+    }else if (window.licenseToken.Type == 'trial'){
+        license.showRegisterWindow()
+    }
+})
+
 window.addEventListener('DOMContentLoaded', function() {
     //load cards
     db.getCards(0, CM.limitItems).then(function(cards) {

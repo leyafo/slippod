@@ -135,12 +135,15 @@ async function sendEncryptionRequest(method, path, header, data){
     }
 
     const response = await httpRequest(method, path, sendHeader, cypherBody)
-    console.log(response)
-    const body = decrypt(response.body, sk.sharedKey)
-    return {
-        headers: response.headers,
-        statusCode: response.statusCode,
-        body: body
+    if(response.statusCode == 200){
+        const body = decrypt(response.body, sk.sharedKey)
+        return {
+            headers: response.headers,
+            statusCode: response.statusCode,
+            body: body
+        }
+    }else{
+        return response
     }
 }
 
