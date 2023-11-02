@@ -1055,7 +1055,7 @@ function setTrialRegisterMode(){
 
 license.getLicense().then(function(licenseToken){
     window.licenseToken = licenseToken
-    if (licenseToken == {}){
+    if (licenseToken.Type == undefined){
         setTrialRegisterMode()
         return
     }
@@ -1078,7 +1078,7 @@ CM.clickHandle(".notificationBar .closeBtn", function(e){
 })
 
 CM.clickHandle(".notificationBar .unlockBtn", function(e){
-    if (window.licenseToken == {}){
+    if (window.licenseToken.Type == undefined){
         license.register_trial().then(function(response){
             if(response.statusCode == 200){
                 pages.reloadAll()
