@@ -29,7 +29,7 @@ window.addEventListener('DOMContentLoaded', function() {
         window.licenseToken = licenseToken
         const registerDiv = document.querySelector(".register")
         const infoDiv = document.querySelector(".info")
-        if (licenseToken == {}){
+        if (licenseToken.Type == undefined){
             infoDiv.classList.add("hidden")
             return
         }
