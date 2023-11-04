@@ -123,11 +123,11 @@ async function sendEncryptionRequest(method, path, header, data){
     const sk = generateSharedKey(serverPubKey)
     const rawBody = JSON.stringify(data)
     const iv = crypto.randomBytes(16)
-    const cypherText = encrypt(rawBody, sk.sharedKey, iv)
+    const hmacDigest = hmac(rawBody, sk.sharedKey)
+    const cypherText = encrypt(rawBody+hmacDigest, sk.sharedKey, iv)
     const cypherBody = cypherText.iv+':'+cypherText.encryptedData
     const sendHeader = {
-        "timestamp":`${timestamp}`,
-        "hmac": hmac(rawBody, sk.sharedKey),
+        "timestamp":`${timestamp}`,        
         "pubkey": sk.pubKey,
     }
     for(let k of Object.keys(header)){

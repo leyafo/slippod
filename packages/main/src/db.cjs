@@ -1,4 +1,3 @@
-const { table } = require("console");
 const sqlite3 = require("better-sqlite3");
 
 // const tagPattern = /(?<=^|\s|#)#([a-zA-Z0-9\u4e00-\u9fff/\\_-]+)(?![a-zA-Z0-9\u4e00-\u9fff/\\_-]*;)/g;
