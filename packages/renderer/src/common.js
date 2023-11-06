@@ -2,6 +2,7 @@
 export const sideNav = document.getElementById('sideNav')
 export const btnSideNav = document.getElementById('btnSideNav')
 export const overlay= document.getElementById('overlay')
+export const main = document.getElementById('main')
 export const listArea = document.getElementById('listArea')
 export const listHeader = document.getElementById('listHeader')
 export const listTitle= document.getElementById('listTitle')
@@ -55,6 +56,23 @@ export function toggleElementShown(element) {
 
 export function toggleElementHidden(element){
     element.classList.add('hidden')
+}
+
+export function htmlToElement(html) {
+    var template = document.createElement('template');
+    html = html.trim();
+    
+    if (html === '') {
+        throw new Error('The HTML string is empty.');
+    }
+    
+    template.innerHTML = html;
+
+    if (template.content.childElementCount === 0) {
+        throw new Error('The HTML string does not contain any HTML elements.');
+    }
+
+    return template.content.firstChild;
 }
 
 export function unixTimeFormat(unixTime) {
