@@ -82,9 +82,9 @@ module.exports = {
         }
         const lastCreatedCard = db.getCards(0, 1)
         let lastCreatedTime = Date.now()
-        if(lastCreatedTime.length > 0){
-            lastCreatedTime = new Date(lastCreatedCard.created_at * 1000);
-        }
+        // if(lastCreatedCard.length > 0){
+        //     lastCreatedTime = new Date(lastCreatedCard.created_at * 1000);
+        // }
         functionNames.forEach((funcName) => {
             ipcMain.handle(funcName, async (event, ...args) => {
                 if (needCheckFunctions.has(funcName)){
