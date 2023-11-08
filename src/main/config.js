@@ -2,9 +2,10 @@ const fs = require("fs");
 const path = require('path');
 const os = require("os");
 const {app} = require('electron');
+const env = require('./env.js')
 
 function getUserDataPath() {
-    if (import.meta.env.DEV){
+    if (env.isDev()){
         return app.getAppPath();
     } 
     switch (process.platform) {
@@ -26,7 +27,7 @@ function getUserDataPath() {
 
 function getExtensionPath(appDir){
     //get the same resource dir if is in production
-    if (!import.meta.env.DEV) {
+    if (!env.isDev()) {
         appDir = path.dirname(appDir);
     }
     if(os.platform == "win32"){
@@ -37,7 +38,7 @@ function getExtensionPath(appDir){
 }
 
 function getDictPath(appDir){
-    if (!import.meta.env.DEV) {
+    if (!env.isDev()) {
         appDir = path.dirname(appDir);
     }
     return path.join(appDir, "libsimple", "dict")

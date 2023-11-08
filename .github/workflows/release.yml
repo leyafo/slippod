@@ -12,11 +12,9 @@ concurrency:
   group: release-${{ github.ref }}
   cancel-in-progress: true
 
-
 defaults:
   run:
     shell: 'bash'
-
 
 jobs:
   draft_release:
@@ -42,7 +40,7 @@ jobs:
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
 
-      - run: npm run build
+      - run: make release
 
       - name: Compile artifacts ${{ inputs.dry-run && '' || 'and upload them to github release' }}
         # I use this action because it is capable of retrying multiple times if there are any issues with the distribution server
@@ -53,7 +51,7 @@ jobs:
           retry_wait_seconds: 15
           retry_on: error
           shell: 'bash'
-          command: npx --no-install electron-builder --config .electron-builder.config.js --publish ${{ inputs.dry-run && 'never' || 'always' }}
+          command: npx --no-install electron-builder --config electron-builder.config.js --publish ${{ inputs.dry-run && 'never' || 'always' }}
         env:
           # Code Signing params
           # See https://www.electron.build/code-signing

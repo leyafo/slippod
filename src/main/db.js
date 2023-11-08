@@ -1,4 +1,5 @@
 const sqlite3 = require("better-sqlite3");
+const env = require('./env.js')
 
 // const tagPattern = /(?<=^|\s|#)#([a-zA-Z0-9\u4e00-\u9fff/\\_-]+)(?![a-zA-Z0-9\u4e00-\u9fff/\\_-]*;)/g;
 const tagPattern = /(?<=^|\s|#)#[a-zA-Z0-9\u4e00-\u9fff/\\_-]+(?![a-zA-Z0-9\u4e00-\u9fff/\\_-]*;)/g
@@ -28,7 +29,7 @@ function getLinkAtRegex(){
 
 function openDB(extPath, dictPath, dbPath){
     let newDB = null;
-    if(import.meta.env.DEV){
+    if(env.isDev()){
         newDB = sqlite3(dbPath, {verbose: console.log});
     }else{
         newDB = sqlite3(dbPath, {verbose: null});
@@ -142,11 +143,11 @@ function getTrashCards(offset, limit){
 function createNewCard(cardEntry) {
   try {
     const tags = parseTags(cardEntry);
-    return db.transaction((entry, tags) => {
+    return db.transaction(function(entry, tags){
       const changes = db
         .prepare(`insert into cards(entry) values(?)`)
         .run(entry);
-      tags.forEach((tag) => {
+      tags.forEach(function(tag){
         db.prepare(`insert into tags(card_id, tag) values(?, ?)`).run(
           changes.lastInsertRowid,
           tag
@@ -278,7 +279,7 @@ function getCardDetails(id){
     result.references = []
     let linkIDs = [];
     const links = parseLinks(result.card.entry);
-    links.forEach((linkID) => {
+    links.forEach(function(linkID){
         if (linkID !== id){ //exclude self
             linkIDs.push(linkID)
         }
@@ -318,7 +319,7 @@ function restoreCard(trashID){
         db.prepare("insert into cards(id, entry, created_at, updated_at) values(?, ?, ?, ?)")
             .run(removedCard.card_id, removedCard.card_entry, removedCard.card_created_at, removedCard.card_updated_at)
 
-        tags.forEach((tag) => {
+        tags.forEach(function(tag){
             db.prepare(`insert into tags(card_id, tag) values(?, ?)`).run(
                 removedCard.card_id,
                 tag)

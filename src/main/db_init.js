@@ -1,4 +1,4 @@
-const db = require('./db')
+const db = require('./db.js')
 function insertSampleData(){ const slippodTag = `[#slippod]()`
     const sqliteTag = `[#sqlite]()`
     const firstCardID = db.createNewCard(`这是一张简单的卡片。  slippodTag`);

@@ -1,4 +1,4 @@
-const {sendEncryptionRequest} = require('./http.cjs')
+const {sendEncryptionRequest} = require('./http.js')
 const util = require("util")
 const si = require("systeminformation")
 const crypto = require('crypto');

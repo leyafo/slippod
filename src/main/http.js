@@ -1,6 +1,7 @@
 const https = require('https');
 const http = require('http');
 const crypto = require('crypto')
+const env = require('./env.js')
 
 const serverHost = `dooku.littletunnel.com`
 const serverPubKey = `sv3uorYgIHIQSQwoKx0SdoclI2mNHN0+eOav4SCVnT8=`;
@@ -8,7 +9,7 @@ const serverPubKey = `sv3uorYgIHIQSQwoKx0SdoclI2mNHN0+eOav4SCVnT8=`;
 async function httpRequest(method, path, headers, body = null) {
     let options = { }
     let protocol = https
-    if (import.meta.env.DEV){
+    if (env.isDev()){
         protocol = http
         options = {
             hostname: "127.0.0.1",
@@ -30,7 +31,7 @@ async function httpRequest(method, path, headers, body = null) {
             },
         }
     }
-    return new Promise((resolve, reject) => { 
+    return new Promise(function(resolve, reject) { 
         for(let k of Object.keys(headers)){
             options.headers[k] = headers[k]
         }
@@ -39,14 +40,14 @@ async function httpRequest(method, path, headers, body = null) {
             options.headers['Content-Length'] = Buffer.from(body).length;
         }
 
-        const req = protocol.request(options, (res) => {
+        const req = protocol.request(options, function(res)  {
             let responseData = '';
 
-            res.on('data', (chunk) => {
+            res.on('data', function(chunk)  {
                 responseData += chunk;
             });
 
-            res.on('end', () => {
+            res.on('end', function()  {
                 resolve({
                     statusCode: res.statusCode,
                     headers: res.headers,
@@ -55,7 +56,7 @@ async function httpRequest(method, path, headers, body = null) {
             });
         });
 
-        req.on('error', (error) => {
+        req.on('error', function(error)  {
             reject(error);
         });
 
