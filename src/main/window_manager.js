@@ -1,7 +1,7 @@
 const {app, BrowserWindow} = require('electron');
 const path = require('path');
-const db = require('./db');
-const { platform } = require('os');
+const db = require('./db.js');
+const env = require('./env.js')
 
 class WindowManager{
     constructor(){
@@ -21,31 +21,20 @@ class WindowManager{
     }
 
     #loadEntryPoint(window, entryPointHTML){
-        if (import.meta.env.DEV && import.meta.env.VITE_DEV_SERVER_URL !== undefined) {
-            /**
-             * Load from the Vite dev server for development.
-             * 这里要小心，如果自己组装url时，tailwindow会无法正确加载，但html又可以。
-             */
-            const urlPath = new URL(
-                entryPointHTML,
-                import.meta.env.VITE_DEV_SERVER_URL).toString();
+        const urlPath = env.getResourceURL(entryPointHTML)
+        console.log(urlPath);
+        if (env.isDev()) {
             window.loadURL(urlPath);
-          } else {
-            /**
-             * Load from the local file system for production and test.
-             *
-             * Use BrowserWindow.loadFile() instead of BrowserWindow.loadURL() for WhatWG URL API limitations
-             * when path contains special characters like `#`.
-             * Let electron handle the path quirks.
-             * @see https://github.com/nodejs/node/issues/12682
-             * @see https://github.com/electron/electron/issues/6869
-             */
-            window.loadFile(path.resolve(__dirname, '../../renderer/dist/', entryPointHTML));
-          }
+        } else {
+            window.loadFile(urlPath);
+        }
+    }
+    #getPreloadPath(fileName){
+        return path.join(__dirname, `../preload/${fileName}`)
     }
 
     getIconPath(){
-        if (import.meta.env.DEV) {
+        if (env.isDev()){
             //use default icon for difference environment
             return ""
         }
@@ -81,8 +70,9 @@ class WindowManager{
             titleBarStyle: "hidden",
             icon: this.getIconPath(),
             webPreferences: {
-                preload: path.join(app.getAppPath(), 'packages/preload/dist/main_preload.cjs'),
-                scrollBounce: true
+                preload: this.#getPreloadPath("main.js"),
+                scrollBounce: true,
+                nodeIntegration: true,
             },
         };
     
@@ -93,20 +83,23 @@ class WindowManager{
             windowConfig.y = y + 50;
         }
 
-        this.mainWindow = new BrowserWindow(windowConfig);
-        this.#loadEntryPoint(this.mainWindow, 'index.html');
+        let mainWindow = new BrowserWindow(windowConfig);
+        this.#loadEntryPoint(mainWindow, 'index.html');
     
-        if (import.meta.env.DEV) {
+        if (env.isDev()) {
             const contextMenu = require("electron-context-menu");
             contextMenu({
-                prepend: (defaultActions, params, browserWindow) => [
-                    { type: "separator" },
-                ],
+                prepend: function(defaultActions, params, browserWindow) {
+                    return [
+                        { type: "separator" },
+                    ]
+                } 
             });
         }        
-        this.mainWindow.once("ready-to-show", () => {
-            this.mainWindow.show();
+        mainWindow.once("ready-to-show", function() {
+            mainWindow.show();
         });
+        this.mainWindow = mainWindow
     
         return this.mainWindow;
     }    
@@ -123,8 +116,9 @@ class WindowManager{
             minHeight: 400,
             icon: this.getIconPath(),
             webPreferences: {
-                preload: path.join(app.getAppPath(), 'packages/preload/dist/settings_preload.cjs'),
-                scrollBounce: true
+                preload: this.#getPreloadPath("setting.js"),
+                scrollBounce: true,
+                nodeIntegration: true,
             },
             parent: this.mainWindow,
             modal: true,
@@ -132,7 +126,7 @@ class WindowManager{
         });
         this.#loadEntryPoint(this.settingsWindow, 'setting.html');
 
-        this.settingsWindow.on("closed", () => {
+        this.settingsWindow.on("closed", function()  {
             this.settingsWindow = null;
         });
         this.settingsWindow.setMenuBarVisibility(false);
@@ -161,8 +155,9 @@ class WindowManager{
                 icon: this.getIconPath(),
                 titleBarStyle: "hidden",
                 webPreferences: {
-                    preload: path.join(app.getAppPath(), 'packages/preload/dist/main_preload.cjs'),
-                    scrollBounce: true
+                    preload: this.#getPreloadPath("main.js"),
+                    scrollBounce: true,
+                    nodeIntegration: true,
                 },
             });
         }
@@ -174,15 +169,15 @@ class WindowManager{
     
         this.#loadEntryPoint(detailWindow, `detail.html`);
     
-        detailWindow.once("ready-to-show", () => {
+        detailWindow.once("ready-to-show", function()  {
             detailWindow.show();
         });
-        detailWindow.webContents.on('did-finish-load', () => {
+        detailWindow.webContents.on('did-finish-load', function()  {
             const cardDetails = db.getCardDetails(cardID)
             detailWindow.webContents.send('displayCardDetail', cardDetails);
         });
     
-        detailWindow.on("closed", () => {
+        detailWindow.on("closed", function()  {
             detailWindow = null;
         });
     
@@ -193,31 +188,6 @@ class WindowManager{
         if (mainWindow === null) {
             throw new Error("Main window must be initialized before settings window");
         }
-        /*
-
-        this.settingsWindow = new BrowserWindow({
-            width: 400,
-            height: 400,
-            minWidth: 400,
-            minHeight: 400,
-            icon: this.getIconPath(),
-            webPreferences: {
-                preload: path.join(app.getAppPath(), 'packages/preload/dist/settings_preload.cjs'),
-                scrollBounce: true
-            },
-            parent: this.mainWindow,
-            modal: true,
-            show: true,
-        });
-        this.#loadEntryPoint(this.settingsWindow, 'setting.html');
-
-        this.settingsWindow.on("closed", () => {
-            this.settingsWindow = null;
-        });
-        this.settingsWindow.setMenuBarVisibility(false);
-
-        return this.settingsWindow;
-        */
 
         let registerWindow = new BrowserWindow({
             width: 400,
@@ -229,7 +199,8 @@ class WindowManager{
             modal: true,
             show: true,
             webPreferences: {
-                preload: path.join(app.getAppPath(), 'packages/preload/dist/register_preload.cjs'),
+                preload: this.#getPreloadPath("register.js"),
+                nodeIntegration: true,
                 scrollBounce: true
             },
         });
@@ -241,11 +212,11 @@ class WindowManager{
     
         this.#loadEntryPoint(registerWindow, `register.html`);
 
-        registerWindow.once("ready-to-show", () => {
+        registerWindow.once("ready-to-show", function()  {
             registerWindow.show();
         });
     
-        registerWindow.on("closed", () => {
+        registerWindow.on("closed", function()  {
             registerWindow = null;
         });
     

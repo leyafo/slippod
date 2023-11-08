@@ -1,18 +1,24 @@
 // preload.js
-import {contextBridge, ipcRenderer } from 'electron';
+const {contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('env', {
     platform: process.platform,
     "isDev": function(){
-        return import.meta.env.DEV
+        return process.env.NODE_ENV == 'dev'
     },
-    "app":function(){
-        return import.meta.env
+    "nodeEnv": function(){
+        if(process.env.NODE_ENV == undefined){
+            return 'production'
+        }
+        return process.env.NODE_ENV
     }
+
 })
 contextBridge.exposeInMainWorld('utils', {
-    uploadCardEditing: (id, entry) => ipcRenderer.invoke("uploadCardEditing", id, entry),
-    markdownRender: (rawText) => ipcRenderer.invoke("markdownRender", rawText),
+    uploadCardEditing: function(id, entry)  {
+        return ipcRenderer.invoke("uploadCardEditing", id, entry);
+    },
+    markdownRender: function(rawText) {return ipcRenderer.invoke("markdownRender", rawText);},
     copyTextToClipboard:function(text){
         return ipcRenderer.invoke("copyTextToClipboard", text);
     },
@@ -29,7 +35,9 @@ contextBridge.exposeInMainWorld('utils', {
 
 
 contextBridge.exposeInMainWorld('pages', {
-    reloadAll: (...args) => ipcRenderer.invoke("reloadAll", ...args),
+    reloadAll: function(...args) {
+        return ipcRenderer.invoke("reloadAll", ...args);
+    },
     showCardDetail: function(cardID) {
         return ipcRenderer.invoke("showCardDetail", cardID)
     },
@@ -40,14 +48,18 @@ contextBridge.exposeInMainWorld('pages', {
 
 //black magic
 contextBridge.exposeInMainWorld('backendBridge', {
-    displayCardCounts: (callback) => ipcRenderer.on("displayCardCounts", (callback)),
-    displayCardDetail: (callback) => ipcRenderer.on("displayCardDetail", (callback))
+    displayCardCounts: function(callback) {
+        return ipcRenderer.on("displayCardCounts", (callback));
+    },
+    displayCardDetail: function(callback) {
+        return ipcRenderer.on("displayCardDetail", (callback));
+    } 
 });
 
 function modulePreload(moduleName, functionArray, callback){
     let moduleFuncs = {}
-    functionArray.forEach((funcName) => {
-        moduleFuncs[funcName] = (...args) => {
+    functionArray.forEach(function(funcName)  {
+        moduleFuncs[funcName] = function(...args)  {
             if(callback != undefined){
                 callback(funcName, args)
             }
@@ -106,8 +118,8 @@ modulePreload("license", licenseFuncNames);
     ]);
 
     let backendFunctions = {};
-    paginatedDFFunc.forEach((funcName) => {
-        backendFunctions[funcName] = (...args) => {
+    paginatedDFFunc.forEach(function(funcName)  {
+        backendFunctions[funcName] = function(...args)  {
             localStorage.setItem('list_call', JSON.stringify({
                 'funcName': funcName,
                 'args': args,
@@ -116,8 +128,8 @@ modulePreload("license", licenseFuncNames);
             return ipcRenderer.invoke(funcName, ...args)
         };
     })
-    fullsetDBFunc.forEach((funcName) => {
-        backendFunctions[funcName] = (...args) => {
+    fullsetDBFunc.forEach(function(funcName)  {
+        backendFunctions[funcName] = function(...args) {
             let ipcResult = ipcRenderer.invoke(funcName, ...args);
             if (needRecount.has(funcName)){
                 setTimeout(function(){

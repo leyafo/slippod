@@ -2,8 +2,8 @@ const { contextBridge, ipcRenderer } = require('electron')
 
 function modulePreload(moduleName, functionArray, callback){
     let moduleFuncs = {}
-    functionArray.forEach((funcName) => {
-        moduleFuncs[funcName] = (...args) => {
+    functionArray.forEach(function(funcName)  {
+        moduleFuncs[funcName] = function(...args)  {
             if(callback != undefined){
                 callback(funcName, args)
             }

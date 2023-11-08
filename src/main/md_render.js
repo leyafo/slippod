@@ -1,5 +1,5 @@
 const marked = require("marked")
-const db = require("./db.cjs")
+const db = require("./db.js")
 
 function createMarkdownRender(){
     let linkAtRegex = db.getLinkAtRegex()
