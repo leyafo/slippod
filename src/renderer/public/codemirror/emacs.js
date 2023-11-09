@@ -10,8 +10,8 @@
     mod(CodeMirror);
 })(function(CodeMirror) {
   "use strict";
-  console.log('load emacs keymap')
 
+  console.log('load emacs keymap')
   var cmds = CodeMirror.commands;
   var Pos = CodeMirror.Pos;
   function posEq(a, b) { return a.line == b.line && a.ch == b.ch; }

@@ -1,9 +1,10 @@
 const {BrowserWindow, app} = require('electron');
 const db = require('./db.js');
 const env = require('./env.js')
+const windowMgr = require('./window.js')
 
 // Create the Application's main menu
-function menuTemplate(windowMgr) {
+function menuTemplate() {
     let licenseMenu = {}
     if (env.isDev()){
         licenseMenu = {
@@ -32,7 +33,7 @@ function menuTemplate(windowMgr) {
                 {
                     label: 'Settings',
                     click: function()  {
-                        windowMgr.getSettingsWindow().show();
+                        windowMgr.createSettingsWindow().show()
                     },
                 },
                 {
