@@ -16,8 +16,7 @@ bundle_main:
 
 main: bundle_main
 	npx bytenode -e -c $(MAIN_DIST)/main.js
-	node scripts/loader.js main.jsc $(MAIN_DIST)/index.js
-	@rm $(MAIN_DIST)/main.js
+	node scripts/loader.js main.jsc $(MAIN_DIST)/main.js
 
 $(PRELOAD_DIST):
 	mkdir -p $@

@@ -5,6 +5,7 @@ dist
 thumbs.db
 slippod.config
 slippod.db
+out
 
 .eslintcache
 .browserslistrc

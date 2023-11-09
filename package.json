@@ -3,7 +3,6 @@
   "description": "just for fun",
   "version": "0.0.6",
   "private": true,
-  "update_schema": "node tasks/update_schema.js",
   "author": {
     "name": "Double L"
   },
@@ -13,8 +12,8 @@
     "dev_electron": "NODE_ENV=dev electron .",
     "build": "vite build",
     "pack": "electron-builder build --config electron-builder.config.js --dir",
-    "esbuild": "esbuild src/main/main.js --platform=node --packages=external --minify --bundle --outfile=src/main/out.js",
-    "install_app_deps": "./node_modules/.bin/electron-builder install-app-deps"
+    "install_app_deps": "./node_modules/.bin/electron-builder install-app-deps",
+    "update_schema": "node tasks/update_schema.js"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.16",

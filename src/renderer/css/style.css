@@ -1,8 +1,6 @@
 @charset "UTF-8";
 @import "/codemirror/github-markdown-light.css";
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "./base.css";
 
 #splashScreen {
     position: fixed;

@@ -79,13 +79,11 @@ module.exports = {
         try{
             license = JSON.parse(db.getConfig("license"))
         }catch(error){
+            license = {}
             console.error(error)
         }
         const lastCreatedCard = db.getCards(0, 1)
         let lastCreatedTime = Date.now()
-        // if(lastCreatedCard.length > 0){
-        //     lastCreatedTime = new Date(lastCreatedCard.created_at * 1000);
-        // }
         functionNames.forEach(function(funcName)  {
             ipcMain.handle(funcName, async function(event, ...args)  {
                 if (needCheckFunctions.has(funcName)){
