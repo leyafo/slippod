@@ -1,24 +1,25 @@
 // main.js
-const {shell, clipboard, ipcMain, app, Menu, BrowserWindow } = require("electron");
-const WindowManager = require("./window_manager.js");
-const ipcHandler = require("./ipc_handlers.js");
+const {app, Menu, BrowserWindow } = require("electron");
+const ipcHandler = require("./ipc.js");
 const {menuTemplate} = require("./menu.js");
-const license = require("./l.js");
-const db = require("./db.js");
-const createMarkdownRender = require("./md_render.js").createMarkdownRender  
+const windowMgr = require('./window.js')
 
-const windowMgr = new WindowManager();
+/***********diable gpu *****/
+app.commandLine.appendSwitch('ignore-gpu-blacklist');
+app.commandLine.appendSwitch('disable-gpu');
+app.commandLine.appendSwitch('disable-gpu-compositing');
+app.disableHardwareAcceleration()
+/***************************/
+
 ipcHandler.registerDBFunctions();
-ipcHandler.registerWindowHandlers(windowMgr);
-
-let mainWindow = null;
+Menu.setApplicationMenu(null)
 app.whenReady().then(async function()  {
-    mainWindow = windowMgr.createMainWindow();
-    const menu = Menu.buildFromTemplate(menuTemplate(windowMgr));
+    windowMgr.createMainWindow();
+    const menu = Menu.buildFromTemplate(menuTemplate());
     Menu.setApplicationMenu(menu);
     app.on("activate", function()  {
         if (BrowserWindow.getAllWindows().length === 0) {
-            mainWindow = windowMgr.createMainWindow();
+            windowMgr.createMainWindow();
         }
     });
 
@@ -30,57 +31,3 @@ app.whenReady().then(async function()  {
     });
 });
 
-
-ipcMain.handle("duplicateWindow", async function(event, ...args)  {
-    const windowMgr = new WindowManager();
-    let newMainWindow = windowMgr.createMainWindow();
-    newMainWindow.show();
-});
-
-ipcMain.handle("displayCardCounts", async function(event){
-    const window = BrowserWindow.getFocusedWindow()
-    window.webContents.send("displayCardCounts");
-});
-
-let markdownRender = createMarkdownRender()
-ipcMain.handle("markdownRender", async function(event, rawText){
-    return markdownRender(rawText)
-});
-
-ipcMain.handle("copyTextToClipboard", async function(event, text){
-    return clipboard.writeText(text);
-});
-
-ipcMain.handle("pasteTextFromClipboard", async function(event){
-    return clipboard.readText();
-});
-
-ipcMain.handle("openExternalURL", async function(event, url){
-    return shell.openExternal(url);
-});
-
-ipcMain.handle("showRegisterWindow", async function(event){
-    windowMgr.createRegisterWindow() 
-});
-
-Object.keys(license).forEach(function(funcName)  {
-    ipcMain.handle(funcName, async function(event, ...args)  {
-        let result = license[funcName](...args);
-        if(funcName == 'register' || funcName == 'register_trial'){
-            result.then(function(response){
-                if(response.statusCode == 200){
-                    db.setConfig('license', response.body)
-                }
-            })
-        }
-        return result
-    });
-});
-
-ipcMain.handle("getLicense", async function(event){
-    let licenseToken = db.getConfig("license");
-    if(licenseToken == ''){
-        return {}
-    }
-    return JSON.parse(licenseToken)
-})

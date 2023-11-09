@@ -9,7 +9,7 @@
   "main": "src/main/main.js",
   "scripts": {
     "dev_vite": "vite",
-    "dev_electron": "NODE_ENV=dev electron .",
+    "dev_electron": "NODE_ENV=dev electron . --enable-logging",
     "build": "vite build",
     "pack": "electron-builder build --config electron-builder.config.js --dir",
     "install_app_deps": "./node_modules/.bin/electron-builder install-app-deps",

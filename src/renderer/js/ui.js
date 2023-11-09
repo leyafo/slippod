@@ -1054,8 +1054,6 @@ async function checkLicense() {
         const isValid = await license.checkLicense(licenseToken);
         window.LicenseIsValid = isValid;
 
-        console.log(isValid);
-        
         if (isValid) {
             if (licenseToken.Type === 'trial') {
                 setTrialBar();
@@ -1070,16 +1068,8 @@ async function checkLicense() {
     }
 }
 
-async function initTrialMode() {
-    if (window.licenseToken.Type !== undefined) {
-        return;
-    }
-
-    const isTrialSet = await license.register_trial();
-    if (isTrialSet.statusCode === 200) {
-        console.log('Trial set successfully.');
-        window.licenseToken = await license.getLicense();
-        
+function initTrialMode() {
+    if(window.licenseToken.Type == undefined || window.licenseToken.Type == 'trial'){
         setTrialBar();
     }
 }
