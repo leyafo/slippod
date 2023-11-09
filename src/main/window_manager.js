@@ -57,7 +57,6 @@ class WindowManager{
                 break
             }
         }
-        console.log(iconPath)
         return iconPath
     }
 
