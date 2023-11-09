@@ -72,9 +72,10 @@ function cancelUpdate(li) {
 }
 
 function editCard(li) {
-    if(li == undefined){
+    if(li == undefined || CM.listArea.dataset.readonly === 'true') {
         return
     }
+
     let getEditingCardPromise = db.getCardByID(li.dataset.id);
 
     getEditingCardPromise.then(function(card) {
@@ -132,6 +133,10 @@ function editCard(li) {
 }
 
 function deleteCard(li) {
+    if (CM.listArea.dataset.readonly === 'true') {
+        return;
+    }
+
     const cardID = li.dataset.id
     if(li.dataset.is_trash) {
         db.removeCardPermanently(li.dataset.trash_id).then(function(){
@@ -147,6 +152,10 @@ function deleteCard(li) {
 }
 
 function restoreCard(li) {
+    if (CM.listArea.dataset.readonly === 'true') {
+        return;
+    }
+
     if(li.dataset.is_trash){
         db.restoreCard(li.dataset.trash_id).then(function() {
             CM.cardsList.removeChild(li);
@@ -355,7 +364,7 @@ function activateNewItemEditor(content) {
 }
 
 CM.eventHandle('#newItemEditor', 'click', function(e) {
-    if (!CM.newItemEditor.classList.contains('inactive')) {
+    if (!CM.newItemEditor.classList.contains('inactive') || CM.listArea.dataset.readonly === 'true') {
         return;
     }
     db.getDraft().then(function(draftContent){
@@ -1104,7 +1113,7 @@ function setTrialBar() {
     });
     
     trialBarUnlockBtn.addEventListener('click', function() {
-        console.log("Unlock button clicked");
+        license.showRegisterWindow();
     });
 }
 
@@ -1124,12 +1133,15 @@ window.addEventListener('DOMContentLoaded', function() {
     //load cards
     db.getCards(0, CM.limitItems).then(function(cards) {
         reloadCardList(cards, "All Cards", CM.listInsertAfterLast)
-        db.getDraft().then(function(draftContent){
-            if (draftContent != '') {
-                activateNewItemEditor(draftContent);
-            }
-        })
         highlightSidebarLink(hrefTagAll)
+
+        if (CM.listArea.dataset.readonly !== 'true') {
+            db.getDraft().then(function(draftContent){
+                if (draftContent != '') {
+                    activateNewItemEditor(draftContent);
+                }
+            })
+        }
     });
     checkLicense();
 
