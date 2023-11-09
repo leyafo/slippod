@@ -1,0 +1,89 @@
+@charset "UTF-8";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+    font-size: 15px;
+    background-color: #F5F6F8;
+}
+
+.container {
+    @apply p-4;
+}
+
+.form {
+    @apply p-4;
+    border-radius: 0.26666667rem;
+    background: #FFFFFF;
+    box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+}
+
+.form .formBody:not(:last-of-type) {
+    @apply mb-4;
+}
+
+.form .formField:not(:last-of-type) {
+    @apply mb-4;
+}
+
+.form .formField .fieldHeader {
+    @apply mb-2;
+}
+
+.form .formField .fieldHeader label {
+    @apply text-sm;
+    font-weight: 700;
+    color: #373A3E;
+}
+
+.form .formField .fieldDesc {
+    @apply text-sm;
+    color: #878782;
+}
+
+.form .formField .fieldDesc a {
+    color: #2569D3;
+}
+
+.form .formField .fieldDesc a:hover {
+    border-bottom: 1px solid #2569D3;
+}
+
+.form .formField .fieldInput * {
+    @apply w-full;
+}
+
+.form .formField .fieldInput input {
+    @apply py-2 pl-2;
+    border-radius: 0.26666667rem;
+    border: 1px solid #E9E9E7;
+    background: #FFFFFF;
+}
+
+.form .formField .fieldInput input:focus {
+    outline: 2px solid #67A5F3;
+}
+
+.form .formField .fieldInput input:read-only {
+    background-color: #DDE0E6;
+    outline: none;
+    border: none;
+}
+
+.form .formCtrlBar * {
+    @apply w-full;
+}
+
+.form .formCtrlBar button {
+    @apply text-sm py-2;
+    line-height: 1;
+    border-radius: 0.26666667rem;
+    font-weight: 700;
+    box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+}
+
+.form .formCtrlBar button:disabled {
+    background-color: #DDE0E6;
+    color: #FFFFFF;
+}

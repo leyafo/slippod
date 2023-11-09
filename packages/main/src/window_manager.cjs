@@ -193,37 +193,12 @@ class WindowManager{
         if (mainWindow === null) {
             throw new Error("Main window must be initialized before settings window");
         }
-        /*
-
-        this.settingsWindow = new BrowserWindow({
-            width: 400,
-            height: 400,
-            minWidth: 400,
-            minHeight: 400,
-            icon: this.getIconPath(),
-            webPreferences: {
-                preload: path.join(app.getAppPath(), 'packages/preload/dist/settings_preload.cjs'),
-                scrollBounce: true
-            },
-            parent: this.mainWindow,
-            modal: true,
-            show: true,
-        });
-        this.#loadEntryPoint(this.settingsWindow, 'setting.html');
-
-        this.settingsWindow.on("closed", () => {
-            this.settingsWindow = null;
-        });
-        this.settingsWindow.setMenuBarVisibility(false);
-
-        return this.settingsWindow;
-        */
 
         let registerWindow = new BrowserWindow({
-            width: 400,
-            height: 400,
-            minWidth: 400,
-            minHeight: 400,
+            width: 450,
+            height: 300,
+            minWidth: 450,
+            minHeight: 300,
             icon: this.getIconPath(),
             parent: mainWindow,
             modal: true,
@@ -239,7 +214,7 @@ class WindowManager{
         }
         registerWindow.setMenuBarVisibility(false);
     
-        this.#loadEntryPoint(registerWindow, `register.html`);
+        this.#loadEntryPoint(registerWindow, `license.html`);
 
         registerWindow.once("ready-to-show", () => {
             registerWindow.show();
