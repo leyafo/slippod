@@ -43,9 +43,11 @@ document.addEventListener("keydown", function (event) {
     }else if (event.key === "r" && ctrlCmdKey(event)){
         pages.reloadAll();
     }else if (event.key === "o" && ctrlCmdKey(event)){
-        db.getDraft().then(function(draftContent){
-            UI.activateNewItemEditor(draftContent).focus();
-        })
+        if (CM.listArea.dataset.readonly !== "true") {
+            db.getDraft().then(function(draftContent){
+                UI.activateNewItemEditor(draftContent).focus();
+            })
+        }
     }else if (event.key === "Escape"){
         // 这里加esc好像不太合适
         CM.unHighlightItem("selected", CM.cardsList);
@@ -93,15 +95,17 @@ CM.searchBox.addEventListener("keydown", function (event) {
             UI.handleOptionSelect(highlightedSuggestion.dataset.id);
             UI.clearSearch(event);
             globalState.setViewing();
-        }else{
-            const input = CM.searchBox.value
-            db.createNewCard(input).then((newCardID) => {
-                db.getCardByID(newCardID).then((card) => {
-                    const li = UI.insertCardToList(card, CM.listInsertBeforeFirst);
-                    UI.editCard(li);
+        }else {
+            if (CM.listArea.dataset.readonly !== "true") { 
+                const input = CM.searchBox.value
+                db.createNewCard(input).then((newCardID) => {
+                    db.getCardByID(newCardID).then((card) => {
+                        const li = UI.insertCardToList(card, CM.listInsertBeforeFirst);
+                        UI.editCard(li);
+                    });
                 });
-            });
-            globalState.setEditing();
+                globalState.setEditing();
+            }
         }
         event.stopPropagation();
     } else if (event.key == "Escape") {

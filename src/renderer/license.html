@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your License</title>
+    <link rel="stylesheet" href="./src/license.css">
+</head>
+<body>
+    <div class="container">
+        <div id="registerForm" class="form">
+            <div class="formBody">
+                <div class="formField">
+                    <div class="fieldHeader">
+                        <p class="fieldDesc">Enter your license key below. You can purchase one from <a href="https://www.slippod.com/pricing">https://www.slippod.com/pricing</a></p>
+                    </div>
+                    <div class="fieldInput">
+                        <input id="licenseInput" type="text" placeholder="Enter license key">
+                        <p class="inputError"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="formCtrlBar">
+                <button id="submitLicenseBtn" disabled>Use License</button>
+            </div>
+        </div>
+        <div id="licenseInfo" class="form hidden">
+            <div class="formBody">
+                <div class="formField">
+                    <div class="fieldHeader">
+                        <label for="emailInput">Email Address:</label>
+                    </div>
+                    <div class="fieldInput">
+                        <input id="emailInput" value="" readonly>
+                        <p class="inputError"></p>
+                    </div>
+                </div>
+                <div class="formField">
+                    <div class="fieldHeader">
+                        <label for="licenseKeyInput">License Code:</label>
+                    </div>
+                    <div class="fieldInput">
+                        <input id="licenseKeyInput" value="" readonly>
+                        <p class="inputError"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="./src/license.js"></script>
+</body>
+</html>
