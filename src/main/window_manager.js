@@ -198,7 +198,7 @@ class WindowManager{
             modal: true,
             show: true,
             webPreferences: {
-                preload: this.#getPreloadPath("register.js"),
+                preload: this.#getPreloadPath("license.js"),
                 nodeIntegration: true,
                 scrollBounce: true
             },
