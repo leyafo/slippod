@@ -72,9 +72,10 @@ function cancelUpdate(li) {
 }
 
 function editCard(li) {
-    if(li == undefined){
+    if(li == undefined || CM.listArea.dataset.readonly === 'true') {
         return
     }
+
     let getEditingCardPromise = db.getCardByID(li.dataset.id);
 
     getEditingCardPromise.then(function(card) {
@@ -132,6 +133,10 @@ function editCard(li) {
 }
 
 function deleteCard(li) {
+    if (CM.listArea.dataset.readonly === 'true') {
+        return;
+    }
+
     const cardID = li.dataset.id
     if(li.dataset.is_trash) {
         db.removeCardPermanently(li.dataset.trash_id).then(function(){
@@ -147,6 +152,10 @@ function deleteCard(li) {
 }
 
 function restoreCard(li) {
+    if (CM.listArea.dataset.readonly === 'true') {
+        return;
+    }
+
     if(li.dataset.is_trash){
         db.restoreCard(li.dataset.trash_id).then(function() {
             CM.cardsList.removeChild(li);
@@ -355,7 +364,7 @@ function activateNewItemEditor(content) {
 }
 
 CM.eventHandle('#newItemEditor', 'click', function(e) {
-    if (!CM.newItemEditor.classList.contains('inactive')) {
+    if (!CM.newItemEditor.classList.contains('inactive') || CM.listArea.dataset.readonly === 'true') {
         return;
     }
     db.getDraft().then(function(draftContent){
@@ -1019,87 +1028,122 @@ let removeSplashScreen = function () {
     splashScreen.remove();
 }
 
-function hideNotificationBar(){
-    let bar = document.querySelector(".notificationBar")
-    bar.style.display = 'none'
+function trialBarTemplate(trialBarText) {
+    let template = `<div id="trialBar">
+                        <div id="trialBarContainer">
+                            <span id="trialBarCloseBtn"></span>
+                            <div id="trialBarText">${trialBarText}</div>
+                            <button id="trialBarUnlockBtn">Unlock</button>
+                        </div>
+                    </div>`;
+    
+    return CM.htmlToElement(template);
 }
 
-function setReadOnlyMode(){
-    let bar = document.querySelector(".notificationBar")
-    bar.style.display = 'flex'
-    let spanText = bar.querySelector(".text")
-    spanText.innerText = 'You are in the read only mode'
-}
-
-function setTrialMode(){
-    let bar = document.querySelector(".notificationBar")
-    bar.style.display = 'flex'
-    let spanText = bar.querySelector(".text")
-    var currentDate = new Date();
-    currentDate.setHours(0, 0, 0, 0);
-    let targetDate = new Date(window.licenseToken.End);
-    // Calculate the difference in milliseconds
-    var differenceInMilliseconds = targetDate - currentDate;
-
-    var differenceInDays = Math.ceil(differenceInMilliseconds / (1000 * 60 * 60 * 24));
-    spanText.innerText = `Trial version expires in ${differenceInDays} days`;
-}
-
-function setTrialRegisterMode(){
-    let bar = document.querySelector(".notificationBar")
-    bar.style.display = 'flex'
-    let spanText = bar.querySelector(".text")
-    spanText.textContent = `Free Trial To register`;
-    bar.querySelector(".unlockBtn").textContent = "Try Free"
-}
-
-license.getLicense().then(function(licenseToken){
-    window.licenseToken = licenseToken
-    if (licenseToken.Type == undefined){
-        setTrialRegisterMode()
-        return
-    }
-    license.checkLicense(licenseToken).then(function(isValid){
-        window.LicenseIsValid = isValid
-        if (isValid){
-            if(licenseToken.Type == 'trial'){
-                setTrialMode()
-            }else{ //license is OK, hidden the notification bar
-                hideNotificationBar()
-            }
-        }else{
-            setReadOnlyMode()
+async function checkLicense() {
+    try {
+        const licenseToken = await license.getLicense();
+        window.licenseToken = licenseToken;
+        
+        if (licenseToken.Type === undefined) {
+            console.log('No license found.');
+            initTrialMode();
+            return;
         }
-    })
-})
+        
+        const isValid = await license.checkLicense(licenseToken);
+        window.LicenseIsValid = isValid;
 
-CM.clickHandle(".notificationBar .closeBtn", function(e){
-    hideNotificationBar();
-})
-
-CM.clickHandle(".notificationBar .unlockBtn", function(e){
-    if (window.licenseToken.Type == undefined){
-        license.register_trial().then(function(response){
-            if(response.statusCode == 200){
-                pages.reloadAll()
+        console.log(isValid);
+        
+        if (isValid) {
+            if (licenseToken.Type === 'trial') {
+                setTrialBar();
+            } else {
+                hideTrialBar();
             }
-        });
-    }else if (window.licenseToken.Type == 'trial'){
-        license.showRegisterWindow()
+        } else {
+            setReadOnlyMode();
+        }
+    } catch (error) {
+        console.error('Error during license check:', error);
     }
-})
+}
+
+async function initTrialMode() {
+    if (window.licenseToken.Type !== undefined) {
+        return;
+    }
+
+    const isTrialSet = await license.register_trial();
+    if (isTrialSet.statusCode === 200) {
+        console.log('Trial set successfully.');
+        window.licenseToken = await license.getLicense();
+        
+        setTrialBar();
+    }
+}
+
+function calTrialDaysLeft() {
+    console.log(window.licenseToken);
+
+    if (window.licenseToken.Type == 'trial') {
+        let currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0);
+        let targetDate = new Date(window.licenseToken.End);
+        let differenceInMilliseconds = targetDate - currentDate;
+    
+        return Math.floor(differenceInMilliseconds / (1000 * 60 * 60 * 24));
+    } else {
+        return;
+    }
+}
+
+function setTrialBar() {
+    const trialDaysLeft = calTrialDaysLeft();
+    const trialBar = trialBarTemplate(`Trial version expires in ${trialDaysLeft} days`);
+
+    CM.main.appendChild(trialBar);
+
+    const trialBarCloseBtn = document.getElementById('trialBarCloseBtn');
+    const trialBarUnlockBtn = document.getElementById('trialBarUnlockBtn');
+
+    trialBarCloseBtn.addEventListener('click', function() {
+        hideTrialBar();
+    });
+    
+    trialBarUnlockBtn.addEventListener('click', function() {
+        license.showRegisterWindow();
+    });
+}
+
+function hideTrialBar() {
+    const trialBar = document.getElementById('trialBar');
+
+    if (trialBar) {
+        trialBar.remove();
+    }
+}
+
+function setReadOnlyMode() {
+    CM.listArea.dataset.readOnly = 'true';
+}
 
 window.addEventListener('DOMContentLoaded', function() {
     //load cards
     db.getCards(0, CM.limitItems).then(function(cards) {
         reloadCardList(cards, "All Cards", CM.listInsertAfterLast)
-        db.getDraft().then(function(draftContent){
-            if (draftContent != '') {
-                activateNewItemEditor(draftContent);
-            }
-        })
         highlightSidebarLink(hrefTagAll)
+
+        if (CM.listArea.dataset.readonly !== 'true') {
+            db.getDraft().then(function(draftContent){
+                if (draftContent != '') {
+                    activateNewItemEditor(draftContent);
+                }
+            })
+        }
     });
+    checkLicense();
 
     //load tags
     db.getAllTags().then(refreshTagTree)

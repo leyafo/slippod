@@ -189,10 +189,10 @@ class WindowManager{
         }
 
         let registerWindow = new BrowserWindow({
-            width: 400,
-            height: 400,
-            minWidth: 400,
-            minHeight: 400,
+            width: 450,
+            height: 300,
+            minWidth: 450,
+            minHeight: 300,
             icon: this.getIconPath(),
             parent: mainWindow,
             modal: true,
@@ -209,7 +209,7 @@ class WindowManager{
         }
         registerWindow.setMenuBarVisibility(false);
     
-        this.#loadEntryPoint(registerWindow, `register.html`);
+        this.#loadEntryPoint(registerWindow, `license.html`);
 
         registerWindow.once("ready-to-show", function()  {
             registerWindow.show();
