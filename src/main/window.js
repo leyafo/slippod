@@ -175,16 +175,15 @@ function createRegisterWindow() {
         height: 400,
         icon: getIconPath(),
         parent: mainWindow,
-        modal: true,
         show: false,
         webPreferences: {
-            preload: getPreloadPath("register.js"),
+            preload: getPreloadPath("license.js"),
             scrollBounce: true,
             nodeIntegration: true,
         },
     };
 
-    registerWindow = createWindow(windowConfig, 'register.html');
+    registerWindow = createWindow(windowConfig, 'license.html');
     registerWindow.setMenuBarVisibility(false);
 
     registerWindow.on("closed", () => {
