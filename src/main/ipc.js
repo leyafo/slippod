@@ -132,7 +132,6 @@ async function registerDBFunctions(){
         license = JSON.parse(db.getConfig(licenseKey))
     }catch(error){
         license = {}
-        console.error(error)
     }
     // const lastCreatedCard = db.getCards(0, 1)
     let lastCreatedTime = Date.now()
