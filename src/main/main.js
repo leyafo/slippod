@@ -5,10 +5,10 @@ const {menuTemplate} = require("./menu.js");
 const windowMgr = require('./window.js')
 
 /***********diable gpu *****/
-app.commandLine.appendSwitch('ignore-gpu-blacklist');
-app.commandLine.appendSwitch('disable-gpu');
-app.commandLine.appendSwitch('disable-gpu-compositing');
-app.disableHardwareAcceleration()
+//app.commandLine.appendSwitch('ignore-gpu-blacklist');
+//app.commandLine.appendSwitch('disable-gpu');
+//app.commandLine.appendSwitch('disable-gpu-compositing');
+//app.disableHardwareAcceleration()
 /***************************/
 
 ipcHandler.registerDBFunctions();

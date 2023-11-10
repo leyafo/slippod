@@ -66,7 +66,9 @@ function createMainWindow() {
 
     mainWindow = createWindow(windowConfig, 'index.html');
     setupDevTools(mainWindow);
-    mainWindow.webContents.openDevTools()
+    if(env.isDev()){
+        // mainWindow.webContents.openDevTools()
+    }
 
     mainWindow.on("closed", function() {
         mainWindow = null;
