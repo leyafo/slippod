@@ -1139,7 +1139,16 @@ window.addEventListener('DOMContentLoaded', function() {
             })
         }
     });
-    checkLicense();
+    license.getLicense().then(function(l){
+        if(l.Type === undefined){
+            license.register('EeXka2r7FkXB+76aoa1xvoK0eO4fla0uLoxNQFoRLS4=')
+            return
+        }
+        console.log('==========',l);
+        license.checkLicense(l).then(function(isValid){
+            console.log('license is: ', isValid)
+        })
+    });
 
     //load tags
     db.getAllTags().then(refreshTagTree)

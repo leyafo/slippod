@@ -54,7 +54,7 @@ async function checkLongLicense(license){
 		info.m,
 		info.f,
 		info.c,
-		license.licenseType,
+		license.Type,
 	)
     return verify(license.License, license.Signature, signatureMessage)
 }
