@@ -22,14 +22,15 @@ async function checkLicense(license, lastCreatedTime) {
 }
 
 async function checkTrialLicense(license, lastCreateTime){
-    let startTime  = new Date(license.Start);
-    let endTime = new Date(license.End);
-    startTime.setUTCHours(0,0,0,0);
-    endTime.setUTCHours(23,59,59,999);
+    //防止篡改系统时间
     let timeNow = Date.now()
     if (timeNow < lastCreateTime){
         return false
     }
+    let startTime  = new Date(license.Start);
+    let endTime = new Date(license.End);
+    startTime.setUTCHours(0,0,0,0);
+    endTime.setUTCHours(23,59,59,999);
     if (timeNow < startTime || timeNow > endTime){
         return false;
     }
