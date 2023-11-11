@@ -1045,25 +1045,21 @@ async function checkLicense() {
         const licenseToken = await license.getLicense();
         
         if (licenseToken.Type === undefined) {
-            const licenseToken = await startTrial();
-            window.licenseToken = licenseToken;
-            if (window.licenseToken.Type === 'trial') {
-                setTrialBar();
-            }
+            console.log('No license token found');
+            setReadOnlyMode();
+            showTrialPrompt();
             return;
         }
 
         const isValid = await license.checkLicense(licenseToken);
         if (isValid) {
-            window.licenseToken = licenseToken;
             if (licenseToken.Type === 'trial') {
-                setTrialBar();
-                return;
+                await showTrialBar();
             }
             if (licenseToken.Type === 'long') {
-                hideTrialBar();
-                return;
+                CM.hideTrialBar();
             }
+            return;
         } else {
             setReadOnlyMode();
             return;
@@ -1073,56 +1069,76 @@ async function checkLicense() {
     }
 }
 
-async function startTrial() {
-    await license.register_trial();
-    const trialLicense = await license.getLicense();
+async function showTrialPrompt() {
+    const trialBar = trialBarTemplate(`You are free to use Slippod for 14 days`);
+    const trialBarCloseBtn = trialBar.querySelector('#trialBarCloseBtn');
+    const trialBarUnlockBtn = trialBar.querySelector('#trialBarUnlockBtn');
 
-    return trialLicense;
+    trialBarCloseBtn.addEventListener('click', function() {
+        CM.hideTrialBar();
+    });
+    
+    trialBarUnlockBtn.addEventListener('click', async function() {
+        await license.register_trial();
+        const trialLicense = await license.getLicense();
+
+        console.log(trialLicense);
+        const isValid = await license.checkLicense(trialLicense);
+        if (isValid) {
+            unSetReadOnlyMode();
+            await showTrialBar();
+            return;
+        } else {
+            console.log('Invalid trial license');
+        }
+    });
+
+    CM.main.appendChild(trialBar);
 }
 
-function calTrialDaysLeft() {
-    console.log(window.licenseToken);
+async function calTrialDaysLeft() {
+    const licenseToken = await license.getLicense();
 
-    if (window.licenseToken.Type == 'trial') {
+    if (licenseToken.Type == 'trial') {
         let currentDate = new Date();
         currentDate.setHours(0, 0, 0, 0);
-        let targetDate = new Date(window.licenseToken.End);
+        console.log(currentDate);
+        let targetDate = new Date(licenseToken.End);
+        console.log(targetDate);
         let differenceInMilliseconds = targetDate - currentDate;
+        console.log(differenceInMilliseconds);
     
+        console.log(Math.floor(differenceInMilliseconds / (1000 * 60 * 60 * 24)));
         return Math.floor(differenceInMilliseconds / (1000 * 60 * 60 * 24));
     } else {
         return;
     }
 }
 
-function setTrialBar() {
-    const trialDaysLeft = calTrialDaysLeft();
+async function showTrialBar() {
+    const trialDaysLeft = await calTrialDaysLeft();
+    console.log(trialDaysLeft);
     const trialBar = trialBarTemplate(`Trial version expires in ${trialDaysLeft} days`);
-
-    CM.main.appendChild(trialBar);
-
-    const trialBarCloseBtn = document.getElementById('trialBarCloseBtn');
-    const trialBarUnlockBtn = document.getElementById('trialBarUnlockBtn');
+    const trialBarCloseBtn = trialBar.querySelector('#trialBarCloseBtn');
+    const trialBarUnlockBtn = trialBar.querySelector('#trialBarUnlockBtn');
 
     trialBarCloseBtn.addEventListener('click', function() {
-        hideTrialBar();
+        CM.hideTrialBar();
     });
     
     trialBarUnlockBtn.addEventListener('click', function() {
         license.showRegisterWindow();
     });
-}
 
-function hideTrialBar() {
-    const trialBar = document.getElementById('trialBar');
-
-    if (trialBar) {
-        trialBar.remove();
-    }
+    CM.main.appendChild(trialBar);
 }
 
 function setReadOnlyMode() {
     CM.listArea.dataset.readonly = 'true';
+}
+
+function unSetReadOnlyMode() {
+    CM.listArea.removeAttribute('data-readonly');
 }
 
 window.addEventListener('DOMContentLoaded', function() {
@@ -1139,6 +1155,8 @@ window.addEventListener('DOMContentLoaded', function() {
             })
         }
     });
+
+    checkLicense();
 
     //load tags
     db.getAllTags().then(refreshTagTree)
@@ -1159,5 +1177,4 @@ export {
     deleteCard,
     activateNewItemEditor,
     highlightCardUpOrDownScreen,
-    startTrial,
 }

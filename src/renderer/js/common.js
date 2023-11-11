@@ -75,6 +75,14 @@ export function htmlToElement(html) {
     return template.content.firstChild;
 }
 
+export function hideTrialBar() {
+    const trialBar = document.getElementById('trialBar');
+
+    if (trialBar) {
+        trialBar.remove();
+    }
+}
+
 export function selectSiblingElement(element, className) {
     const parent = element.parentElement;
     const sibling = parent.querySelector(className);
@@ -88,13 +96,6 @@ export function unixTimeFormat(unixTime) {
     let second = d.getSeconds()
     second = second < 10 ? '0'+second : second;
     return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getUTCDate()} ${d.getHours()}:${minute}:${second}`;
-}
-
-export async function startTrial() {
-    await license.register_trial();
-    const trialLicense = await license.getLicense();
-
-    return trialLicense;
 }
 
 export function hideOmniSearchAndUnfocus() {
@@ -155,7 +156,6 @@ export function isInViewport(element) {
         rect.right > 0
     );
 }
-
 
 export function unHighlightItem(highlightedClass, parentElement){
     const items = parentElement.querySelectorAll(`.${highlightedClass}`)
