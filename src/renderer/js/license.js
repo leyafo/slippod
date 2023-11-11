@@ -139,6 +139,7 @@ function showRegisterSuccess() {
     const registerSuccessDiv = registerSuccessTemplate();
     const dialogCloseBtn = registerSuccessDiv.querySelector('#dialogCloseBtn');
 
+    // 这里需要改为刷新所有main窗口的方法
     pages.reloadAll();
 
     dialogCloseBtn.addEventListener('click', () => {
