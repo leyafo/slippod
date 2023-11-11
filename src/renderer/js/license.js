@@ -6,6 +6,7 @@ const licenseInfo = document.getElementById('licenseInfo');
 
 async function initWindow() {
     const licenseToken = await license.getLicense();
+    console.log(licenseToken);
     if (licenseToken == {}) {
         const trialLicenseToken = await CM.startTrial();
         if (trialLicenseToken.Type === 'trial') {
@@ -32,7 +33,6 @@ async function initWindow() {
 };
 
 function initRegisterForm() {
-    console.log('initRegisterForm');
     const licenseInput = document.getElementById('licenseInput');
     const licenseInputError = CM.selectSiblingElement(licenseInput, '.inputError');
     const submitLicenseBtn = document.getElementById('submitLicenseBtn');
@@ -40,24 +40,28 @@ function initRegisterForm() {
     licenseInput.addEventListener('keyup', (event) => {
         if (event.target.value === '') {
             submitLicenseBtn.disabled = true;
+            licenseInputError.textContent = '';
         } else {
             submitLicenseBtn.disabled = false;
+            licenseInputError.textContent = '';
         }
     });
 
     submitLicenseBtn.addEventListener('click', async (event) => {
         let licenseValue = licenseInput.value;
         const res = await license.register(licenseValue);
+        console.log(res);
         if (res.statusCode = 401) {
-            console.log(licenseInputError);
+            licenseInputError.textContent = "Invalid license. Please enter again.";
         }
-        console.log(licenseToken);
+        if (res.statusCode = 200) {
+            
+        }
     });
     return;
 }
 
 function showRegisterForm() {
-    console.log('showRegisterForm');
     CM.toggleElementShown(registerForm);
     CM.toggleElementHidden(licenseInfo);
     return;
