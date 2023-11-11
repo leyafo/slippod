@@ -53,9 +53,9 @@ function getIconPath() {
 function createMainWindow() {
     const windowConfig = {
         width: 800,
-        height: 600,
+        height: 800,
         minWidth: 400,
-        minHeight: 300,
+        minHeight: 400,
         titleBarStyle: "hidden",
         icon: getIconPath(),
         webPreferences: {
@@ -80,9 +80,20 @@ function createMainWindow() {
 }
 
 function duplicateMainWindow(){
+    let activeWindow = BrowserWindow.getFocusedWindow();
+    let x = 0;
+    let y = 0;
+
+    if (activeWindow) {
+        x = activeWindow.getBounds().x;
+        y = activeWindow.getBounds().y;
+    }
+
     const windowConfig = {
+        x: x + 50,
+        y: y + 50,
         width: 800,
-        height: 600,
+        height: 800,
         minWidth: 400,
         minHeight: 300,
         titleBarStyle: "hidden",
@@ -134,11 +145,18 @@ function createSettingsWindow() {
 }
 
 function createDetailWindow(cardID) {
-    if (!mainWindow) {
-        throw new Error("Main window must be initialized before detail window");
+    let activeWindow = BrowserWindow.getFocusedWindow();
+    let x = 0;
+    let y = 0;
+
+    if (activeWindow) {
+        x = activeWindow.getBounds().x;
+        y = activeWindow.getBounds().y;
     }
 
     const windowConfig = {
+        x: x + 50,
+        y: y + 50,
         width: 800,
         height: 600,
         icon: getIconPath(),
