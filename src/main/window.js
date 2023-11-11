@@ -175,8 +175,8 @@ function createRegisterWindow() {
     }
 
     const windowConfig = {
-        width: 450,
-        height: 250,
+        width: 480,
+        height: 300,
         icon: getIconPath(),
         show: false,
         webPreferences: {
@@ -217,6 +217,10 @@ function getMainWindow(){
     return mainWindow
 }
 
+function getRegisterWindow() {
+    return registerWindow
+}
+
 module.exports = {
     createMainWindow,
     createSettingsWindow,
@@ -224,5 +228,6 @@ module.exports = {
     createRegisterWindow,
     duplicateMainWindow,
     getSettingsWindow,
+    getRegisterWindow,
     getMainWindow,
 }
