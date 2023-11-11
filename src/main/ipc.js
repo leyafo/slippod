@@ -2,7 +2,7 @@ const {dialog, shell, clipboard, ipcMain, app, BrowserWindow } = require("electr
 const windowMgr = require('./window')
 const createMarkdownRender = require("./md_render.js").createMarkdownRender  
 const config = require('./config.js');
-const license = require("./l.js");
+const licenseModule = require("./l.js");
 const db = require("./db.js");
 const path = require('path')
 const fs = require('fs')
@@ -41,7 +41,7 @@ ipcMain.handle("showRegisterWindow", async function(event){
     windowMgr.createRegisterWindow() 
 });
 
-Object.keys(license).forEach(function(funcName)  {
+Object.keys(licenseModule).forEach(function(funcName)  {
     ipcMain.handle(funcName, async function(event, ...args)  {
         let result = license[funcName](...args);
         if(funcName == 'register' || funcName == 'register_trial'){
