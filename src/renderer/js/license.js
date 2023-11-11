@@ -1,48 +1,75 @@
 import * as CM from './common.js';
 
-const registerDiv = document.querySelector(".register")
-const infoDiv = document.querySelector(".info")
+const myLicense = document.getElementById('myLicense');
+const registerForm = document.getElementById('registerForm');
+const licenseInfo = document.getElementById('licenseInfo');
 
-const emailInput = document.querySelector("#emailInput")
-const licenseKeyInput = document.querySelector("#licenseKeyInput")
-
-CM.clickHandle("#commitBtn", function(e){
-    const key = document.getElementById('licenseInput').value
-    license.register(key).then(function(response){
-        if(response.statusCode == 200){
-            const licenseToken = JSON.parse(response.body)
-            license.checkLicense(licenseToken).then(function(isValid){
-                if (isValid){
-                    registerDiv.classList.add("hidden")
-                    emailInput.value = licenseToken.Email
-                    licenseKeyInput.value = licenseToken.License
-                }
-            })
-        }else{
-            window.alert("invalid license");
+async function initWindow() {
+    const licenseToken = await license.getLicense();
+    if (licenseToken == {}) {
+        const trialLicenseToken = await CM.startTrial();
+        if (trialLicenseToken.Type === 'trial') {
+            window.licenseToken = trialLicenseToken;
         }
-    })
-})
+    }
 
-window.addEventListener('DOMContentLoaded', function() {
-    license.getLicense().then(function(licenseToken){
-        window.licenseToken = licenseToken
-        const registerDiv = document.querySelector(".register")
-        const infoDiv = document.querySelector(".info")
-        if (licenseToken.Type == undefined){
-            infoDiv.classList.add("hidden")
-            return
+    const isValid = await license.checkLicense(licenseToken);
+    if (isValid) {
+        window.licenseToken = licenseToken;
+        if (licenseToken.Type === 'trial') {
+            initRegisterForm();
+            showRegisterForm();
+            return;
         }
-        license.checkLicense(licenseToken).then(function(isValid){
-            if (isValid){
-                if(licenseToken.Type == 'trial'){
-                    infoDiv.classList.add("hidden")
-                }else{ //license is OK, hidden the notification bar
-                    registerDiv.classList.add("hidden")
-                }
-            }else{
-                registerDiv.classList.add("hidden")
-            }
-        })
-    })
-})
+        if (licenseToken.Type === 'long') {
+            showLicenseInfo();
+            return;
+        }
+    } else {
+        // showErrorMessage();
+        return;
+    }
+};
+
+function initRegisterForm() {
+    console.log('initRegisterForm');
+    const licenseInput = document.getElementById('licenseInput');
+    const licenseInputError = CM.selectSiblingElement(licenseInput, '.inputError');
+    const submitLicenseBtn = document.getElementById('submitLicenseBtn');
+
+    licenseInput.addEventListener('keyup', (event) => {
+        if (event.target.value === '') {
+            submitLicenseBtn.disabled = true;
+        } else {
+            submitLicenseBtn.disabled = false;
+        }
+    });
+
+    submitLicenseBtn.addEventListener('click', async (event) => {
+        let licenseValue = licenseInput.value;
+        const res = await license.register(licenseValue);
+        if (res.statusCode = 401) {
+            console.log(licenseInputError);
+        }
+        console.log(licenseToken);
+    });
+    return;
+}
+
+function showRegisterForm() {
+    console.log('showRegisterForm');
+    CM.toggleElementShown(registerForm);
+    CM.toggleElementHidden(licenseInfo);
+    return;
+}
+
+function showLicenseInfo() {
+    console.log('showLicenseInfo');
+    CM.toggleElementShown(licenseInfo);
+    CM.toggleElementHidden(registerForm);
+    return;
+}
+
+window.addEventListener('DOMContentLoaded', function(event) {
+    initWindow();
+});

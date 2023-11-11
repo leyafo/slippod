@@ -75,6 +75,12 @@ export function htmlToElement(html) {
     return template.content.firstChild;
 }
 
+export function selectSiblingElement(element, className) {
+    const parent = element.parentElement;
+    const sibling = parent.querySelector(className);
+    return sibling;
+}
+
 export function unixTimeFormat(unixTime) {
     const d = new Date(unixTime * 1000);
     let minute = d.getMinutes();
@@ -82,6 +88,13 @@ export function unixTimeFormat(unixTime) {
     let second = d.getSeconds()
     second = second < 10 ? '0'+second : second;
     return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getUTCDate()} ${d.getHours()}:${minute}:${second}`;
+}
+
+export async function startTrial() {
+    await license.register_trial();
+    const trialLicense = await license.getLicense();
+
+    return trialLicense;
 }
 
 export function hideOmniSearchAndUnfocus() {
@@ -232,7 +245,6 @@ export function deleteCard(li) {
         })
     }
 }
-
 
 export function getHighlightedCardItem(){
     const highlightedLi = cardsList.querySelector("li.selected")
