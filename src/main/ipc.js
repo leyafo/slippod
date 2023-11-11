@@ -43,7 +43,7 @@ ipcMain.handle("showRegisterWindow", async function(event){
 
 Object.keys(licenseModule).forEach(function(funcName)  {
     ipcMain.handle(funcName, async function(event, ...args)  {
-        let result = license[funcName](...args);
+        let result = licenseModule[funcName](...args);
         if(funcName == 'register' || funcName == 'register_trial'){
             result.then(function(response){
                 if(response.statusCode == 200){
@@ -133,8 +133,11 @@ async function registerDBFunctions(){
     }catch(error){
         license = {}
     }
-    // const lastCreatedCard = db.getCards(0, 1)
+    const lastCreatedCard = db.getCards(0, 1)
     let lastCreatedTime = Date.now()
+    if(lastCreatedCard.length != 0){
+        lastCreatedTime = new Date(lastCreatedCard[0].created_at * 1000);
+    }
     functionNames.forEach(function(funcName)  {
         ipcMain.handle(funcName, async function(event, ...args)  {
             if (needCheckFunctions.has(funcName)){
