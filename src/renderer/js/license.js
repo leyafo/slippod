@@ -51,10 +51,10 @@ function initRegisterForm() {
         let licenseValue = licenseInput.value;
         const res = await license.register(licenseValue);
         console.log(res);
-        if (res.statusCode = 401) {
+        if (res.statusCode === 401) {
             licenseInputError.textContent = "Invalid license. Please enter again.";
         }
-        if (res.statusCode = 200) {
+        if (res.statusCode === 200) {
             
         }
     });
