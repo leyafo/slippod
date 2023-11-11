@@ -139,9 +139,7 @@ function showRegisterSuccess() {
     const registerSuccessDiv = registerSuccessTemplate();
     const dialogCloseBtn = registerSuccessDiv.querySelector('#dialogCloseBtn');
 
-    // 这里是想操作主窗口的，但是这两个方法要操作主窗口的dom元素，现在license窗口是没有的，所以报错了。现在需要想一下怎么操作主窗口的dom元素。
-    // CM.hideTrialBar();
-    // CM.unSetReadOnlyMode();
+    pages.reloadAll();
 
     dialogCloseBtn.addEventListener('click', () => {
         window.close();
