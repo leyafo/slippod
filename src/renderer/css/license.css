@@ -8,7 +8,7 @@ html {
     background-color: #F5F6F8;
 }
 
-.container {
+#myLicense {
     @apply p-4;
 }
 
@@ -17,6 +17,23 @@ html {
     border-radius: 0.26666667rem;
     background: #FFFFFF;
     box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+}
+
+.form .formHeader {
+    @apply mb-4;
+}
+
+.form .formHeader .formHeaderDesc {
+    @apply text-sm;
+    color: #878782;
+}
+
+.form .formHeader .formHeaderDesc a {
+    color: #2569D3;
+}
+
+.form .formHeader .formHeaderDesc a:hover {
+    border-bottom: 1px solid #2569D3;
 }
 
 .form .formBody:not(:last-of-type) {
@@ -81,6 +98,8 @@ html {
     border-radius: 0.26666667rem;
     font-weight: 700;
     box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+    background-color: #67A5F3;
+    color: #FFFFFF;
 }
 
 .form .formCtrlBar button:disabled {

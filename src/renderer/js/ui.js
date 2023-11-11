@@ -1043,35 +1043,41 @@ function trialBarTemplate(trialBarText) {
 async function checkLicense() {
     try {
         const licenseToken = await license.getLicense();
-        window.licenseToken = licenseToken;
         
         if (licenseToken.Type === undefined) {
-            console.log('No license found.');
-            initTrialMode();
+            const licenseToken = await startTrial();
+            window.licenseToken = licenseToken;
+            if (window.licenseToken.Type === 'trial') {
+                setTrialBar();
+            }
             return;
         }
-        
-        const isValid = await license.checkLicense(licenseToken);
-        window.LicenseIsValid = isValid;
 
+        const isValid = await license.checkLicense(licenseToken);
         if (isValid) {
+            window.licenseToken = licenseToken;
             if (licenseToken.Type === 'trial') {
                 setTrialBar();
-            } else {
+                return;
+            }
+            if (licenseToken.Type === 'long') {
                 hideTrialBar();
+                return;
             }
         } else {
             setReadOnlyMode();
+            return;
         }
     } catch (error) {
         console.error('Error during license check:', error);
     }
 }
 
-function initTrialMode() {
-    if(window.licenseToken.Type == undefined || window.licenseToken.Type == 'trial'){
-        setTrialBar();
-    }
+async function startTrial() {
+    await license.register_trial();
+    const trialLicense = await license.getLicense();
+
+    return trialLicense;
 }
 
 function calTrialDaysLeft() {
@@ -1116,7 +1122,7 @@ function hideTrialBar() {
 }
 
 function setReadOnlyMode() {
-    CM.listArea.dataset.readOnly = 'true';
+    CM.listArea.dataset.readonly = 'true';
 }
 
 window.addEventListener('DOMContentLoaded', function() {
@@ -1153,5 +1159,6 @@ export {
     editCard,
     deleteCard,
     activateNewItemEditor,
-    highlightCardUpOrDownScreen 
+    highlightCardUpOrDownScreen,
+    startTrial,
 }

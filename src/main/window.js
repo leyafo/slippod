@@ -6,7 +6,8 @@ const env = require('./env.js');
 let mainWindow = null;
 let settingsWindow = null;
 let detailWindow = null; 
-let registerWindow = null; 
+let registerWindow = null;
+let activeWindow = null;
 
 function createWindow(windowConfig, entryPointHTML) {
     let newWindow = new BrowserWindow(windowConfig);
@@ -141,9 +142,8 @@ function createDetailWindow(cardID) {
         width: 800,
         height: 600,
         icon: getIconPath(),
-        parent: mainWindow,
-        modal: true,
         show: false,
+        titleBarStyle: "hidden",
         webPreferences: {
             preload: getPreloadPath("main.js"),
             scrollBounce: true,
@@ -169,12 +169,15 @@ function createRegisterWindow() {
     if (!mainWindow) {
         throw new Error("Main window must be initialized before register window");
     }
+    if (registerWindow) {
+        registerWindow.show();
+        return registerWindow;
+    }
 
     const windowConfig = {
-        width: 400,
-        height: 400,
+        width: 450,
+        height: 250,
         icon: getIconPath(),
-        parent: mainWindow,
         show: false,
         webPreferences: {
             preload: getPreloadPath("license.js"),
