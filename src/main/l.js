@@ -49,7 +49,7 @@ async function checkTrialLicense(license, lastCreateTime){
 
 async function checkLongLicense(license){
     let info = await fingerprint()
-	let signatureMessage = util.fomrat("%s,%s.%s.%s.%s",
+	let signatureMessage = util.format("%s,%s.%s.%s.%s",
 		license.Email,
 		info.m,
 		info.f,
