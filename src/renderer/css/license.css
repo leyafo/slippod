@@ -78,6 +78,12 @@ html {
     background: #FFFFFF;
 }
 
+.form .formField .fieldInput .inputError {
+    @apply text-sm;
+    line-height: 1.4rem;
+    color: #878782;
+}
+
 .form .formField .fieldInput input:focus {
     outline: 2px solid #67A5F3;
 }
