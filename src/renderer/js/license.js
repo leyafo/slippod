@@ -1,5 +1,5 @@
 import * as CM from './common.js';
-
+console.log(CM);
 const myLicense = document.getElementById('licenseWindow');
 
 function registerFormTemplate() {
@@ -23,7 +23,7 @@ function registerFormTemplate() {
 }
 
 function licenseInfoTemplate() {
-    const template = `<div id="licenseInfo" class="form hidden">
+    const template = `<div id="licenseInfo" class="form">
                           <div class="formHeader">
                               <p class="formHeaderDesc">Reach out to <a href="mailto:support@slippod.com">support@slippod.com</a> if you have any questions about your license.</p>
                           </div>
@@ -89,13 +89,14 @@ async function initWindow() {
         }
         if (licenseToken.Type === 'long') {
             document.title = "Your License";
+            console.log('show license info');
             showLicenseInfo(licenseToken);
         }
         window.licenseToken = licenseToken;
         return;
     }
     else {
-        showinvalidLicense();
+        showInvalidLicense();
     }
 };
 
@@ -138,6 +139,10 @@ function showRegisterSuccess() {
     const registerSuccessDiv = registerSuccessTemplate();
     const dialogCloseBtn = registerSuccessDiv.querySelector('#dialogCloseBtn');
 
+    // 这里是想操作主窗口的，但是这两个方法要操作主窗口的dom元素，现在license窗口是没有的，所以报错了。现在需要想一下怎么操作主窗口的dom元素。
+    // CM.hideTrialBar();
+    // CM.unSetReadOnlyMode();
+
     dialogCloseBtn.addEventListener('click', () => {
         window.close();
     });
@@ -148,6 +153,7 @@ function showRegisterSuccess() {
 
 function showLicenseInfo(license) {
     const licenseInfoDiv = licenseInfoTemplate();
+    console.log(licenseInfoDiv);
     const emailInput = licenseInfoDiv.querySelector('#emailInput');
     const licenseKeyInput = licenseInfoDiv.querySelector('#licenseKeyInput');
 
@@ -158,7 +164,7 @@ function showLicenseInfo(license) {
     myLicense.appendChild(licenseInfoDiv);
 }
 
-function showinvalidLicense() {
+function showInvalidLicense() {
     const invalidLicenseDiv = invalidLicenseTemplate();
     const dialogCloseBtn = invalidLicenseDiv.querySelector('#dialogCloseBtn');
 

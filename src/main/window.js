@@ -175,7 +175,7 @@ function createRegisterWindow() {
     }
 
     const windowConfig = {
-        width: 480,
+        width: 520,
         height: 300,
         icon: getIconPath(),
         show: false,
