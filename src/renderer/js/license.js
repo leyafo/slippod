@@ -80,9 +80,7 @@ function invalidLicenseTemplate() {
 async function initWindow() {
     const licenseToken = await license.getLicense();
     console.log(licenseToken);
-    let isValid = await license.checkLicense(licenseToken);
-
-    if (isValid) {
+    if (licenseToken.isValid) {
         if (licenseToken.Type === undefined || licenseToken.Type === 'trial') {
             document.title = "Enter License";
             showRegisterForm();
@@ -139,7 +137,6 @@ function showRegisterSuccess() {
     const registerSuccessDiv = registerSuccessTemplate();
     const dialogCloseBtn = registerSuccessDiv.querySelector('#dialogCloseBtn');
 
-    // 这里需要改为刷新所有main窗口的方法
     pages.reloadAll();
 
     dialogCloseBtn.addEventListener('click', () => {

@@ -41,7 +41,7 @@ document.addEventListener("keydown", function (event) {
             return
         }
     }else if (event.key === "r" && ctrlCmdKey(event)){
-        pages.reloadAll();
+        pages.reloadCurrentWindow();
     }else if (event.key === "o" && ctrlCmdKey(event)){
         if (CM.listArea.dataset.readonly !== "true") {
             db.getDraft().then(function(draftContent){

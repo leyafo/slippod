@@ -174,7 +174,7 @@ CM.eventHandle('.tagContainer', 'click', function(e) {
     
     switch (href) {
         case hrefTagAll:
-            pages.reloadAll();
+            pages.reloadCurrentWindow();
             break;
         case hrefTagTrash:
             db.getTrashCards(0, CM.limitItems).then(cards => reloadCardList(cards, "Trash", CM.listInsertAfterLast));
@@ -1050,8 +1050,7 @@ async function checkLicense() {
             return;
         }
 
-        const isValid = await license.checkLicense(licenseToken);
-        if (isValid) {
+        if (licenseToken.isValid) {
             if (licenseToken.Type === 'trial') {
                 await showTrialBar();
             }
@@ -1082,10 +1081,9 @@ async function showTrialPrompt() {
         const trialLicense = await license.getLicense();
 
         console.log(trialLicense);
-        const isValid = await license.checkLicense(trialLicense);
-        if (isValid) {
+        if (trialLicense.isValid) {
             unSetReadOnlyMode();
-            await showTrialBar();
+            pages.reloadAll();
             return;
         } else {
             console.log('Invalid trial license');
@@ -1101,6 +1099,8 @@ async function calTrialDaysLeft() {
     if (licenseToken.Type == 'trial') {
         let currentDate = new Date();
         currentDate.setHours(0, 0, 0, 0);
+        // for test only
+        // currentDate.setDate(currentDate.getDate() + 30);
         console.log(currentDate);
         let targetDate = new Date(licenseToken.End);
         console.log(targetDate);
@@ -1116,8 +1116,14 @@ async function calTrialDaysLeft() {
 
 async function showTrialBar() {
     const trialDaysLeft = await calTrialDaysLeft();
-    console.log(trialDaysLeft);
-    const trialBar = trialBarTemplate(`Trial version expires in ${trialDaysLeft} days`);
+    let trialBar = {}
+    if (trialDaysLeft >= 0){
+        trialDaysLeft = (trialDaysLeft==0) ? 1 : trialDaysLeft;
+        trialBar = trialBarTemplate(`Trial version expires in ${trialDaysLeft} days`);
+    }else{
+        let absDaysLeft = Math.abs(trialDaysLeft);
+        trialBar = trialBarTemplate(`Trial version expired ${absDaysLeft} days ago`);
+    }
     const trialBarCloseBtn = trialBar.querySelector('#trialBarCloseBtn');
     const trialBarUnlockBtn = trialBar.querySelector('#trialBarUnlockBtn');
 
