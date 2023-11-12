@@ -1118,8 +1118,8 @@ async function showTrialBar() {
     const trialDaysLeft = await calTrialDaysLeft();
     let trialBar = {}
     if (trialDaysLeft >= 0){
-        trialDaysLeft = (trialDaysLeft==0) ? 1 : trialDaysLeft;
-        trialBar = trialBarTemplate(`Trial version expires in ${trialDaysLeft} days`);
+        let daysLeft = (trialDaysLeft==0) ? 1 : trialDaysLeft;
+        trialBar = trialBarTemplate(`Trial version expires in ${daysLeft} days`);
     }else{
         let absDaysLeft = Math.abs(trialDaysLeft);
         trialBar = trialBarTemplate(`Trial version expired ${absDaysLeft} days ago`);
