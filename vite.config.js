@@ -15,7 +15,7 @@ export default defineConfig({
             input:{
                 index: path.join(PACKAGE_ROOT, 'index.html'),
                 setting: path.join(PACKAGE_ROOT, 'setting.html'),
-                license: path.join(PACKAGE_ROOT, 'register.html'),
+                license: path.join(PACKAGE_ROOT, 'license.html'),
                 detail: path.join(PACKAGE_ROOT, 'detail.html'),
             }
         },
