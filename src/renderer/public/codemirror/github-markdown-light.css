@@ -1010,14 +1010,14 @@
 
 /* Custom css styles for the markdown body */
 .markdown-body {
-    color: #121417;
+    color: var(--sunlight-gray-100);
 }
 .markdown-body a.cm-hashtag { 
     display: inline-block;
     font-size: 13px;
-    color: #2569D3;
-    background-color: #EFF5FC;
-    border: 1px solid #6A9EE1;
+    color: var(--sunlight-500);
+    background-color: var(--sunlight-900);
+    border: 1px solid var(--sunlight-700);
     border-radius: 0.26666667rem;
     padding-top: 0.15rem;
     padding-bottom: 0.15rem;
@@ -1027,17 +1027,17 @@
 
 .markdown-body a.cm-hashtag:hover {
     text-decoration: none;
-    color: #FFFFFF;
-    background-color: #2569D3;
+    color: var(--white);
+    background-color: var(--sunlight-500);
     border: 1px solid transparent;
 }
 
 .markdown-body a.cm-linkref {
-    color: #2569D3;
+    color: var(--sunlight-300);
     text-decoration: none;
 }
 
 .markdown-body a.cm-linkref:hover {
-    border-bottom: 1px solid #2569D3;
+    border-bottom: 1px solid var(--sunlight-300);
 }
 
