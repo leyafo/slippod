@@ -845,8 +845,7 @@ function tagTemplate(hasSubTag, key, fullTag) {
                     ${hasSubTag ? `<span class="foldIcon open"></span>` : ''}
                     <div class="tagClick" href="/tags/${fullTag}" data-tag="${fullTag}">
                         <div class="left-group">
-                            <span class="tagIcon"></span>
-                            <span class="label">${key}</span>
+                            <span class="tagIcon"></span><span class="label">${key}</span>
                         </div>
                         <span class="count"></span>
                         <div class="tagMenuContainer hidden">
