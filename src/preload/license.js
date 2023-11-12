@@ -25,9 +25,7 @@ contextBridge.exposeInMainWorld('pages', {
 const licenseFuncNames = [
     "register",
     "register_trial",
-    "checkTrialLicense",
     "getLicense",
-    "checkLicense",
     "showRegisterWindow"
 ]
 
