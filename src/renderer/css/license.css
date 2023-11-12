@@ -1,11 +1,9 @@
 @charset "UTF-8";
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "./base.css";
 
 html {
     font-size: 15px;
-    background-color: #F5F6F8;
+    background-color: var(--sunlight-gray-900);
 }
 
 #licenseWindow {
@@ -16,7 +14,7 @@ html {
     @apply p-4;
     height: 100%;
     border-radius: 0.26666667rem;
-    background: #FFFFFF;
+    background: var(--white);
     box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
 }
 
@@ -26,15 +24,15 @@ html {
 
 .form .formHeader .formHeaderDesc {
     @apply text-sm;
-    color: #878782;
+    color: var(--sunlight-gray-500);
 }
 
 .form .formHeader .formHeaderDesc a {
-    color: #2569D3;
+    color: var(--sunlight-300);
 }
 
 .form .formHeader .formHeaderDesc a:hover {
-    border-bottom: 1px solid #2569D3;
+    border-bottom: 1px solid var(--sunlight-300);
 }
 
 .form .formBody:not(:last-of-type) {

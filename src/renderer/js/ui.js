@@ -852,8 +852,7 @@ function tagTemplate(hasSubTag, key, fullTag) {
                             <span class="tagMenu"></span>
                             <div class="tagMenuOptions z-30 hidden">
                                 <div class="editOption">
-                                    <span class="icon"></span>
-                                    <span class="label">Edit tag name</span>
+                                    <span class="icon"></span><span class="label">Edit tag name</span>
                                 </div>
                             </div>
                         </div>
