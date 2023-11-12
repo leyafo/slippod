@@ -41,16 +41,14 @@ ipcMain.handle("showRegisterWindow", async function(event){
     windowMgr.createRegisterWindow() 
 });
 
-Object.keys(licenseModule).forEach(function(funcName)  {
+['register', 'register_trial'].forEach(function(funcName)  {
     ipcMain.handle(funcName, async function(event, ...args)  {
         let result = licenseModule[funcName](...args);
-        if(funcName == 'register' || funcName == 'register_trial'){
-            result.then(function(response){
-                if(response.statusCode == 200){
-                    db.setConfig(licenseKey, response.body)
-                }
-            })
-        }
+        result.then(function(response){
+            if(response.statusCode == 200){
+                db.setConfig(licenseKey, response.body)
+            }
+        })
         return result
     });
 });
