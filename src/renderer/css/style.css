@@ -407,11 +407,10 @@ body {
 }
 
 #listHeader #listTitle {
-    @apply text-2xl;
+    @apply text-2xl w-[89%] md:w-[92%];
     font-weight: 700;
     display: inline-block;
     line-height: 24px;
-    width: 92%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
