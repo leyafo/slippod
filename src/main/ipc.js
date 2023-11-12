@@ -60,10 +60,23 @@ ipcMain.handle("getLicense", async function(event){
     if(licenseToken == ''){
         return {}
     }
-    return JSON.parse(licenseToken)
+    let licenseObj = {}
+    try{
+        licenseObj =  JSON.parse(licenseToken)
+    }catch(error){
+        licenseObj.isValid = false
+        return licenseObj 
+    }
+    let isValid = await licenseModule.checkLicense(licenseObj)
+    licenseObj.isValid = isValid
+    return licenseObj
 })
 
 ipcMain.handle("reloadAll", async function(event, ...args)  {
+    windowMgr.reloadAllMainWindow()
+});
+
+ipcMain.handle("reloadCurrentWindow", async function(event, ...args){
     BrowserWindow.getFocusedWindow().reload(); 
 });
 

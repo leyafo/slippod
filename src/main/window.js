@@ -8,6 +8,7 @@ let settingsWindow = null;
 let detailWindow = null; 
 let registerWindow = null;
 let activeWindow = null;
+let mainWindowArray = [];
 
 function createWindow(windowConfig, entryPointHTML) {
     let newWindow = new BrowserWindow(windowConfig);
@@ -51,6 +52,9 @@ function getIconPath() {
 }
 
 function createMainWindow() {
+    if (mainWindow != null){
+        return
+    }
     const windowConfig = {
         width: 800,
         height: 800,
@@ -74,7 +78,7 @@ function createMainWindow() {
     mainWindow.on("closed", function() {
         mainWindow = null;
     });
-
+    mainWindowArray.push(mainWindow);
 
     return mainWindow;
 }
@@ -112,7 +116,16 @@ function duplicateMainWindow(){
         newMainWindow = null;
     });
 
+    mainWindowArray.push(newMainWindow);
     return newMainWindow;
+}
+
+function reloadAllMainWindow(){
+    for(let w of mainWindowArray){
+        if(w != null){
+            w.reload()
+        }
+    }
 }
 
 function createSettingsWindow() {
@@ -248,4 +261,5 @@ module.exports = {
     getSettingsWindow,
     getRegisterWindow,
     getMainWindow,
+    reloadAllMainWindow,
 }

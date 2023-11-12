@@ -13,10 +13,12 @@ function modulePreload(moduleName, functionArray, callback){
     contextBridge.exposeInMainWorld(moduleName, moduleFuncs);
 }
 
-// 期望去刷所有的main窗口，但是当前没有这个接口，需要添加
 contextBridge.exposeInMainWorld('pages', {
     reloadAll: function(...args) {
         return ipcRenderer.invoke("reloadAll", ...args);
+    },
+    reloadCurrentWindow: function(...args){
+        return ipcRenderer.invoke("reloadCurrentWindow", ...args);
     }
 });
 

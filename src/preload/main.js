@@ -43,6 +43,9 @@ contextBridge.exposeInMainWorld('pages', {
     },
     duplicateWindow: function(){
         return ipcRenderer.invoke("duplicateWindow");
+    },
+    reloadCurrentWindow: function(...args){
+        return ipcRenderer.invoke("reloadCurrentWindow", ...args);
     }
 });
 
