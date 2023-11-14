@@ -2,18 +2,41 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./css/style.css" />
   <title>Settings</title>
-  <link rel="stylesheet" href="./css/setting.css" />
 </head>
 <body>
-    <div>
-        <label for="DBPath">Database</label>
-        <div>
-            <input id="DBPath" readonly></input>
-            <button id="filePicker">Browse</button>
+  <div class="container mx-auto p-6">
+    <div class="setting-panel bg-white p-6 rounded shadow-md">
+      <div class="mb-4">
+        <label for="database-path" class="block text-gray-700 text-sm font-bold mb-2">Database Path:</label>
+        <div class="flex items-center border border-gray-300 rounded">
+          <p id="DBPath"
+            class="flex-grow py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+            /path/to/database</p>
+          <button id="filePicker"
+            class="px-4 py-2 mt-0 font-bold text-white rounded-r focus:outline-none">Browse</button>
         </div>
+      </div>
+      <!-- Other settings go here -->
     </div>
-  <script type="module" src="./js/setting.js"></script>
+  </div>
 </body>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    fs.getDBPath().then(function(path){
+      document.getElementById("DBPath").textContent = path;
+    })
+    document.addEventListener("click", function(event){
+        if(!event.target.closest("#filePicker")){
+            return
+        }
+        document.getElementById("filePicker").disabled = true;
+        fs.filePicker().then(function(path){
+          document.getElementById("filePicker").disabled = false;
+          document.getElementById("DBPath").textContent = path[0];
+        });
+    })
+  })
+</script>
 </html>
