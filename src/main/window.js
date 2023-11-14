@@ -7,7 +7,6 @@ let mainWindow = null;
 let settingsWindow = null;
 let detailWindow = null; 
 let registerWindow = null;
-let activeWindow = null;
 let mainWindowArray = [];
 
 function createWindow(windowConfig, entryPointHTML) {
