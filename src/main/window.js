@@ -133,8 +133,8 @@ function createSettingsWindow() {
     }
 
     const windowConfig = {
-        width: 400,
-        height: 400,
+        width: 520,
+        height: 300,
         icon: getIconPath(),
         show: false,
         webPreferences: {

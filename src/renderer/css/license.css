@@ -87,7 +87,7 @@ body {
     outline: 2px solid var(--sunlight-500);
 }
 
-.form .formField .fieldInput input:read-only {
+.form .formField .fieldInput input[readonly] {
     background-color: var(--sunlight-gray-800);
     outline: none;
     border: none;

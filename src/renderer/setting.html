@@ -4,21 +4,10 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Settings</title>
-        <link rel="stylesheet" href="./css/style.css" />
+        <link rel="stylesheet" href="./css/setting.css">
     </head>
     <body>
-        <div class="container mx-auto p-6">
-            <div class="setting-panel bg-white p-6 rounded shadow-md">
-                <div class="mb-4">
-                    <label for="database-path" class="block text-gray-700 text-sm font-bold mb-2">Database Path:</label>
-                    <div class="flex items-center border border-gray-300 rounded">
-                        <p id="DBPath" class="flex-grow py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">/path/to/database</p>
-                        <button id="filePicker" class="px-4 py-2 mt-0 font-bold text-white rounded-r focus:outline-none">Browse</button>
-                    </div>
-                </div>
-                <!-- Other settings go here -->
-            </div>
-        </div>
-        <script src="./js/setting.js"></script>
+        <div id="settingsWindow"></div>
+        <script type="module" src="./js/setting.js"></script>
     </body>
 </html>

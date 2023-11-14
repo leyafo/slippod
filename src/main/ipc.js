@@ -84,14 +84,12 @@ ipcMain.handle("openSetting", async function(event, ...args){
 
 ipcMain.handle("filePicker", async function(event, ...args)  {
     let settingsWindow = windowMgr.getSettingsWindow()
-    settingsWindow.hide();
     let mainWindow = windowMgr.getMainWindow();
     const dbPath = dialog.showOpenDialogSync({
-        browserWindow: mainWindow,
+        browserWindow: settingsWindow,
         properties: ["openFile"],
         filters: [{ name: "slippod", extensions: ["db"] }],
     });
-    settingsWindow.show();
     if (dbPath != undefined) {
         try {
             db.reloadDB(dbPath[0]);
