@@ -1,5 +1,4 @@
 import * as CM from './common.js';
-console.log(CM);
 const myLicense = document.getElementById('licenseWindow');
 
 function registerFormTemplate() {
