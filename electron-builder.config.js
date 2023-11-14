@@ -1,0 +1,39 @@
+
+module.exports = async function () {
+
+  return {
+    directories: {
+      output: 'out',
+      buildResources: 'buildResources',
+    },
+    files: [
+        {
+            "from": "dist",
+            "to": "src",
+        },
+        "package.json",
+        "icons/",
+        "**/node_modules/**/*"
+    ],
+    extraResources: [
+          "libsimple/"
+    ],
+    extraMetadata: {
+      version: process.env.npm_package_version,
+    },
+
+    // Specify linux target just for disabling snap compilation
+    linux: {
+      target: "AppImage",
+      icon: "icons/icon.png",
+    },    
+    mac: {
+      target: "dmg",
+      icon: "icons/icon.icns",
+    },
+    win: {
+      target: "nsis",
+      icon: "icons/icon.ico",
+    },
+  };
+};

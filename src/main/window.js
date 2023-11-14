@@ -1,0 +1,263 @@
+const { app, BrowserWindow } = require('electron');
+const path = require('path');
+const db = require('./db.js');
+const env = require('./env.js');
+
+let mainWindow = null;
+let settingsWindow = null;
+let detailWindow = null; 
+let registerWindow = null;
+let activeWindow = null;
+let mainWindowArray = [];
+
+function createWindow(windowConfig, entryPointHTML) {
+    let newWindow = new BrowserWindow(windowConfig);
+    loadEntryPoint(newWindow, entryPointHTML);
+
+    newWindow.once("ready-to-show", () => {
+        newWindow.show();
+    });
+
+    return newWindow;
+}
+
+function loadEntryPoint(window, entryPointHTML) {
+    const urlPath = env.getResourceURL(entryPointHTML);
+    if (env.isDev()) {
+        window.loadURL(urlPath);
+    } else {
+        window.loadFile(urlPath);
+    }
+}
+
+function getPreloadPath(fileName) {
+    return path.join(__dirname, `../preload/${fileName}`);
+}
+
+function getIconPath() {
+    // Default icon path
+    let iconPath = path.join(app.getAppPath(), 'icons/icon.png');
+
+    if (env.isDev()) {
+        return ""; 
+    }
+
+    switch (process.platform) {
+        case "win32":
+            iconPath = path.join(app.getAppPath(), 'icons/icon.ico');
+            break;
+    }
+
+    return iconPath;
+}
+
+function createMainWindow() {
+    if (mainWindow != null){
+        return
+    }
+    const windowConfig = {
+        width: 800,
+        height: 800,
+        minWidth: 400,
+        minHeight: 400,
+        titleBarStyle: "hidden",
+        icon: getIconPath(),
+        webPreferences: {
+            preload: getPreloadPath("main.js"),
+            scrollBounce: true,
+            nodeIntegration: true,
+        },
+    };
+
+    mainWindow = createWindow(windowConfig, 'index.html');
+    setupDevTools(mainWindow);
+    if(env.isDev()){
+        // mainWindow.webContents.openDevTools()
+    }
+
+    mainWindow.on("closed", function() {
+        mainWindow = null;
+    });
+    mainWindowArray.push(mainWindow);
+
+    return mainWindow;
+}
+
+function duplicateMainWindow(){
+    let activeWindow = BrowserWindow.getFocusedWindow();
+    let x = 0;
+    let y = 0;
+
+    if (activeWindow) {
+        x = activeWindow.getBounds().x;
+        y = activeWindow.getBounds().y;
+    }
+
+    const windowConfig = {
+        x: x + 50,
+        y: y + 50,
+        width: 800,
+        height: 800,
+        minWidth: 400,
+        minHeight: 300,
+        titleBarStyle: "hidden",
+        icon: getIconPath(),
+        webPreferences: {
+            preload: getPreloadPath("main.js"),
+            scrollBounce: true,
+            nodeIntegration: true,
+        },
+    };
+
+    let newMainWindow = createWindow(windowConfig, 'index.html');
+    setupDevTools(newMainWindow);
+
+    newMainWindow.on("closed", () => {
+        newMainWindow = null;
+    });
+
+    mainWindowArray.push(newMainWindow);
+    return newMainWindow;
+}
+
+function reloadAllMainWindow(){
+    for(let w of mainWindowArray){
+        if(w != null){
+            w.reload()
+        }
+    }
+}
+
+function createSettingsWindow() {
+    if (!mainWindow) {
+        throw new Error("Main window must be initialized before settings window");
+    }
+
+    const windowConfig = {
+        width: 400,
+        height: 400,
+        icon: getIconPath(),
+        show: false,
+        webPreferences: {
+            preload: getPreloadPath("setting.js"),
+            scrollBounce: true,
+            nodeIntegration: true,
+        },
+    };
+
+    settingsWindow = createWindow(windowConfig, 'setting.html');
+    settingsWindow.setMenuBarVisibility(false);
+
+    settingsWindow.on("closed", () => {
+        settingsWindow = null;
+    });
+
+    return settingsWindow;
+}
+
+function createDetailWindow(cardID) {
+    let activeWindow = BrowserWindow.getFocusedWindow();
+    let x = 0;
+    let y = 0;
+
+    if (activeWindow) {
+        x = activeWindow.getBounds().x;
+        y = activeWindow.getBounds().y;
+    }
+
+    const windowConfig = {
+        x: x + 50,
+        y: y + 50,
+        width: 800,
+        height: 600,
+        icon: getIconPath(),
+        show: false,
+        titleBarStyle: "hidden",
+        webPreferences: {
+            preload: getPreloadPath("main.js"),
+            scrollBounce: true,
+            nodeIntegration: true,
+        },
+    };
+
+    detailWindow = createWindow(windowConfig, 'detail.html');
+
+    detailWindow.webContents.on('did-finish-load', () => {
+        const cardDetails = db.getCardDetails(cardID);
+        detailWindow.webContents.send('displayCardDetail', cardDetails);
+    });
+
+    detailWindow.on("closed", () => {
+        detailWindow = null;
+    });
+
+    return detailWindow;
+}
+
+function createRegisterWindow() {
+    if (!mainWindow) {
+        throw new Error("Main window must be initialized before register window");
+    }
+    if (registerWindow) {
+        registerWindow.show();
+        return registerWindow;
+    }
+
+    const windowConfig = {
+        width: 520,
+        height: 300,
+        icon: getIconPath(),
+        show: false,
+        webPreferences: {
+            preload: getPreloadPath("license.js"),
+            scrollBounce: true,
+            nodeIntegration: true,
+        },
+    };
+
+    registerWindow = createWindow(windowConfig, 'license.html');
+    registerWindow.setMenuBarVisibility(false);
+
+    registerWindow.on("closed", () => {
+        registerWindow = null;
+    });
+
+    return registerWindow;
+}
+
+function setupDevTools(window) {
+    if (env.isDev()) {
+        const contextMenu = require("electron-context-menu");
+        contextMenu({
+            prepend: function(defaultActions, params, browserWindow) {
+                return [
+                    { type: "separator" },
+                ];
+            },
+        });
+    }
+}
+
+function getSettingsWindow(){
+    return settingsWindow
+}
+
+function getMainWindow(){
+    return mainWindow
+}
+
+function getRegisterWindow() {
+    return registerWindow
+}
+
+module.exports = {
+    createMainWindow,
+    createSettingsWindow,
+    createDetailWindow,
+    createRegisterWindow,
+    duplicateMainWindow,
+    getSettingsWindow,
+    getRegisterWindow,
+    getMainWindow,
+    reloadAllMainWindow,
+}

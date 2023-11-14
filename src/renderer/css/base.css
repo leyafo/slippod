@@ -1,0 +1,29 @@
+@charset "UTF-8";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --white: #FFFFFF;
+        --black: #000000;
+        --sunlight-100: #541D0C;
+        --sunlight-200: #722B16;
+        --sunlight-300: #9F391A;
+        --sunlight-400: #C64922;
+        --sunlight-500: #DF5F38;
+        --sunlight-600: #EA7855;
+        --sunlight-700: #F69B7F;
+        --sunlight-800: #FCD1C4;
+        --sunlight-900: #FEF4F0;
+        --sunlight-gray-100: #2B2625;
+        --sunlight-gray-200: #473C39;
+        --sunlight-gray-300: #64534E;
+        --sunlight-gray-400: #776864;
+        --sunlight-gray-500: #918886;
+        --sunlight-gray-600: #B6AAA7;
+        --sunlight-gray-700: #CEC8C7;
+        --sunlight-gray-800: #E5E2E1;
+        --sunlight-gray-900: #F3F2F2;
+    }
+}

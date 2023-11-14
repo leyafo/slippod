@@ -1,0 +1,183 @@
+@charset "UTF-8";
+@import "./base.css";
+
+body {
+    font-size: 15px;
+    background-color: var(--sunlight-gray-900);
+}
+
+#licenseWindow {
+    @apply p-4 h-screen;
+}
+
+.form {
+    @apply p-4;
+    height: 100%;
+    border-radius: 0.26666667rem;
+    background: var(--white);
+    box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+}
+
+.form .formHeader {
+    @apply mb-4;
+}
+
+.form .formHeader .formHeaderDesc {
+    @apply text-sm;
+    color: var(--sunlight-gray-500);
+}
+
+.form .formHeader .formHeaderDesc a {
+    color: var(--sunlight-300);
+}
+
+.form .formHeader .formHeaderDesc a:hover {
+    border-bottom: 1px solid var(--sunlight-300);
+}
+
+.form .formBody:not(:last-of-type) {
+    @apply mb-4;
+}
+
+.form .formField:not(:last-of-type) {
+    @apply mb-4;
+}
+
+.form .formField .fieldHeader {
+    @apply mb-2;
+}
+
+.form .formField .fieldHeader label {
+    @apply text-sm;
+    font-weight: 700;
+    color: #373A3E;
+}
+
+.form .formField .fieldDesc {
+    @apply text-sm;
+    color: var(--sunlight-gray-500);
+}
+
+.form .formField .fieldDesc a {
+    color: var(--sunlight-300);
+}
+
+.form .formField .fieldDesc a:hover {
+    border-bottom: 1px solid var(--sunlight-300);
+}
+
+.form .formField .fieldInput * {
+    @apply w-full;
+}
+
+.form .formField .fieldInput input {
+    @apply py-2 pl-2;
+    border-radius: 0.26666667rem;
+    border: 1px solid var(--sunlight-gray-800);
+    background: var(--white);
+}
+
+.form .formField .fieldInput .inputError {
+    @apply text-sm;
+    line-height: 1.4rem;
+    color: var(--sunlight-gray-500);
+}
+
+.form .formField .fieldInput input:focus {
+    outline: 2px solid var(--sunlight-500);
+}
+
+.form .formField .fieldInput input:read-only {
+    background-color: var(--sunlight-gray-800);
+    outline: none;
+    border: none;
+}
+
+.form .formCtrlBar * {
+    @apply w-full;
+}
+
+.form .formCtrlBar button {
+    @apply text-sm py-2;
+    line-height: 1;
+    border-radius: 0.26666667rem;
+    font-weight: 700;
+    box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+    background-color: var(--sunlight-600);
+    color: var(--white);
+}
+
+.form .formCtrlBar button:hover {
+    background-color: var(--sunlight-500);
+}
+
+.form .formCtrlBar button:disabled {
+    background-color: var(--sunlight-gray-800);
+    color: var(--white);
+}
+
+.dialog {
+    @apply p-4;
+    height: 100%;
+    border-radius: 0.26666667rem;
+    background: var(--white);
+    box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+}
+
+.dialog .dialogGraphic, .dialog .dialogMsg, .dialog .dialogCtrlBar {
+    @apply text-center mb-4;
+    color: var(--sunlight-gray-200);
+}
+
+.dialog .dialogGraphic {
+    @apply mt-6;
+}
+
+.dialog .dialogCtrlBar {
+    margin-bottom: 0;
+}
+
+.dialog .dialogGraphic span {
+    width: 40px;
+    height: 40px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.dialog .dialogGraphic.success span {
+    mask: url("/asset/alert-success.svg");
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    background-color: var(--sunlight-gray-200);
+    height: 40px;
+    width: 40px;
+}
+
+.dialog .dialogGraphic.invalid span {
+    mask: url("/asset/alert-info.svg");
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    background-color: var(--sunlight-gray-200);
+    height: 40px;
+    width: 40px;
+}
+
+.dialog .dialogMsg {
+    @apply mb-4;
+    font-weight: 500;
+    line-height: 1.4rem;
+}
+
+.dialog .dialogCtrlBar button {
+    @apply text-sm py-1 px-4;
+    font-weight: 500;
+    line-height: 1rem;
+    background-color: var(--sunlight-600);
+    color: var(--white);
+    border-radius: 0.26666667rem;
+    box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+}
+
+.dialog .dialogCtrlBar button:hover {
+    background-color: var(--sunlight-500);
+}
