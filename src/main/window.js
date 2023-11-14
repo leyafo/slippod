@@ -134,11 +134,9 @@ function createSettingsWindow() {
     }
 
     const windowConfig = {
-        width: 400,
-        height: 400,
+        width: 520,
+        height: 320,
         icon: getIconPath(),
-        parent: mainWindow,
-        modal: true,
         show: false,
         webPreferences: {
             preload: getPreloadPath("setting.js"),
