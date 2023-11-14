@@ -1031,7 +1031,7 @@ function trialBarTemplate(trialBarText) {
                         <div id="trialBarContainer">
                             <span id="trialBarCloseBtn"></span>
                             <div id="trialBarText">${trialBarText}</div>
-                            <button id="trialBarUnlockBtn">Unlock</button>
+                            <button id="trialBarUnlockBtn"><span class="icon"></span><span class="label">Unlock</span></button>
                         </div>
                     </div>`;
     
@@ -1076,6 +1076,9 @@ async function showTrialPrompt() {
     });
     
     trialBarUnlockBtn.addEventListener('click', async function() {
+        trialBarUnlockBtn.disabled = true;
+        trialBarUnlockBtn.classList.add('saving');
+
         await license.register_trial();
         const trialLicense = await license.getLicense();
 

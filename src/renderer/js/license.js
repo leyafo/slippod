@@ -16,7 +16,7 @@ function registerFormTemplate() {
                             </div>
                         </div>
                         <div class="formCtrlBar">
-                            <button id="submitLicenseBtn" disabled>Use License</button>
+                            <button id="submitLicenseBtn" disabled><span class="icon"></span><span class="label">Use License</span></button>
                         </div>
                     </div>`;
     return CM.htmlToElement(template);
@@ -116,15 +116,19 @@ function showRegisterForm() {
     });
 
     submitLicenseBtn.addEventListener('click', async (event) => {
-        console.log(licenseInput.value)
-        let licenseValue = licenseInput.value;
+        let licenseValue = licenseInput.value.trim();
+        licenseInput.disabled = true;
+        submitLicenseBtn.disabled = true;
+        submitLicenseBtn.classList.add('saving');
+
         const res = await license.register(licenseValue);
-        console.log(res);
         if (res.statusCode === 401) {
             licenseInputError.textContent = "Invalid license. Please enter again.";
+            licenseInput.disabled = false;
+            submitLicenseBtn.disabled = false;
+            submitLicenseBtn.classList.remove('saving');
         }
         if (res.statusCode === 200) {
-            console.log('success');
             showRegisterSuccess();
         }
     });
