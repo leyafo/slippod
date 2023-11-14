@@ -56,6 +56,8 @@ async function checkLongLicense(license){
 		info.c,
 		license.Type,
 	)
+    console.log(info)
+    console.log(verify(license.License, license.Signature, signatureMessage), signatureMessage)
     return verify(license.License, license.Signature, signatureMessage)
 }
 

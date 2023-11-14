@@ -13,13 +13,14 @@ const windowMgr = require('./window.js')
 
 ipcHandler.registerDBFunctions();
 Menu.setApplicationMenu(null)
+let mainWindow = null;
 app.whenReady().then(async function()  {
-    windowMgr.createMainWindow();
+    mainWindow = windowMgr.createMainWindow();
     const menu = Menu.buildFromTemplate(menuTemplate());
     Menu.setApplicationMenu(menu);
     app.on("activate", function()  {
         if (BrowserWindow.getAllWindows().length === 0) {
-            windowMgr.createMainWindow();
+            mainWindow = windowMgr.createMainWindow();
         }
     });
 
