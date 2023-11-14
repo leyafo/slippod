@@ -5,21 +5,7 @@ const windowMgr = require('./window.js')
 
 // Create the Application's main menu
 function menuTemplate() {
-    let licenseMenu = {}
-    if (env.isDev()){
-        licenseMenu = {
-            label: 'Dev',
-            submenu: [
-                {
-                    label: 'Remove License',
-                    click: function(){
-                        db.removeConfig("license");
-                    }
-                }
-            ]
-        }
-    }
-    return [
+    let menuItems = [
         {
             label: 'Slippod',
             submenu: [
@@ -142,9 +128,22 @@ function menuTemplate() {
             label: 'Help',
             submenu: []
         },
-        licenseMenu,
     ];
-
+    if (env.isDev()){
+        let licenseMenu = {
+            label: 'Dev',
+            submenu: [
+                {
+                    label: 'Remove License',
+                    click: function(){
+                        db.removeConfig("license");
+                    }
+                }
+            ]
+        }
+        menuItems.push(licenseMenu);
+    }
+    return menuItems
 }
 
 module.exports={
