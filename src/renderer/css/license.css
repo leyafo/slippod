@@ -107,6 +107,18 @@ body {
     color: var(--white);
 }
 
+.form .formCtrlBar button.saving .icon {
+    @apply animate-spin mr-1;
+    mask: url("/asset/loading.svg");
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    background-color: var(--white);
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    vertical-align: text-bottom;
+}
+
 .form .formCtrlBar button:hover {
     background-color: var(--sunlight-500);
 }
