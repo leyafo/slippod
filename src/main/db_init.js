@@ -1,15 +1,16 @@
 const db = require('./db.js')
-function insertSampleData(){ const slippodTag = `[#slippod]()`
-    const sqliteTag = `[#sqlite]()`
-    const firstCardID = db.createNewCard(`这是一张简单的卡片。  slippodTag`);
+function insertSampleData(){ const slippodTag = `#slippod `
+    const sqliteTag = `#sqlite `
+    const firstCardID = db.createNewCard(`这是一张简单的卡片。  ${slippodTag}`);
     db.createNewCard(`本项目采用 sqlite 做为后端存储。  
 采用sqlite做为数据存储。sqlite 的好处有：  
 
+* Local first 你的数据永远属于你。
 * 小巧，一个文件可以存储所有数据。  
 * 功能强大，几乎是一个拥有全功能的数据库。  
 * 不用安装任何三方软件，就像加载一个文件一样加载数据库。  
 * sql 是最强大的查询语言，数据库是强大的数据存储容器。   
-* fts extetion 全文搜索支持。  
+* fts 全文搜索支持。  
 * 
 ${slippodTag} ${sqliteTag}
     `);
@@ -19,32 +20,25 @@ ${slippodTag} ${sqliteTag}
 ${sqliteTag}
 ${slippodTag}
     `)
-    const tagExample = '\[\#tag\]\(\)';
-    const atExample = '[@1]()'
-    db.createNewCard(`笔记支持 tag。 tag 直接在卡片的内容中插入，格式为:     
-\`\`\`
-${tagExample}
-\`\`\`
-
-也支持链接到其他任何笔记。格式为:   
-\`\`\`
-${atExample}
-\`\`\`
-
-比如这里 [@${firstCardID}]() 链接到第一条笔记。
-
-[#slippod]()  
-    `)
-
-    db.createNewCard(`点击左边的 link 链接可以过滤有相关 tag 的笔记。   
-${slippodTag}
+    const tagExample = '#tag ';
+    const atExample = '@1 '
+    db.createNewCard(`
+笔记支持 tag。 tag 直接在卡片的内容中插入，格式为:  ${tagExample}
+支持直接输入 @ 链接到其他笔记，比如：  ${atExample}   
+比如： @${firstCardID} 链接到第一条笔记。   
+#slippod  
     `)
 
     db.createNewCard(`
-如何新建笔记？   
-按下 ctrl+k 快捷键后，输入任意内容再按下 enter（回车）即可。  
+点击左边的 link 链接可以过滤有相关 tag 的笔记。   
+    ${slippodTag}
+    `)
 
-${slippodTag}
+    db.createNewCard(`
+如何新建笔记？  ctrl + o 激活输入框， ctrl + enter 提交新建笔记。 
+按下 ctrl+k 输入任意内容，如没有搜索到任何内容，再按下 enter（回车）即可快速新建笔记。  
+
+    ${slippodTag}
     `)
 }
 
