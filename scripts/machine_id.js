@@ -31,6 +31,42 @@ async function fingerprint() {
     };
 }
 
-fingerprint().then(function(fingerprint){
-    console.log(fingerprint)
-})
+(async function(){
+
+    const first = await si.cpu();
+    let info = ""
+    info += first.brand;
+    info += first.model;
+    info += first.family;
+    info += first.cores;
+    // for(let i = 0; i < 10000; i++){
+    //     const second = await si.cpu();
+    //     let info1 = ""
+    //     info1 += second.brand;
+    //     info1 += second.model;
+    //     info1 += second.family;
+    //     info1 += second.cores;
+    //     for(let k of Object.keys(first)){
+    //         if (info != info1){
+    //             console.log(info, info1)
+    //         }
+    //     }
+    // }
+
+    let uuid = await si.uuid();
+    let macs = ""
+    for (let mac of uuid.macs) {
+        macs += mac;
+    }
+    for (let i = 0; i < 10000; i++) {
+        let uuid1 = await si.uuid();
+        let macs1 = ""
+        for (let mac of uuid1.macs) {
+            macs1 += mac;
+        }
+        if (macs != macs1){
+            console.log(macs, macs1)
+        }
+    }
+
+})()
