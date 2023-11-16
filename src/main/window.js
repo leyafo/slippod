@@ -131,6 +131,10 @@ function createSettingsWindow() {
     if (!mainWindow) {
         throw new Error("Main window must be initialized before settings window");
     }
+    if (settingsWindow) {
+        settingsWindow.show();
+        return settingsWindow;
+    }
 
     const windowConfig = {
         width: 520,
