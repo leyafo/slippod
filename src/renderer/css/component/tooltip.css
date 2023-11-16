@@ -1,0 +1,15 @@
+.tooltip {
+    position: absolute;
+    line-height: 1.4rem;
+    background-color: var(--sunlight-gray-800);
+    border: 1px solid var(--sunlight-gray-700);
+    border-radius: 0.5rem;
+    box-shadow: 0px 2px 20px 0px rgba(0, 0, 0, 0.2);
+    color: var(--sunlight-gray-100);
+    text-align: center;
+    min-width: 200px;
+}
+
+.tooltipContainer {
+    @apply p-4;
+}

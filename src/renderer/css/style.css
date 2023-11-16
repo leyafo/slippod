@@ -1,5 +1,6 @@
 @charset "UTF-8";
 @import "/codemirror/github-markdown-light.css";
+@import "./component/tooltip.css";
 @import "./base.css";
 
 #splashScreen {
@@ -233,6 +234,7 @@ body {
 #featureDock .btnContainer {
     display: inline-block;
     line-height: 0;
+    position: relative;
 }
 
 #featureDock .btnContainer button {
@@ -247,7 +249,6 @@ body {
 
 #featureDock .btnContainer button .icon {
     display: inline-block;
-    cursor: pointer;
     mask-size: contain;
     mask-repeat: no-repeat;
     background-color: var(--sunlight-gray-100);
@@ -263,6 +264,10 @@ body {
     mask: url("/asset/settings.svg");
     height: 16px;
     width: 15.15px;
+}
+
+#publisherTooltip {
+    top: -80px;
 }
 
 #overlay {

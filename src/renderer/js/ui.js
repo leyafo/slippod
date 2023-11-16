@@ -1148,16 +1148,30 @@ function unSetReadOnlyMode() {
     CM.listArea.removeAttribute('data-readonly');
 }
 
-CM.appSettingsBtn.addEventListener('click', function() {
-    
+CM.appSettingsBtn.addEventListener('click', function(event) {
+    pages.openSetting();
 });
 
-CM.publisherBtn.addEventListener('mouseover', function() {
-    console.log("hello");
+function tooltipTemplate(tooltipText, tooltipID) {
+    let template = `<div id="${tooltipID}" class="tooltip">
+                        <div class="tooltipContainer">
+                            <div class="tooltipContent">${tooltipText}</div>
+                        </div>
+                    </div>`;
+    return CM.htmlToElement(template);
+};
+
+CM.publisherBtn.addEventListener('mouseover', function(event) {
+    const tooltip = tooltipTemplate("This feature is currently under development.", "publisherTooltip");
+    const publisherBtn = document.getElementById('publisherBtn')
+
+    if (!document.getElementById('publisherTooltip')) {
+        publisherBtn.parentNode.insertBefore(tooltip, publisherBtn.nextSibling);
+    }
 });
 
-CM.publisherBtn.addEventListener('mouseout', function() {
-    console.log("world");
+CM.publisherBtn.addEventListener('mouseout', function(event) {
+    document.getElementById('publisherTooltip').remove();
 });
 
 window.addEventListener('DOMContentLoaded', function() {
