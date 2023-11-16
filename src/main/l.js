@@ -56,8 +56,6 @@ async function checkLongLicense(license){
 		info.c,
 		license.Type,
 	)
-    console.log(info)
-    console.log(verify(license.License, license.Signature, signatureMessage), signatureMessage)
     return verify(license.License, license.Signature, signatureMessage)
 }
 
@@ -77,6 +75,7 @@ function verify(publicKey, signature, data) {
     return crypto.verify(null, Buffer.from(data), verifyKey, signatureData);
 }
 
+
 let fingerprintCache = undefined
 //初始化模块的时候调用一次，防止后续拿到undefined的值。
 fingerprint()
@@ -87,23 +86,32 @@ async function fingerprint() {
     const uuid = await si.uuid();
     const cpu = await si.cpu();
     const osInfo = await si.osInfo();
+    const baseboard = await si.baseboard()
+    let interfaces = await si.networkInterfaces()
+    let macAddress = ""
+    for(let i of  interfaces){
+        if(i.default){
+            macAddress = i.mac
+        }
+    }
 
     let info = '';
-    let mm = uuid.macs.join(',')
-    info += mm
+    info += uuid.os
+    info += osInfo.platform
+    info += macAddress
     info += cpu.brand;
     info += cpu.model;
     info += cpu.family;
     info += cpu.cores;
-    for (let k of Object.keys(cpu.cache)) {
-        info += cpu.cache[k];
-    }
+    info += baseboard.model
 
     fingerprintCache = {
         m: uuid.os, //MachineID
-        c: mm,      //MacAddress
+        c: macAddress,      //MacAddress
         f: sha256(info),  //Fingerprint
         d: `${osInfo.platform}-${osInfo.distro}-${osInfo.release}-${osInfo.kernel}-${osInfo.arch}`, // description
+        bb: baseboard.model,
+        p: osInfo.platform,
     };
 }
 
