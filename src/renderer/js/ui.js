@@ -1148,6 +1148,18 @@ function unSetReadOnlyMode() {
     CM.listArea.removeAttribute('data-readonly');
 }
 
+CM.appSettingsBtn.addEventListener('click', function() {
+    
+});
+
+CM.publisherBtn.addEventListener('mouseover', function() {
+    console.log("hello");
+});
+
+CM.publisherBtn.addEventListener('mouseout', function() {
+    console.log("world");
+});
+
 window.addEventListener('DOMContentLoaded', function() {
     //load cards
     db.getCards(0, CM.limitItems).then(function(cards) {
