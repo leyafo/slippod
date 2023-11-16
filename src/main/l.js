@@ -34,13 +34,10 @@ async function checkTrialLicense(license, lastCreateTime){
     if (timeNow < startTime || timeNow > endTime){
         return false;
     }
-    let info = await fingerprint()
-	let signatureMessage = util.format("%s-%s,%s.%s.%s.%s",
+	let signatureMessage = util.format("%s-%s,%s.%s",
 		license.Start,
 		license.End,
-		info.m,
-		info.f,
-		info.c,
+		license.Fingerprint,
 		license.Type,
 	)
 
@@ -78,6 +75,7 @@ function verify(publicKey, signature, data) {
 
 let fingerprintCache = undefined
 //初始化模块的时候调用一次，防止后续拿到undefined的值。
+
 fingerprint()
 async function fingerprint() {
     if(fingerprintCache != undefined){
@@ -94,15 +92,12 @@ async function fingerprint() {
             macAddress = i.mac
         }
     }
+    let cpuStr = cpu.brand+cpu.model+cpu.family+cpu.cores
 
     let info = '';
     info += uuid.os
     info += osInfo.platform
-    info += macAddress
-    info += cpu.brand;
-    info += cpu.model;
-    info += cpu.family;
-    info += cpu.cores;
+    info += cpuStr
     info += baseboard.model
 
     fingerprintCache = {
@@ -112,6 +107,7 @@ async function fingerprint() {
         d: `${osInfo.platform}-${osInfo.distro}-${osInfo.release}-${osInfo.kernel}-${osInfo.arch}`, // description
         bb: baseboard.model,
         p: osInfo.platform,
+        u: cpuStr,
     };
 }
 
