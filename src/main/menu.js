@@ -17,9 +17,18 @@ function menuTemplate() {
                     type: 'separator'
                 },
                 {
-                    label: 'Settings',
+                    label: 'Settings...',
                     click: function()  {
                         windowMgr.createSettingsWindow().show()
+                    },
+                },
+                {
+                    type: 'separator'
+                },
+                {
+                    label: 'License...',
+                    click: function()  {
+                        windowMgr.createRegisterWindow().show()
                     },
                 },
                 {
@@ -47,6 +56,11 @@ function menuTemplate() {
                     accelerator: 'Command+Q',
                     click: function () { app.quit(); }
                 },
+            ]
+        },
+        {
+            label: 'File',
+            submenu: [
             ]
         },
         {
