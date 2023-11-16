@@ -20,9 +20,6 @@ async function fingerprint() {
     info += cpu.model;
     info += cpu.family;
     info += cpu.cores;
-    for (let k of Object.keys(cpu.cache)) {
-        info += cpu.cache[k];
-    }
 
     return {
         machineID: uuid.os,
@@ -32,39 +29,43 @@ async function fingerprint() {
 }
 
 (async function(){
+    // si.baseboard().then(el => console.log('=======',el))
+    // let baseboard = await si.baseboard()
+    // console.log(baseboard)
+    // si.chassis().then(data => console.log(data));
+    
+    let uuid = await si.uuid()
+    console.log(uuid);
+    let net = await si.networkInterfaces()
+    let defaultNet = await si.networkInterfaceDefault()
+    console.log(net, defaultNet)
+    // let audio = await si.audio()
+    // console.log(audio)
+    // let cpu = await si.cpu();
+    // let osInfo = await si.osInfo()
+    // console.log(cpu, osInfo);
+    // let info = '';
+    // let uuid = await si.uuid();
+    // console.log(uuid);
+    // let mm = uuid.macs.join(',')
+    // info += mm
+    // info += cpu.brand;
+    // info += cpu.model;
+    // info += cpu.family;
+    // info += cpu.cores;
+    // console.log(info)
+    // for(let i = 0; i < 10000; i++){
+    //     const second = await si.cpu();
+    //     let info1 = ""
+    //     info1 += mm
+    //     info1 += second.brand;
+    //     info1 += second.model;
+    //     info1 += second.family;
+    //     info1 += second.cores;
 
-    const first = await si.cpu();
-    let info = ""
-    info += first.brand;
-    info += first.model;
-    info += first.family;
-    info += first.cores;
-    for(let i = 0; i < 10000; i++){
-        const second = await si.cpu();
-        let info1 = ""
-        info1 += second.brand;
-        info1 += second.model;
-        info1 += second.family;
-        info1 += second.cores;
-        if (info != info1){
-            console.log(info, info1)
-        }
-    }
-
-    let uuid = await si.uuid();
-    let macs = ""
-    for (let mac of uuid.macs) {
-        macs += mac;
-    }
-    for (let i = 0; i < 10000; i++) {
-        let uuid1 = await si.uuid();
-        let macs1 = ""
-        for (let mac of uuid1.macs) {
-            macs1 += mac;
-        }
-        if (macs != macs1){
-            console.log(macs, macs1)
-        }
-    }
+    //     if (info != info1){
+    //         console.log(info, info1)
+    //     }
+    // }
 
 })()

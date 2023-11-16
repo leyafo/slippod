@@ -46,6 +46,9 @@ contextBridge.exposeInMainWorld('pages', {
     },
     reloadCurrentWindow: function(...args){
         return ipcRenderer.invoke("reloadCurrentWindow", ...args);
+    },
+    openSetting: function(...args){
+        return ipcRenderer.invoke("openSetting", ...args)
     }
 });
 

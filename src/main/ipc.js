@@ -78,6 +78,10 @@ ipcMain.handle("reloadCurrentWindow", async function(event, ...args){
     BrowserWindow.getFocusedWindow().reload(); 
 });
 
+ipcMain.handle("openSetting", async function(event, ...args){
+    windowMgr.createSettingsWindow().show()
+})
+
 ipcMain.handle("filePicker", async function(event, ...args)  {
     let settingsWindow = windowMgr.getSettingsWindow()
     settingsWindow.hide();
