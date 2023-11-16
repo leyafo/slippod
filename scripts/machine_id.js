@@ -11,61 +11,40 @@ async function fingerprint() {
     const uuid = await si.uuid();
     const cpu = await si.cpu();
     const osInfo = await si.osInfo();
-
-    let info = uuid.os;
-    for (let mac of uuid.macs) {
-        info += mac;
+    const baseboard = await si.baseboard()
+    let interfaces = await si.networkInterfaces()
+    let macAddress = ""
+    for(let i of  interfaces){
+        if(i.default){
+            macAddress = i.mac
+        }
     }
-    info += cpu.brand;
-    info += cpu.model;
-    info += cpu.family;
-    info += cpu.cores;
+    let cpuStr = cpu.brand+cpu.model+cpu.family+cpu.cores
+
+    let info = '';
+    info += uuid.os
+    info += osInfo.platform
+    info += cpuStr
+    info += baseboard.model
 
     return {
-        machineID: uuid.os,
-        fingerprint: sha256(info),
-        osInfo: `${osInfo.platform}-${osInfo.distro}-${osInfo.release}-${osInfo.kernel}-${osInfo.arch}`,
+        m: uuid.os, //MachineID
+        c: macAddress,      //MacAddress
+        u: cpuStr,
+        f: sha256(info),  //Fingerprint
+        d: `${osInfo.platform}-${osInfo.distro}-${osInfo.release}-${osInfo.kernel}-${osInfo.arch}`, // description
+        bb: baseboard.model,
+        p: osInfo.platform,
     };
 }
 
 (async function(){
-    // si.baseboard().then(el => console.log('=======',el))
-    // let baseboard = await si.baseboard()
-    // console.log(baseboard)
-    // si.chassis().then(data => console.log(data));
-    
-    let uuid = await si.uuid()
-    console.log(uuid);
-    let net = await si.networkInterfaces()
-    let defaultNet = await si.networkInterfaceDefault()
-    console.log(net, defaultNet)
-    // let audio = await si.audio()
-    // console.log(audio)
-    // let cpu = await si.cpu();
-    // let osInfo = await si.osInfo()
-    // console.log(cpu, osInfo);
-    // let info = '';
-    // let uuid = await si.uuid();
-    // console.log(uuid);
-    // let mm = uuid.macs.join(',')
-    // info += mm
-    // info += cpu.brand;
-    // info += cpu.model;
-    // info += cpu.family;
-    // info += cpu.cores;
-    // console.log(info)
-    // for(let i = 0; i < 10000; i++){
-    //     const second = await si.cpu();
-    //     let info1 = ""
-    //     info1 += mm
-    //     info1 += second.brand;
-    //     info1 += second.model;
-    //     info1 += second.family;
-    //     info1 += second.cores;
-
-    //     if (info != info1){
-    //         console.log(info, info1)
-    //     }
-    // }
+    let info = await fingerprint()
+    for(let i = 0; i < 10000; i++){
+        let info1 = await fingerprint()
+        if(info.f != info1.f){
+            console.log(info.f, info1.f)
+        }
+    }
 
 })()
