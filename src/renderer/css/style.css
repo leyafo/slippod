@@ -223,7 +223,7 @@ body {
 
 #featureDock {
     border-top: 1px solid var(--sunlight-gray-700);
-    height: 38px;
+    height: 40px;
     background-color: var(--sunlight-gray-800);
     position: fixed;
     @apply p-2 w-64 bottom-0 flex;
@@ -231,25 +231,36 @@ body {
 }
 
 #featureDock .btnContainer {
-    @apply p-1;
     display: inline-block;
     line-height: 0;
 }
 
-#publisherBtn {
-    mask: url("/asset/publisher.svg");
+#featureDock .btnContainer button {
+    @apply p-1;
+    border: 1px solid transparent;
+    border-radius: 0.26666667rem;
+}
+
+#featureDock .btnContainer button:hover {
+    border: 1px solid var(--sunlight-gray-600);
+}
+
+#featureDock .btnContainer button .icon {
+    display: inline-block;
+    cursor: pointer;
     mask-size: contain;
     mask-repeat: no-repeat;
     background-color: var(--sunlight-gray-100);
+}
+
+#featureDock .btnContainer button#publisherBtn .icon {
+    mask: url("/asset/publisher.svg");
     height: 16px;
     width: 14.51px;
 }
 
-#appSettingsBtn {
+#featureDock .btnContainer button#appSettingsBtn .icon {
     mask: url("/asset/settings.svg");
-    mask-size: contain;
-    mask-repeat: no-repeat;
-    background-color: var(--sunlight-gray-100);
     height: 16px;
     width: 15.15px;
 }

@@ -117,6 +117,10 @@ function menuTemplate() {
             ]
         },
         {
+            label: 'Find',
+            submenu: []
+        },
+        {
             label: 'Window',
             submenu: [
                 {

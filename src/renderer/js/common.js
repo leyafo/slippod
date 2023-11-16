@@ -23,6 +23,8 @@ export const allCardsTag = document.getElementById("allCards")
 export const cardsNoTag = document.getElementById("noTag")
 export const cardsTrash = document.getElementById("trashCards")
 export const endTip = document.getElementById("endTip")
+export const publisherBtn = document.getElementById("publisherBtn")
+export const appSettingsBtn = document.getElementById("appSettingsBtn")
 
 export const limitItems= 20;
 export const listInsertBeforeFirst= 1;
