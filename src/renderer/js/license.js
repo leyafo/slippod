@@ -79,21 +79,27 @@ function invalidLicenseTemplate() {
 async function initWindow() {
     const licenseToken = await license.getLicense();
     console.log(licenseToken);
-    if (licenseToken.isValid) {
-        if (licenseToken.Type === undefined || licenseToken.Type === 'trial') {
-            document.title = "Enter License";
-            showRegisterForm();
-        }
-        if (licenseToken.Type === 'long') {
-            document.title = "Your License";
-            console.log('show license info');
-            showLicenseInfo(licenseToken);
-        }
-        window.licenseToken = licenseToken;
+
+    if (licenseToken.Type === undefined) {
+        document.title = "Enter License";
+        showRegisterForm();
         return;
     }
-    else {
-        showInvalidLicense();
+
+    if (licenseToken.isValid) {
+        if (licenseToken.Type === 'trial') {
+            document.title = "Enter License";
+            showRegisterForm();
+            return;
+        } else if (licenseToken.Type === 'long') {
+            document.title = "Your License";
+            showLicenseInfo(licenseToken);
+            return;
+        }
+    } else {
+        console.log('trial license expired');
+        document.title = "Enter License";
+        showRegisterForm();
     }
 };
 
