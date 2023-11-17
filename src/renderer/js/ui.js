@@ -1082,7 +1082,6 @@ async function showTrialPrompt() {
         await license.register_trial();
         const trialLicense = await license.getLicense();
 
-        console.log(trialLicense);
         if (trialLicense.isValid) {
             unSetReadOnlyMode();
             pages.reloadAll();
@@ -1103,13 +1102,9 @@ async function calTrialDaysLeft() {
         currentDate.setHours(0, 0, 0, 0);
         // for test only
         // currentDate.setDate(currentDate.getDate() + 30);
-        console.log(currentDate);
         let targetDate = new Date(licenseToken.End);
-        console.log(targetDate);
         let differenceInMilliseconds = targetDate - currentDate;
-        console.log(differenceInMilliseconds);
     
-        console.log(Math.floor(differenceInMilliseconds / (1000 * 60 * 60 * 24)));
         return Math.floor(differenceInMilliseconds / (1000 * 60 * 60 * 24));
     } else {
         return;
