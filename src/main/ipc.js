@@ -71,7 +71,6 @@ ipcMain.handle("showRegisterWindow", async function(event){
 
 ipcMain.handle("getLicense", async function(event){
     globalLicense = acquireLicense()//refresh global license
-    console.log(globalLicense)
     let licenseObj = globalLicense
     let isValid = await licenseModule.checkLicense(licenseObj)
     licenseObj.isValid = isValid
