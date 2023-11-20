@@ -2,6 +2,7 @@ const { app, BrowserWindow } = require('electron');
 const path = require('path');
 const db = require('./db.js');
 const env = require('./env.js');
+const conf = require("./config.js")
 
 let mainWindow = null;
 let settingsWindow = null;
@@ -33,22 +34,6 @@ function getPreloadPath(fileName) {
     return path.join(__dirname, `../preload/${fileName}`);
 }
 
-function getIconPath() {
-    // Default icon path
-    let iconPath = path.join(app.getAppPath(), 'icons/icon.png');
-
-    if (env.isDev()) {
-        return ""; 
-    }
-
-    switch (process.platform) {
-        case "win32":
-            iconPath = path.join(app.getAppPath(), 'icons/icon.ico');
-            break;
-    }
-
-    return iconPath;
-}
 
 function createMainWindow() {
     if (mainWindow != null){
@@ -60,7 +45,7 @@ function createMainWindow() {
         minWidth: 400,
         minHeight: 400,
         titleBarStyle: "hidden",
-        icon: getIconPath(),
+        icon: conf.getIconPath(),
         webPreferences: {
             preload: getPreloadPath("main.js"),
             scrollBounce: true,
@@ -100,7 +85,7 @@ function duplicateMainWindow(){
         minWidth: 400,
         minHeight: 300,
         titleBarStyle: "hidden",
-        icon: getIconPath(),
+        icon: conf.getIconPath(),
         webPreferences: {
             preload: getPreloadPath("main.js"),
             scrollBounce: true,
@@ -139,7 +124,7 @@ function createSettingsWindow() {
     const windowConfig = {
         width: 520,
         height: 300,
-        icon: getIconPath(),
+        icon: conf.getIconPath(),
         show: false,
         webPreferences: {
             preload: getPreloadPath("setting.js"),
@@ -173,7 +158,7 @@ function createDetailWindow(cardID) {
         y: y + 50,
         width: 800,
         height: 600,
-        icon: getIconPath(),
+        icon: conf.getIconPath(),
         show: false,
         titleBarStyle: "hidden",
         webPreferences: {
@@ -209,7 +194,7 @@ function createRegisterWindow() {
     const windowConfig = {
         width: 520,
         height: 300,
-        icon: getIconPath(),
+        icon: conf.getIconPath(),
         show: false,
         webPreferences: {
             preload: getPreloadPath("license.js"),

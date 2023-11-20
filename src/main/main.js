@@ -3,6 +3,7 @@ const {app, Menu, BrowserWindow } = require("electron");
 const ipcHandler = require("./ipc.js");
 const menu = require("./menu");
 const windowMgr = require('./window.js')
+const path = require('path');
 
 /***********diable gpu *****/
 //app.commandLine.appendSwitch('ignore-gpu-blacklist');
@@ -31,3 +32,13 @@ app.whenReady().then(async function()  {
     });
 });
 
+app.setAboutPanelOptions({
+    applicationName: "slippod",
+    applicationVersion: app.getVersion(),
+    version: app.getVersion(),
+    credits: "ANYWHERE ARC LTD",
+    authors: "ANYWHERE ARC LTD",
+    copyright: `(c) 2023-${new Date().getFullYear()+1}`,
+    website: "https://slippod.com",
+    iconPath:  path.join(app.getAppPath(), 'icons/icon.png'),
+});

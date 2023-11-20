@@ -6,6 +6,10 @@ function linuxTemplate() {
             label: 'Slippod',
             submenu: [
                 {
+                    label: 'About Slippod',
+                    role: 'about'
+                },
+                {
                     label: 'Settings...',
                     click: common.showSettingItem, 
                 },
