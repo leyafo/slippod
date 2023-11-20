@@ -33,12 +33,11 @@ app.whenReady().then(async function()  {
 });
 
 app.setAboutPanelOptions({
-    applicationName: "slippod",
+    applicationName: "Slippod",
     applicationVersion: app.getVersion(),
     version: app.getVersion(),
-    credits: "ANYWHERE ARC LTD",
+    // credits: "Copyright © ANYWHERE ARC LTD",
     authors: "ANYWHERE ARC LTD",
-    copyright: `(c) 2023-${new Date().getFullYear()+1}`,
-    website: "https://slippod.com",
+    website: "https://www.slippod.com",
     iconPath:  path.join(app.getAppPath(), 'icons/icon.png'),
 });
