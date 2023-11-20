@@ -8,8 +8,16 @@ function macTemplate() {
             label: 'Slippod',
             submenu: [
                 {
+                    label: 'About Slippod',
+                    selector: 'orderFrontStandardAboutPanel:'
+                },
+                {
+                    type: 'separator'
+                },
+                {
                     label: 'Settings...',
-                    click: common.showSettingItem, 
+                    accelerator: 'Command+,',
+                    click: common.showSettingItem,
                 },
                 {
                     type: 'separator'
@@ -24,9 +32,6 @@ function macTemplate() {
                 {
                     label: 'Hide',
                     click: common.minimizeItem,
-                },
-                {
-                    type: 'separator'
                 },
                 {
                     label: 'Quit',
@@ -47,7 +52,15 @@ function macTemplate() {
                     label: "Search",
                     accelerator: 'Command+K',
                     click: common.startSearchItem,
-                }
+                },
+                {
+                    type: 'separator'
+                },
+                {
+                    label: 'Close Window',
+                    accelerator: 'Command+W',
+                    click: function () { BrowserWindow.getFocusedWindow().close(); }
+                },
             ]
         },
         {
@@ -56,13 +69,11 @@ function macTemplate() {
                 {
                     label: 'Undo',
                     accelerator: 'Command+Z',
-                    selector: 'undo:',
                     role: "undo",
                 },
                 {
                     label: 'Redo',
                     accelerator: 'Shift+Command+Z',
-                    selector: 'redo:',
                     role: "redo",
                 },
                 {
@@ -71,19 +82,16 @@ function macTemplate() {
                 {
                     label: 'Cut',
                     accelerator: 'Command+X',
-                    selector: 'cut:',
                     role: 'cut'
                 },
                 {
                     label: 'Copy',
                     accelerator: 'Command+C',
-                    selector: 'copy:',
                     role: 'copy',
                 },
                 {
                     label: 'Paste',
                     accelerator: 'Command+V',
-                    selector: 'paste:',
                     role:"paste",
                 },
             ]
@@ -98,6 +106,16 @@ function macTemplate() {
                 {
                     label: 'Toggle DevTools',
                     click: common.toggleDevToolsItem,
+                },
+            ]
+        },
+        {
+            label: 'Window',
+            submenu: [
+                {
+                    label: 'Minimize',
+                    accelerator: 'Command+M',
+                    click: common.minimizeItem,
                 },
             ]
         },
