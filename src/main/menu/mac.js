@@ -59,7 +59,11 @@ function macTemplate() {
                 {
                     label: 'Close Window',
                     accelerator: 'Command+W',
-                    click: function () { BrowserWindow.getFocusedWindow().close(); }
+                    click: function () { 
+                        if (BrowserWindow.getFocusedWindow() !== null) {
+                            BrowserWindow.getFocusedWindow().close();
+                        }
+                    }
                 },
             ]
         },

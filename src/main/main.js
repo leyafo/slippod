@@ -36,7 +36,7 @@ app.setAboutPanelOptions({
     applicationName: "Slippod",
     applicationVersion: app.getVersion(),
     version: app.getVersion(),
-    copyright: process.platform != "darwin"? "Copyright © ANYWHERE ARC LTD":"",
+    copyright: "Copyright © ANYWHERE ARC LTD",
     authors: "ANYWHERE ARC LTD",
     website: "https://www.slippod.com",
     iconPath:  conf.getIconPath(),
