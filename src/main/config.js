@@ -25,6 +25,23 @@ function getUserDataPath() {
     }
 }
 
+function getIconPath() {
+    if (env.isDev()) {
+        return ""; 
+    }
+
+    const appPath = path.dirname(app.getAppPath());
+    let iconPath = path.join(appPath, 'icons', 'icon.png');
+
+    switch (process.platform) {
+        case "win32":
+            iconPath = path.join(appPath, 'icons', 'icon.ico');
+            break;
+    }
+
+    return iconPath;
+}
+
 function getExtensionPath(appDir){
     //get the same resource dir if is in production
     if (!env.isDev()) {
@@ -61,4 +78,5 @@ module.exports = {
     getUserDataPath,
     getDictPath,
     getExtensionPath,
+    getIconPath,
 }

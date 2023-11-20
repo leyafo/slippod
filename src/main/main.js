@@ -1,8 +1,9 @@
 // main.js
 const {app, Menu, BrowserWindow } = require("electron");
 const ipcHandler = require("./ipc.js");
-const {menuTemplate} = require("./menu.js");
+const menu = require("./menu");
 const windowMgr = require('./window.js')
+const conf = require('./config.js');
 
 /***********diable gpu *****/
 //app.commandLine.appendSwitch('ignore-gpu-blacklist');
@@ -13,13 +14,13 @@ const windowMgr = require('./window.js')
 
 ipcHandler.registerDBFunctions();
 Menu.setApplicationMenu(null)
+let mainWindow = null;
 app.whenReady().then(async function()  {
-    windowMgr.createMainWindow();
-    const menu = Menu.buildFromTemplate(menuTemplate());
-    Menu.setApplicationMenu(menu);
+    mainWindow = windowMgr.createMainWindow();
+    Menu.setApplicationMenu(Menu.buildFromTemplate(menu.menuTemplate()));
     app.on("activate", function()  {
         if (BrowserWindow.getAllWindows().length === 0) {
-            windowMgr.createMainWindow();
+            mainWindow = windowMgr.createMainWindow();
         }
     });
 
@@ -31,3 +32,12 @@ app.whenReady().then(async function()  {
     });
 });
 
+app.setAboutPanelOptions({
+    applicationName: "Slippod",
+    applicationVersion: app.getVersion(),
+    version: app.getVersion(),
+    copyright: "Copyright © ANYWHERE ARC LTD",
+    authors: "ANYWHERE ARC LTD",
+    website: "https://www.slippod.com",
+    iconPath:  conf.getIconPath(),
+});

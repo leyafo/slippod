@@ -1,10 +1,10 @@
 {
-  "name": "slippod",
+  "name": "Slippod",
   "description": "just for fun",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "private": true,
   "author": {
-    "name": "Double L"
+    "name": "Anywhere Arc LTD"
   },
   "main": "src/main/main.js",
   "scripts": {
@@ -19,8 +19,8 @@
     "autoprefixer": "^10.4.16",
     "electron": "^24.2.0",
     "electron-builder": "23.6.0",
-    "electron-rebuild": "^3.2.9",
     "electron-context-menu": "^3.6.1",
+    "electron-rebuild": "^3.2.9",
     "esbuild": "0.19.3",
     "postcss": "^8.4.30",
     "tailwindcss": "^3.3.3",

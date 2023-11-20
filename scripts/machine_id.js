@@ -11,26 +11,40 @@ async function fingerprint() {
     const uuid = await si.uuid();
     const cpu = await si.cpu();
     const osInfo = await si.osInfo();
+    const baseboard = await si.baseboard()
+    let interfaces = await si.networkInterfaces()
+    let macAddress = ""
+    for(let i of  interfaces){
+        if(i.default){
+            macAddress = i.mac
+        }
+    }
+    let cpuStr = cpu.brand+cpu.model+cpu.family+cpu.cores
 
-    let info = uuid.os;
-    for (let mac of uuid.macs) {
-        info += mac;
-    }
-    info += cpu.brand;
-    info += cpu.model;
-    info += cpu.family;
-    info += cpu.cores;
-    for (let k of Object.keys(cpu.cache)) {
-        info += cpu.cache[k];
-    }
+    let info = '';
+    info += uuid.os
+    info += osInfo.platform
+    info += cpuStr
+    info += baseboard.model
 
     return {
-        machineID: uuid.os,
-        fingerprint: sha256(info),
-        osInfo: `${osInfo.platform}-${osInfo.distro}-${osInfo.release}-${osInfo.kernel}-${osInfo.arch}`,
+        m: uuid.os, //MachineID
+        c: macAddress,      //MacAddress
+        u: cpuStr,
+        f: sha256(info),  //Fingerprint
+        d: `${osInfo.platform}-${osInfo.distro}-${osInfo.release}-${osInfo.kernel}-${osInfo.arch}`, // description
+        bb: baseboard.model,
+        p: osInfo.platform,
     };
 }
 
-fingerprint().then(function(fingerprint){
-    console.log(fingerprint)
-})
+(async function(){
+    let info = await fingerprint()
+    for(let i = 0; i < 10000; i++){
+        let info1 = await fingerprint()
+        if(info.f != info1.f){
+            console.log(info.f, info1.f)
+        }
+    }
+
+})()

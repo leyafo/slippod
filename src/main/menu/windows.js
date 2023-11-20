@@ -1,10 +1,10 @@
 const {BrowserWindow, app} = require('electron');
-const db = require('./db.js');
-const env = require('./env.js')
-const windowMgr = require('./window.js')
+const db = require('../db.js');
+const env = require('../env.js')
+const windowMgr = require('../window.js')
 
 // Create the Application's main menu
-function menuTemplate() {
+function windowsTemplate() {
     let menuItems = [
         {
             label: 'Slippod',
@@ -17,9 +17,18 @@ function menuTemplate() {
                     type: 'separator'
                 },
                 {
-                    label: 'Settings',
+                    label: 'Settings...',
                     click: function()  {
                         windowMgr.createSettingsWindow().show()
+                    },
+                },
+                {
+                    type: 'separator'
+                },
+                {
+                    label: 'License...',
+                    click: function()  {
+                        windowMgr.createRegisterWindow().show()
                     },
                 },
                 {
@@ -47,6 +56,11 @@ function menuTemplate() {
                     accelerator: 'Command+Q',
                     click: function () { app.quit(); }
                 },
+            ]
+        },
+        {
+            label: 'File',
+            submenu: [
             ]
         },
         {
@@ -103,6 +117,10 @@ function menuTemplate() {
             ]
         },
         {
+            label: 'Find',
+            submenu: []
+        },
+        {
             label: 'Window',
             submenu: [
                 {
@@ -129,23 +147,9 @@ function menuTemplate() {
             submenu: []
         },
     ];
-    if (env.isDev()){
-        let licenseMenu = {
-            label: 'Dev',
-            submenu: [
-                {
-                    label: 'Remove License',
-                    click: function(){
-                        db.removeConfig("license");
-                    }
-                }
-            ]
-        }
-        menuItems.push(licenseMenu);
-    }
     return menuItems
 }
 
 module.exports={
-    menuTemplate
+    windowsTemplate
 }

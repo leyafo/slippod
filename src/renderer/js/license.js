@@ -1,5 +1,4 @@
 import * as CM from './common.js';
-console.log(CM);
 const myLicense = document.getElementById('licenseWindow');
 
 function registerFormTemplate() {
@@ -16,7 +15,7 @@ function registerFormTemplate() {
                             </div>
                         </div>
                         <div class="formCtrlBar">
-                            <button id="submitLicenseBtn" disabled>Use License</button>
+                            <button id="submitLicenseBtn" disabled><span class="icon"></span><span class="label">Use License</span></button>
                         </div>
                     </div>`;
     return CM.htmlToElement(template);
@@ -80,21 +79,27 @@ function invalidLicenseTemplate() {
 async function initWindow() {
     const licenseToken = await license.getLicense();
     console.log(licenseToken);
-    if (licenseToken.isValid) {
-        if (licenseToken.Type === undefined || licenseToken.Type === 'trial') {
-            document.title = "Enter License";
-            showRegisterForm();
-        }
-        if (licenseToken.Type === 'long') {
-            document.title = "Your License";
-            console.log('show license info');
-            showLicenseInfo(licenseToken);
-        }
-        window.licenseToken = licenseToken;
+
+    if (licenseToken.Type === undefined) {
+        document.title = "Enter License";
+        showRegisterForm();
         return;
     }
-    else {
-        showInvalidLicense();
+
+    if (licenseToken.isValid) {
+        if (licenseToken.Type === 'trial') {
+            document.title = "Enter License";
+            showRegisterForm();
+            return;
+        } else if (licenseToken.Type === 'long') {
+            document.title = "Your License";
+            showLicenseInfo(licenseToken);
+            return;
+        }
+    } else {
+        console.log('trial license expired');
+        document.title = "Enter License";
+        showRegisterForm();
     }
 };
 
@@ -116,15 +121,19 @@ function showRegisterForm() {
     });
 
     submitLicenseBtn.addEventListener('click', async (event) => {
-        console.log(licenseInput.value)
-        let licenseValue = licenseInput.value;
+        let licenseValue = licenseInput.value.trim();
+        licenseInput.disabled = true;
+        submitLicenseBtn.disabled = true;
+        submitLicenseBtn.classList.add('saving');
+
         const res = await license.register(licenseValue);
-        console.log(res);
         if (res.statusCode === 401) {
             licenseInputError.textContent = "Invalid license. Please enter again.";
+            licenseInput.disabled = false;
+            submitLicenseBtn.disabled = false;
+            submitLicenseBtn.classList.remove('saving');
         }
         if (res.statusCode === 200) {
-            console.log('success');
             showRegisterSuccess();
         }
     });

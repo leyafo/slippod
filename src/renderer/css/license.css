@@ -87,7 +87,7 @@ body {
     outline: 2px solid var(--sunlight-500);
 }
 
-.form .formField .fieldInput input:read-only {
+.form .formField .fieldInput input[readonly] {
     background-color: var(--sunlight-gray-800);
     outline: none;
     border: none;
@@ -105,6 +105,18 @@ body {
     box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
     background-color: var(--sunlight-600);
     color: var(--white);
+}
+
+.form .formCtrlBar button.saving .icon {
+    @apply animate-spin mr-1;
+    mask: url("/asset/loading.svg");
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    background-color: var(--white);
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    vertical-align: text-bottom;
 }
 
 .form .formCtrlBar button:hover {

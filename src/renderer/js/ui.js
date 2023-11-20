@@ -1031,7 +1031,7 @@ function trialBarTemplate(trialBarText) {
                         <div id="trialBarContainer">
                             <span id="trialBarCloseBtn"></span>
                             <div id="trialBarText">${trialBarText}</div>
-                            <button id="trialBarUnlockBtn">Unlock</button>
+                            <button id="trialBarUnlockBtn"><span class="icon"></span><span class="label">Unlock</span></button>
                         </div>
                     </div>`;
     
@@ -1076,10 +1076,12 @@ async function showTrialPrompt() {
     });
     
     trialBarUnlockBtn.addEventListener('click', async function() {
+        trialBarUnlockBtn.disabled = true;
+        trialBarUnlockBtn.classList.add('saving');
+
         await license.register_trial();
         const trialLicense = await license.getLicense();
 
-        console.log(trialLicense);
         if (trialLicense.isValid) {
             unSetReadOnlyMode();
             pages.reloadAll();
@@ -1100,13 +1102,9 @@ async function calTrialDaysLeft() {
         currentDate.setHours(0, 0, 0, 0);
         // for test only
         // currentDate.setDate(currentDate.getDate() + 30);
-        console.log(currentDate);
         let targetDate = new Date(licenseToken.End);
-        console.log(targetDate);
         let differenceInMilliseconds = targetDate - currentDate;
-        console.log(differenceInMilliseconds);
     
-        console.log(Math.floor(differenceInMilliseconds / (1000 * 60 * 60 * 24)));
         return Math.floor(differenceInMilliseconds / (1000 * 60 * 60 * 24));
     } else {
         return;
@@ -1145,6 +1143,32 @@ function unSetReadOnlyMode() {
     CM.listArea.removeAttribute('data-readonly');
 }
 
+CM.appSettingsBtn.addEventListener('click', function(event) {
+    pages.openSetting();
+});
+
+function tooltipTemplate(tooltipText, tooltipID) {
+    let template = `<div id="${tooltipID}" class="tooltip">
+                        <div class="tooltipContainer">
+                            <div class="tooltipContent">${tooltipText}</div>
+                        </div>
+                    </div>`;
+    return CM.htmlToElement(template);
+};
+
+CM.publisherBtn.addEventListener('mouseover', function(event) {
+    const tooltip = tooltipTemplate("This feature is currently under development.", "publisherTooltip");
+    const publisherBtn = document.getElementById('publisherBtn')
+
+    if (!document.getElementById('publisherTooltip')) {
+        publisherBtn.parentNode.insertBefore(tooltip, publisherBtn.nextSibling);
+    }
+});
+
+CM.publisherBtn.addEventListener('mouseout', function(event) {
+    document.getElementById('publisherTooltip').remove();
+});
+
 window.addEventListener('DOMContentLoaded', function() {
     //load cards
     db.getCards(0, CM.limitItems).then(function(cards) {
@@ -1168,10 +1192,27 @@ window.addEventListener('DOMContentLoaded', function() {
     removeSplashScreen();
 });
 
+function startingSearch(){
+    globalState.setSearching();
+    CM.showOmniSearchAndFocus();
+    CM.searchBox.focus();
+}
+
 //This is a black magic, from an India youtube brother. Youtube: 70-p0mq-w5g
 window.backendBridge.displayCardCounts(function(event){
     displayCardCounts();
 });
+window.backendBridge.startSearch(function (callback) {
+    startingSearch()
+})
+
+window.backendBridge.openNewCard(function (callback) {
+    if (CM.listArea.dataset.readonly !== "true") {
+        db.getDraft().then(function (draftContent) {
+            activateNewItemEditor(draftContent).focus();
+        })
+    }
+})
 
 export {
     handleOptionSelect,
@@ -1181,4 +1222,5 @@ export {
     deleteCard,
     activateNewItemEditor,
     highlightCardUpOrDownScreen,
+    startingSearch,
 }
