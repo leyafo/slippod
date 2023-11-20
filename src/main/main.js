@@ -3,7 +3,7 @@ const {app, Menu, BrowserWindow } = require("electron");
 const ipcHandler = require("./ipc.js");
 const menu = require("./menu");
 const windowMgr = require('./window.js')
-const path = require('path');
+const conf = require('./config.js');
 
 /***********diable gpu *****/
 //app.commandLine.appendSwitch('ignore-gpu-blacklist');
@@ -36,8 +36,8 @@ app.setAboutPanelOptions({
     applicationName: "Slippod",
     applicationVersion: app.getVersion(),
     version: app.getVersion(),
-    // credits: "Copyright © ANYWHERE ARC LTD",
+    copyright: process.platform != "darwin"? "Copyright © ANYWHERE ARC LTD":"",
     authors: "ANYWHERE ARC LTD",
     website: "https://www.slippod.com",
-    iconPath:  path.join(app.getAppPath(), 'icons/icon.png'),
+    iconPath:  conf.getIconPath(),
 });

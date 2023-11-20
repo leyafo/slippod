@@ -29,11 +29,13 @@ function getIconPath() {
     if (env.isDev()) {
         return ""; 
     }
-    let iconPath = path.join(app.getAppPath(), 'icons/icon.png');
+
+    const appPath = path.dirname(app.getAppPath());
+    let iconPath = path.join(appPath, 'icons', 'icon.png');
 
     switch (process.platform) {
         case "win32":
-            iconPath = path.join(app.getAppPath(), 'icons/icon.ico');
+            iconPath = path.join(appPath, 'icons', 'icon.ico');
             break;
     }
 

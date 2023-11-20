@@ -12,11 +12,11 @@ module.exports = async function () {
             "to": "src",
         },
         "package.json",
-        "icons/",
         "**/node_modules/**/*"
     ],
     extraResources: [
-          "libsimple/"
+          "libsimple/",
+          "icons/",
     ],
     extraMetadata: {
       version: process.env.npm_package_version,
