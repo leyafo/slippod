@@ -1,7 +1,7 @@
 // main.js
 const {app, Menu, BrowserWindow } = require("electron");
 const ipcHandler = require("./ipc.js");
-const {menuTemplate} = require("./menu.js");
+const menu = require("./menu");
 const windowMgr = require('./window.js')
 
 /***********diable gpu *****/
@@ -16,8 +16,7 @@ Menu.setApplicationMenu(null)
 let mainWindow = null;
 app.whenReady().then(async function()  {
     mainWindow = windowMgr.createMainWindow();
-    const menu = Menu.buildFromTemplate(menuTemplate());
-    Menu.setApplicationMenu(menu);
+    Menu.setApplicationMenu(Menu.buildFromTemplate(menu.menuTemplate()));
     app.on("activate", function()  {
         if (BrowserWindow.getAllWindows().length === 0) {
             mainWindow = windowMgr.createMainWindow();

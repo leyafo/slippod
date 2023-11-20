@@ -1192,10 +1192,27 @@ window.addEventListener('DOMContentLoaded', function() {
     removeSplashScreen();
 });
 
+function startingSearch(){
+    globalState.setSearching();
+    CM.showOmniSearchAndFocus();
+    CM.searchBox.focus();
+}
+
 //This is a black magic, from an India youtube brother. Youtube: 70-p0mq-w5g
 window.backendBridge.displayCardCounts(function(event){
     displayCardCounts();
 });
+window.backendBridge.startSearch(function (callback) {
+    startingSearch()
+})
+
+window.backendBridge.openNewCard(function (callback) {
+    if (CM.listArea.dataset.readonly !== "true") {
+        db.getDraft().then(function (draftContent) {
+            activateNewItemEditor(draftContent).focus();
+        })
+    }
+})
 
 export {
     handleOptionSelect,
@@ -1205,4 +1222,5 @@ export {
     deleteCard,
     activateNewItemEditor,
     highlightCardUpOrDownScreen,
+    startingSearch,
 }
