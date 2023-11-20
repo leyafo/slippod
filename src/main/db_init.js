@@ -39,7 +39,53 @@ ${slippodTag}
 
 ${slippodTag}
     `)
+
 }
+
+db.createNewCard(`
+| 类目   | 操作        | Windows & Linux       | Mac                   |
+|------|-----------|-----------------------|-----------------------|
+| 搜索   | 激活搜索框     | Ctrl + K              | Cmd + K               |
+| 搜索   | 关闭搜索框     | Esc                   | Esc                   |
+| 搜索   | 向下选下一条目   | Arrow Down / Ctrl + N | Arrow Down / Ctrl + N |
+| 搜索   | 向上选上一条目   | Arrow Up / Ctrl + P   | Arrow Up / Ctrl + P   |
+| 搜索   | 跳转所选条目    | Enter                 | Enter                 |
+| 搜索   | 新建卡片（无提示） | Enter                 | Enter                 |
+| 卡片列表 | 选下一张卡片    | Arrow Down / Ctrl + N | Arrow Down / Ctrl + N |
+| 卡片列表 | 选上一张卡片    | Arrow Up / Ctrl + P   | Arrow Up / Ctrl + P   |
+| 卡片列表 | 取消选中状态    | Esc                   | Esc                   |
+| 卡片列表 | 查看选中卡片    | V                      |V                   |
+| 卡片列表 | 编辑所选卡片    | Enter                 | Enter                 |
+| 卡片列表 | 删除所选卡片    | Ctrl + D              | Cmd + D              |
+| 卡片   | 新建卡片      | Ctrl + O              | Cmd + O               |
+| 卡片   | 保存卡片      | Ctrl+S                | Cmd+S                 |
+| 卡片   | 保存卡片且退出编辑 | Ctrl + Enter          | Cmd + Enter           |
+| 文本编辑 | 复制        | Ctrl+C                | Cmd+C                 |
+| 文本编辑 | 粘贴        | Ctrl+V                | Cmd + V               |
+| 文本编辑 | 全选        | Ctrl+A                | Cmd + A               |
+| 文本编辑 | 回撤        | Ctrl + Z              | Cmd + Z               |
+| 文本编辑 | 向前回撤      | Ctrl + Shift + Z      | Cmd + Shift + Z       |
+| 文本编辑 | 移动到行首     | Ctrl+A                | Ctrl+A                |
+| 文本编辑 | 移动到行尾     | Ctrl+E                | Ctrl+E                |
+| 文本编辑 | 光标前移一个字符  | Ctrl+F                | Ctrl+F                |
+| 文本编辑 | 光标后移一个字符  | Ctrl+B                | Ctrl+B                |
+| 文本编辑 | 光标向上移动一行  | Ctrl+P                | Ctrl+P                |
+| 文本编辑 | 光标向下移动一行  | Ctrl+N                | Ctrl+N                |
+| 文本编辑 | 光标后移一个单词  | Alt+B                 | Alt+B                 |
+| 文本编辑 | 光标前移一个单词  | Alt+F                 | Alt+F                 |
+| 文本编辑 | 光标移到开始  | Ctrl+ Arrow Up                 |Cmd+ Arrow Up                 |
+| 文本编辑 | 光标移到结束  |  Ctrl+ Arrow Down                 |Cmd+ Arrow Down                 |
+| 文本编辑 | 向前选中一个字符  | Ctrl+Shift+F          | Ctrl+Shift+F          |
+| 文本编辑 | 向后选中一个字符  | Ctrl+Shift+B          | Ctrl+Shift+B          |
+| 文本编辑 | 向前选中一个单词  | Alt+Shift+B           | Alt+Shift+B           |
+| 文本编辑 | 向后选中一个单词  | Alt+Shift+F           | Alt+Shift+F           |
+| 文本编辑 | 选中至行首     | Ctrl+Shift+A          | Ctrl+Shift+A          |
+| 文本编辑 | 选中至行尾     | Ctrl+Shift+E          | Ctrl+Shift+E          |
+| 文本编辑 | 向后删除一个单词  | Ctrl+W                | Ctrl+W                |
+| 文本编辑 | 向前删除一个单词  | Alt+D                 | Alt+D                 |
+| 文本编辑 | 删除到行首     | Ctrl+U                | Ctrl+U                |
+| 文本编辑 | 删除到行尾     | Ctrl+K                | Ctrl+K                |
+`)
 
 module.exports = {
     insertSampleData,
