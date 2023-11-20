@@ -15,7 +15,7 @@ const conf = require('./config.js');
 ipcHandler.registerDBFunctions();
 Menu.setApplicationMenu(null)
 let mainWindow = null;
-app.whenReady().then(async function()  {
+app.whenReady().then(async function() {
     mainWindow = windowMgr.createMainWindow();
     Menu.setApplicationMenu(Menu.buildFromTemplate(menu.menuTemplate()));
     app.on("activate", function()  {
