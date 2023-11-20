@@ -1,10 +1,10 @@
 const {BrowserWindow, app} = require('electron');
-const db = require('./db.js');
-const env = require('./env.js')
-const windowMgr = require('./window.js')
+const db = require('../db.js');
+const env = require('../env.js')
+const windowMgr = require('../window.js')
 
 // Create the Application's main menu
-function menuTemplate() {
+function windowsTemplate() {
     let menuItems = [
         {
             label: 'Slippod',
@@ -147,23 +147,9 @@ function menuTemplate() {
             submenu: []
         },
     ];
-    if (env.isDev()){
-        let licenseMenu = {
-            label: 'Dev',
-            submenu: [
-                {
-                    label: 'Remove License',
-                    click: function(){
-                        db.removeConfig("license");
-                    }
-                }
-            ]
-        }
-        menuItems.push(licenseMenu);
-    }
     return menuItems
 }
 
 module.exports={
-    menuTemplate
+    windowsTemplate
 }

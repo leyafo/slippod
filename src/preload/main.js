@@ -59,7 +59,13 @@ contextBridge.exposeInMainWorld('backendBridge', {
     },
     displayCardDetail: function(callback) {
         return ipcRenderer.on("displayCardDetail", (callback));
-    } 
+    }, 
+    startSearch: function(callback){
+        return ipcRenderer.on("startSearch", (callback));
+    },
+    openNewCard: function(callback){
+        return ipcRenderer.on("openNewCard", (callback));
+    }
 });
 
 function modulePreload(moduleName, functionArray, callback){
@@ -128,7 +134,7 @@ modulePreload("license", licenseFuncNames);
                 'funcName': funcName,
                 'args': args,
             }));
-            console.log(funcName, ...args);
+            // console.log(funcName, ...args);
             return ipcRenderer.invoke(funcName, ...args)
         };
     })

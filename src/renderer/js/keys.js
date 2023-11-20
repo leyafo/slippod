@@ -1,11 +1,6 @@
 import * as CM from "./common.js";
 import * as UI from "./ui.js";
 
-function startingSearch(){
-    globalState.setSearching();
-    CM.showOmniSearchAndFocus();
-    CM.searchBox.focus();
-}
 
 function ctrlCmdKey(event){
     switch (env.platform){
@@ -23,7 +18,7 @@ document.addEventListener("keydown", function (event) {
     }
 
     if (event.key == "k" && ctrlCmdKey(event)) {
-        startingSearch()
+        UI.startingSearch()
         event.preventDefault();
         return
     }
