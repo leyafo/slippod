@@ -6,6 +6,7 @@ module.exports = async function () {
       output: 'out',
       buildResources: 'buildResources',
     },
+    artifactName: "slippod.${ext}",
     files: [
         {
             "from": "dist",
