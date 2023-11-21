@@ -59,3 +59,21 @@ jobs:
           # CSC_KEY_PASSWORD: ''
           # Publishing artifacts
           GH_TOKEN: ${{ secrets.github_token }} # GitHub token, automatically provided (No need to define this secret in the repo settings)
+
+      - name: upload to cloudflare
+        uses: cloudflare/wrangler-action@v3
+        with:
+            apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+            preCommands: echo "*** pre command ***"
+            postCommands: |
+                echo "*** post commands ***"
+                file=$(ls out/slippod.{exe,dmg,appimage} 2> /dev/null | head -n 1)
+                if [ -n "$file" ]; then
+                    filename=$(basename "$file")
+                    echo "Uploading $file to Cloudflare $filename..."
+                    echo wrangler r2 object put test/"$filename" --file="$file"
+                    wrangler r2 object put test/"$filename" --file="$file"
+                else
+                    echo "No file found to upload."
+                fi
+                echo "******"
