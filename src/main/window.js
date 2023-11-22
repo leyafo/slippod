@@ -105,9 +105,10 @@ function duplicateMainWindow(){
 }
 
 function reloadAllMainWindow(){
-    for(let w of BrowserWindow.getAllWindows()){
-        if(w != null){
-            w.reload()
+    for(let window of BrowserWindow.getAllWindows()){
+        //copy from electron
+        if (!window.isDestroyed() && window.webContents && !window.webContents.isDestroyed()) {
+            window.reload()
         }
     }
 }
