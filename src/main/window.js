@@ -96,7 +96,7 @@ function duplicateMainWindow(){
     let newMainWindow = createWindow(windowConfig, 'index.html');
     setupDevTools(newMainWindow);
 
-    newMainWindow.on("closed", () => {
+    newMainWindow.on("closed", function() {
         newMainWindow = null;
     });
 
@@ -105,7 +105,7 @@ function duplicateMainWindow(){
 }
 
 function reloadAllMainWindow(){
-    for(let w of mainWindowArray){
+    for(let w of BrowserWindow.getAllWindows()){
         if(w != null){
             w.reload()
         }
