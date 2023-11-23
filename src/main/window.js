@@ -96,7 +96,7 @@ function duplicateMainWindow(){
     let newMainWindow = createWindow(windowConfig, 'index.html');
     setupDevTools(newMainWindow);
 
-    newMainWindow.on("closed", () => {
+    newMainWindow.on("closed", function() {
         newMainWindow = null;
     });
 
@@ -105,9 +105,10 @@ function duplicateMainWindow(){
 }
 
 function reloadAllMainWindow(){
-    for(let w of mainWindowArray){
-        if(w != null){
-            w.reload()
+    for(let window of BrowserWindow.getAllWindows()){
+        //copy from electron
+        if (!window.isDestroyed() && window.webContents && !window.webContents.isDestroyed()) {
+            window.reload()
         }
     }
 }
