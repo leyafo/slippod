@@ -25,10 +25,6 @@ function isProduction(){
     return !isDev()
 }
 
-function platform(){
-
-}
-
 
 module.exports = {
     nodeEnv,
