@@ -888,7 +888,6 @@ function refreshTagTree(tags) {
             event.stopPropagation();
 
             const existingTagName = btn.closest('.tagClick').getAttribute('data-tag');
-            console.log(document.getElementById('editTagModal'));
             if (!document.getElementById('editTagModal')) {
                 createEditTagModal(existingTagName);
             } else {
@@ -929,6 +928,7 @@ document.addEventListener('click', function(event) {
 })
 
 function createEditTagModal(existingTagName = '') {
+    globalState.setEditing();
     const modalHTML = `
         <div id="modalOverlay">
             <div id="editTagModal" class="modal">
@@ -955,18 +955,23 @@ function createEditTagModal(existingTagName = '') {
     const modalSaveBtn = document.getElementById('saveEditTagBtn');
     const modalCancelBtn = document.getElementById('cancelEditTagBtn');
     const modalTagNameInput = document.getElementById('tagNameInput');
+    modalTagNameInput.focus();
 
-    modalCancelBtn.addEventListener('click', () => {
+    let closeModal = function(){
         document.getElementById('modalOverlay').remove();
         
         if (document.documentElement.clientWidth >= 768) {
             document.body.classList.remove('overflow-hidden');
         }
+        globalState.setViewing();
+    }
+
+    modalCancelBtn.addEventListener('click', () => {
+        closeModal();
     });
 
     modalSaveBtn.addEventListener('click', () => {
         modalCancelBtn.disabled = true;
-        modalTagNameInput.disabled = true;
         modalSaveBtn.disabled = true;
         modalSaveBtn.classList.add('saving');
 
@@ -985,16 +990,16 @@ function createEditTagModal(existingTagName = '') {
             if (CM.listArea.classList.contains("allCardsList")) {
                 db.getCards(0, CM.limitItems).then(cards => reloadCardList(cards, "All Cards"));
             }
-            
-            document.getElementById('modalOverlay').remove();
-        
-            if (document.documentElement.clientWidth >= 768) {
-                document.body.classList.remove('overflow-hidden');
-            }
+
+            closeModal();
         });
     });
 
     modalTagNameInput.addEventListener('keyup', (event) => {
+        if (event.key == "Escape") {
+            closeModal();
+            return
+        }
         if (event.target.value === '') {
             modalSaveBtn.disabled = true;
         } else if (event.target.value === existingTagName) {
