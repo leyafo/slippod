@@ -39,12 +39,17 @@ function createMainWindow() {
     if (mainWindow != null){
         return
     }
+    let titleBarStyle = ""
+    if (process.platform == "darwin") {
+        titleBarStyle = "hidden"
+    }
+    console.log("============",titleBarStyle)
     const windowConfig = {
         width: 800,
         height: 800,
         minWidth: 400,
         minHeight: 400,
-        titleBarStyle: "hidden",
+        titleBarStyle: titleBarStyle,
         icon: conf.getIconPath(),
         webPreferences: {
             preload: getPreloadPath("main.js"),
@@ -77,6 +82,10 @@ function duplicateMainWindow(){
         y = activeWindow.getBounds().y;
     }
 
+    let titleBarStyle = ""
+    if (process.platform == "darwin") {
+        titleBarStyle = "hidden"
+    }
     const windowConfig = {
         x: x + 50,
         y: y + 50,
@@ -84,7 +93,7 @@ function duplicateMainWindow(){
         height: 800,
         minWidth: 400,
         minHeight: 300,
-        titleBarStyle: "hidden",
+        titleBarStyle: titleBarStyle,
         icon: conf.getIconPath(),
         webPreferences: {
             preload: getPreloadPath("main.js"),
