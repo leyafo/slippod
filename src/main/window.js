@@ -39,11 +39,10 @@ function createMainWindow() {
     if (mainWindow != null){
         return
     }
-    let titleBarStyle = ""
+    let titleBarStyle = "default"
     if (process.platform == "darwin") {
         titleBarStyle = "hidden"
     }
-    console.log("============",titleBarStyle)
     const windowConfig = {
         width: 800,
         height: 800,
@@ -82,7 +81,7 @@ function duplicateMainWindow(){
         y = activeWindow.getBounds().y;
     }
 
-    let titleBarStyle = ""
+    let titleBarStyle = "default"
     if (process.platform == "darwin") {
         titleBarStyle = "hidden"
     }
@@ -163,6 +162,10 @@ function createDetailWindow(cardID) {
         y = activeWindow.getBounds().y;
     }
 
+    let titleBarStyle = "default"
+    if (process.platform == "darwin") {
+        titleBarStyle = "hidden"
+    }
     const windowConfig = {
         x: x + 50,
         y: y + 50,
@@ -170,7 +173,7 @@ function createDetailWindow(cardID) {
         height: 600,
         icon: conf.getIconPath(),
         show: false,
-        titleBarStyle: "hidden",
+        titleBarStyle: titleBarStyle,
         webPreferences: {
             preload: getPreloadPath("main.js"),
             scrollBounce: true,
