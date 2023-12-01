@@ -32,10 +32,16 @@ function getIconPath() {
 
     const appPath = path.dirname(app.getAppPath());
     let iconPath = path.join(appPath, 'icons', 'icon.png');
+    if(!fs.existsSync(iconPath)){
+        iconPath = path.join(appPath, 'icons', 'icon_white.png');
+    }
 
     switch (process.platform) {
         case "win32":
             iconPath = path.join(appPath, 'icons', 'icon.ico');
+            if(!fs.existsSync(iconPath)){
+                iconPath = path.join(appPath, 'icons', 'icon_white.ico');
+            }
             break;
     }
 
