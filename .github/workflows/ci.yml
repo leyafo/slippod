@@ -35,4 +35,5 @@ jobs:
     with:
       dry-run: ${{ github.event_name != 'push' || github.ref_name != 'master' }}
     uses: ./.github/workflows/release.yml
+    secrets: inherit
 
