@@ -302,7 +302,7 @@ function activateNewItemEditor(content) {
         const isTagList = CM.listArea.classList.contains("tagList");
         if (isTagList){
             const tag = document.getElementById("listTitle").textContent;
-            content = `#${tag} `
+            content = `#${tag}  \n`
         }
     }
     const existedEditor = CM.newItemEditor.firstChild.CodeMirror;

@@ -11,6 +11,7 @@ module.exports = async function () {
     }
 
     return {
+        afterSign: "build/notarize.js",
         directories: {
             output: 'out',
             buildResources: 'buildResources',
@@ -39,7 +40,14 @@ module.exports = async function () {
         },
         mac: {
             target: "dmg",
+            hardenedRuntime: true,
+            gatekeeperAssess: false,
+            entitlements: "build/entitlements.mac.plist",
+            entitlementsInherit: "build/entitlements.mac.plist",
             icon: (env === undefined)? "icons/icon.icns":"icons/icon_white.icns",
+            "dmg": {
+                "sign": false
+            },
         },
         win: {
             target: "nsis",
