@@ -8,11 +8,12 @@ exports.default = async function notarizing(context) {
 
   const appName = context.packager.appInfo.productFilename;
 
-  console.log(process.env.MACOS_CERTIFICATE);
+  console.log(process.env.CLOUDFLARE_ACCOUNT_ID);
   return await notarize({
     appBundleId: 'com.anywherearctest.slippodtest',
     appPath: `${appOutDir}/${appName}.app`,
     appleId: "iosmediadev@gmail.com",
     appleIdPassword: "SlippodDevDemo",
+    teamId: 'F2W7ZZD6VR',
   });
 };
