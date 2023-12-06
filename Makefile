@@ -1,4 +1,4 @@
-.PHONY: all bundle_main main preload renderer pack release preview clean publish
+.PHONY: all bundle_main main preload renderer pack release preview clean publish publish_pack
 
 DIST := ./dist
 MAIN_DIST := $(DIST)/main
@@ -38,8 +38,10 @@ pack:
 release: renderer preload main
 
 publish: renderer preload main 
+	npx electron-builder build --config electron-builder.config.js --dir --publish 'never'
+
+publish_pack: release
 	NODE_ENV=pre npx --no-install electron-builder --config electron-builder.config.js --publish 'never'
-	# npx electron-builder build --config electron-builder.config.js --dir --publish 'never'
 
 preview: 
 	npx electron $(MAIN_DIST)/index.js
