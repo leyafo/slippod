@@ -8,12 +8,12 @@ exports.default = async function notarizing(context) {
 
   const appName = context.packager.appInfo.productFilename;
 
-  console.log(process.env.CLOUDFLARE_ACCOUNT_ID);
+  console.log(process.env.APPLE_ID_PASSWORD);
   return await notarize({
     appBundleId: 'com.anywherearctest.slippodtest',
     appPath: `${appOutDir}/${appName}.app`,
     appleId: "iosmediadev@gmail.com",
-    appleIdPassword: "puga-uooy-ujwg-pdsh",
+    appleIdPassword: process.env.APPLE_ID_PASSWORD,
     teamId: 'F2W7ZZD6VR',
   });
 };
