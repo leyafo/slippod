@@ -38,7 +38,8 @@ pack:
 release: renderer preload main
 
 publish: renderer preload main 
-	NODE_ENV=pre npx electron-builder build --config electron-builder.config.js --dir
+	NODE_ENV=pre npx --no-install electron-builder --config electron-builder.config.js --publish 'never'
+	# npx electron-builder build --config electron-builder.config.js --dir --publish 'never'
 
 preview: 
 	npx electron $(MAIN_DIST)/index.js
