@@ -12,7 +12,7 @@ exports.default = async function notarizing(context) {
   return await notarize({
     appBundleId: 'com.anywherearctest.slippodtest',
     appPath: `${appOutDir}/${appName}.app`,
-    appleId: "iosmediadev@gmail.com",
+    appleId: "16981214165",
     appleIdPassword: "SlippodDevDemo",
     teamId: 'F2W7ZZD6VR',
   });
