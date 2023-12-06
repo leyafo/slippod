@@ -45,9 +45,6 @@ module.exports = async function () {
             entitlements: "build/entitlements.mac.plist",
             entitlementsInherit: "build/entitlements.mac.plist",
             icon: (env === undefined)? "icons/icon.icns":"icons/icon_white.icns",
-            "dmg": {
-                "sign": false
-            },
         },
         win: {
             target: "nsis",
