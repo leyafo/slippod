@@ -75,7 +75,7 @@ function readDBPathFromConfigFile(configFilePath){
     return dbPath;
 }
 function saveDBPathToConfigFile(configFilePath, dbPath){
-    fs.writeFileSync(configFilePath, dbPath)
+    return fs.writeFileSync(configFilePath, dbPath)
 }
 
 module.exports = {
