@@ -120,7 +120,7 @@ ipcMain.handle("getDBPath", async function(event, ...args)  {
 
 
 const configFilePath = path.join(config.getUserDataPath(), "slippod.config")
-async function registerDBFunctions(){
+function registerDBFunctions(){
     const appPath = app.getAppPath();
     const extPath = config.getExtensionPath(appPath);
     const dictPath = config.getDictPath(appPath);

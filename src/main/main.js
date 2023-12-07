@@ -13,7 +13,6 @@ const conf = require('./config.js');
 /***************************/
 
 ipcHandler.registerDBFunctions();
-Menu.setApplicationMenu(null)
 let mainWindow = null;
 app.whenReady().then(async function() {
     mainWindow = windowMgr.createMainWindow();
