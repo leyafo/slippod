@@ -167,7 +167,7 @@ For any card you want to edit, simply double clicks it to enter editting mode to
 ${welcomeTag}`)
 
     const welcomeCardNewCard = db.createNewCard(`## How to create a new cards
-Simply click the always present top compose box at the top your current card stack (\`⌘+O / Ctrl+O\`), type what you want to note down and click the paper plane button to save it (`⌘+Enter / Ctrl+Enter`).
+Simply click the always present top compose box at the top your current card stack (\`⌘+O / Ctrl+O\`), type what you want to note down and click the paper plane button to save it (\`⌘+Enter / Ctrl+Enter\`).
 
 ![Slippod compose box](https://download.slippod.com/slippod-app-ui-compose-box.png)
 
