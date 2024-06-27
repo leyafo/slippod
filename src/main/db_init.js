@@ -117,7 +117,7 @@ With multiple windows, you can view cards from different tags side by side. This
 ${welcomeTag}`)
 
     const welcomeCardHashLink = db.createNewCard(`## Reference other cards
-You can reference other cards by using \`@\`, like @${welcomeCardMultiWindows}. Simply typing \`@\` will bring up an auto-suggested list of cards and you can continue to type to search the specific card you want to reference.
+You can reference other cards by using \`@\`, like @${welcomeCardKeyboard}. Simply typing \`@\` will bring up an auto-suggested list of cards and you can continue to type to search the specific card you want to reference.
 
 ---
 
