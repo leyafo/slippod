@@ -515,7 +515,6 @@ const topCardObserver = new IntersectionObserver(entries => {
     // Check if the item is in the viewport
     if (entry.isIntersecting) {
         viewportTopcard = entry.target;
-        console.log(viewportTopcard);
     }
   }
 }, {
@@ -982,7 +981,6 @@ function createEditTagModal(existingTagName = '') {
             db.getAllTags().then(refreshTagTree);
 
             if (CM.listArea.classList.contains("tagList")) {
-                console.log(CM.listArea);
                 let currentListTag = document.getElementById("listTitle").textContent;
                 db.getCardsByTag(currentListTag, 0, CM.limitItems).then(cards => reloadCardList(cards, currentListTag));
             }

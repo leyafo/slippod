@@ -78,7 +78,6 @@ function invalidLicenseTemplate() {
 
 async function initWindow() {
     const licenseToken = await license.getLicense();
-    console.log(licenseToken);
 
     if (licenseToken.Type === undefined) {
         document.title = "Enter License";
@@ -97,7 +96,6 @@ async function initWindow() {
             return;
         }
     } else {
-        console.log('trial license expired');
         document.title = "Enter License";
         showRegisterForm();
     }
@@ -158,7 +156,6 @@ function showRegisterSuccess() {
 
 function showLicenseInfo(license) {
     const licenseInfoDiv = licenseInfoTemplate();
-    console.log(licenseInfoDiv);
     const emailInput = licenseInfoDiv.querySelector('#emailInput');
     const licenseKeyInput = licenseInfoDiv.querySelector('#licenseKeyInput');
 

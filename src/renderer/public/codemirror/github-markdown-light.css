@@ -1041,3 +1041,11 @@
     border-bottom: 1px solid var(--sunlight-300);
 }
 
+.markdown-body iframe,
+.markdown-body embed,
+.markdown-body object {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    border: 0;
+}
