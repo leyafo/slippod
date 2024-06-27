@@ -31,7 +31,6 @@ function showTagHints(cm, option){
 
             //+1 means remove '#'
             var nakedTag = line.slice(start+1, end).toLowerCase()
-            console.log(nakedTag);
             if (nakedTag === "") {
                 return accept({
                     list: allHints,
@@ -103,7 +102,6 @@ function showLinkHints(cm, option){
 }
 
 function autocompleteHints(cm, option) {
-    // console.log(option)
     if(option.type == 'tag'){
         return showTagHints(cm, option)
     }else if(option.type == 'link'){

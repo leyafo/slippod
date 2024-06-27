@@ -1,79 +1,215 @@
 const db = require('./db.js')
 function insertSampleData() {
-    const slippodTag = `#slippod`
-    const sqliteTag = `#sqlite`
+    const welcomeTag = `#slippod/welcome`
 
-    const slippodHowToSearchCardID = db.createNewCard(`${sqliteTag} ${slippodTag} **如何全文搜索？**
+    const welcomeCardKeyboard = db.createNewCard(`## Keyboard Shortcuts
+
+### Search
+| Action                      | Windows & Linux       | Mac                     |
+|-----------------------------|-----------------------|-------------------------|
+| Activate search box         | Ctrl + K              | Cmd + K                 |
+| Close search box            | Esc                   | Esc                     |
+| Select next item            | Arrow Down or Ctrl + N | Arrow Down or Ctrl + N |
+| Select previous item        | Arrow Up or Ctrl + P   | Arrow Up or Ctrl + P   |
+| Jump to selected item       | Enter                 | Enter                   |
+| Create new card (no prompt) | Enter                 | Enter                   |
+
+### Card List
+| Action                      | Windows & Linux       | Mac                     |
+|-----------------------------|-----------------------|-------------------------|
+| Select next card            | Arrow Down or Ctrl + N | Arrow Down or Ctrl + N |
+| Select previous card        | Arrow Up or Ctrl + P   | Arrow Up or Ctrl + P   |
+| Cancel selection            | Esc                   | Esc                     |
+| View selected card          | V                     | V                       |
+| Edit selected card          | Enter                 | Enter                   |
+| Delete selected card        | Ctrl + D              | Cmd + D                 |
+
+### Card Creation
+| Action                      | Windows & Linux       | Mac                     |
+|-----------------------------|-----------------------|-------------------------|
+| Create new card             | Ctrl + O              | Cmd + O                 |
+| Save card                   | Ctrl + S              | Cmd + S                 |
+| Save and exit edit mode     | Ctrl + Enter          | Cmd + Enter             |
+
+### Card Editting
+| Action                      | Windows & Linux       | Mac                     |
+|-----------------------------|-----------------------|-------------------------|
+| Copy                        | Ctrl + C              | Cmd + C                 |
+| Paste                       | Ctrl + V              | Cmd + V                 |
+| Select all                  | Ctrl + A              | Cmd + A                 |
+| Undo                        | Ctrl + Z              | Cmd + Z                 |
+| Redo                        | Ctrl + Shift + Z      | Cmd + Shift + Z         |
+| Move to line start          | Ctrl + A              | Ctrl + A                |
+| Move to line end            | Ctrl + E              | Ctrl + E                |
+| Move cursor forward one char| Ctrl + F              | Ctrl + F                |
+| Move cursor backward one char| Ctrl + B              | Ctrl + B               |
+| Move cursor up one line     | Ctrl + P              | Ctrl + P                |
+| Move cursor down one line   | Ctrl + N              | Ctrl + N                |
+| Move cursor backward one word| Alt + B               | Alt + B                |
+| Move cursor forward one word| Alt + F               | Alt + F                 |
+| Move to start               | Ctrl + Arrow Up       | Cmd + Arrow Up          |
+| Move to end                 | Ctrl + Arrow Down     | Cmd + Arrow Down        |
+| Select forward one char     | Ctrl + Shift + F      | Ctrl + Shift + F        |
+| Select backward one char    | Ctrl + Shift + B      | Ctrl + Shift + B        |
+| Select forward one word     | Alt + Shift + B       | Alt + Shift + B         |
+| Select backward one word    | Alt + Shift + F       | Alt + Shift + F         |
+| Select to line start        | Ctrl + Shift + A      | Ctrl + Shift + A        |
+| Select to line end          | Ctrl + Shift + E      | Ctrl + Shift + E        |
+| Delete forward one word     | Ctrl + W              | Ctrl + W                |
+| Delete backward one word    | Alt + D               | Alt + D                 |
+| Delete to line start        | Ctrl + U              | Ctrl + U                |
+| Delete to line end          | Ctrl + K              | Ctrl + K                |
+
+---
+
+${welcomeTag}`)
+
+    const welcomeCardPrivacy = db.createNewCard(`## 🔒 Data privacy
+Your data security is our top priority. In Slippod, all your data is stored locally and you can back it up anywhere you want. Since we use SQLite which is an open source database technology, you can directly read the database file with tools available free. 
+
+We don't track you. The only server interaction is for license verification, nothing more. 
+
+---
+
+${welcomeTag}`)
+
+    const welcomeCardBackup = db.createNewCard(`## 💾 Backup your cards
+Slippod uses a local database technology called SQLite. All your cards are stored locally in a database file. Backing up your cards is as simple as saving that database file.
+
+To backup your cards, follow the steps below:
+1. Go to Settings (\`⌘+, / Ctrl+,\`)
+2. Look up the folder your database file is stored
+3. Open the folder and copy the database file to where you want to back it up
+
+---
+
+${welcomeTag}`)
+
+    const welcomeCardSearch = db.createNewCard(`## 🔍 How to use search
+Slippod supports full text search. To search your cards, click the search bar on top (\`⌘+K / Ctrl+K\`) and type what you are search for. Since all your data is stored locally, search is incredibly fast. 
+
+---
+
+${welcomeTag}`)
     
-全文搜索的意思是你敲下的每一个字都会索引，你在搜索框（快捷键 Ctrl / CMD + K ） 搜索任何内容都可以在秒级返回。`)
+    const welcomeCardDetails = db.createNewCard(`## View a card's incoming and outgoing cards
+If you are famillar with the concepts of networked thoughts or Zettelkasten, you are likely familar with bidirectional links between a note. Slippod supports bidirectional linking out of the box. 
 
-    const slippodTechSQLiteCardID = db.createNewCard(`${slippodTag} ${sqliteTag} **Slippod 采用 SQLite 做数据存储**
-    
-SQLite 的好处有：
-* Local first，你的数据永远只属于你；
-* 小巧，一个文件可以存储所有数据；
-* 功能强大，一个拥有全功能的数据库； 
-* 无须安装任何三方软件，如打开一个文件一样的加载数据库；
-* SQL 是最强大的查询语言；  
-* 支持全文搜索 @${slippodHowToSearchCardID} 。`)
+To view bidirectional linked cards for a specific card, simply click an \`@id\` on any card and a card details window should open to display all the incoming cards and outgoing cards of the card.
 
-    db.createNewCard(`${slippodTag} **如何使用 tag 整理卡片？**
+![Slippod card details](https://download.slippod.com/slippod-card-details.png)
 
-笔记支持 tagging。 在卡片中可直接插入 tag，格式为:  ${slippodTag}。`)
+---
 
-    db.createNewCard(`${slippodTag} **如何建立笔记的双链？**
+${welcomeTag}`)
 
-输入 @ 链接到其他笔记，建立笔记间的双链。比如： @${slippodTechSQLiteCardID} 。`)
+    const welcomeCardMultiWindows = db.createNewCard(`## View cards from different tags side by side
+You can open as many Slippod windows as you need. To clone a Slippod window, all you need to do is click the Duplicate window icon on the top right corner.
 
-    db.createNewCard(`${slippodTag} **如何新建笔记？**
+![Duplicate window icon](https://download.slippod.com/slippod-app-ui-window-clone.png)
 
-* Ctrl / Cmd + O 激活输入框， Ctrl / Cmd + Enter 提交新建笔记。 
-* 按下 Ctrl + K 输入任意内容，如没有搜索到任何内容，再按下 Enter 键即可快速新建笔记。`)
+With multiple windows, you can view cards from different tags side by side. This will allow you to understand how different cards are related from different topics.
 
-    db.createNewCard(`${slippodTag} **Slippod快捷键**
+![Multiple windows side by side](https://download.slippod.com/slippod-multiple-windows.png)
 
-| 类目   | 操作        | Windows & Linux       | Mac                   |
-|------|-----------|-----------------------|-----------------------|
-| 搜索   | 激活搜索框     | Ctrl + K              | Cmd + K               |
-| 搜索   | 关闭搜索框     | Esc                   | Esc                   |
-| 搜索   | 向下选下一条目   | Arrow Down / Ctrl + N | Arrow Down / Ctrl + N |
-| 搜索   | 向上选上一条目   | Arrow Up / Ctrl + P   | Arrow Up / Ctrl + P   |
-| 搜索   | 跳转所选条目    | Enter                 | Enter                 |
-| 搜索   | 新建卡片（无提示） | Enter                 | Enter                 |
-| 卡片列表 | 选下一张卡片    | Arrow Down / Ctrl + N | Arrow Down / Ctrl + N |
-| 卡片列表 | 选上一张卡片    | Arrow Up / Ctrl + P   | Arrow Up / Ctrl + P   |
-| 卡片列表 | 取消选中状态    | Esc                   | Esc                   |
-| 卡片列表 | 查看选中卡片    | V                      |V                   |
-| 卡片列表 | 编辑所选卡片    | Enter                 | Enter                 |
-| 卡片列表 | 删除所选卡片    | Ctrl + D              | Cmd + D              |
-| 卡片   | 新建卡片      | Ctrl + O              | Cmd + O               |
-| 卡片   | 保存卡片      | Ctrl + S                | Cmd + S                 |
-| 卡片   | 保存卡片且退出编辑 | Ctrl + Enter          | Cmd + Enter           |
-| 文本编辑 | 复制        | Ctrl + C                | Cmd + C                 |
-| 文本编辑 | 粘贴        | Ctrl + V                | Cmd + V               |
-| 文本编辑 | 全选        | Ctrl + A                | Cmd + A               |
-| 文本编辑 | 回撤        | Ctrl + Z              | Cmd + Z               |
-| 文本编辑 | 向前回撤      | Ctrl + Shift + Z      | Cmd + Shift + Z       |
-| 文本编辑 | 移动到行首     | Ctrl + A                | Ctrl + A                |
-| 文本编辑 | 移动到行尾     | Ctrl + E                | Ctrl + E                |
-| 文本编辑 | 光标前移一个字符  | Ctrl + F                | Ctrl + F                |
-| 文本编辑 | 光标后移一个字符  | Ctrl + B                | Ctrl + B                |
-| 文本编辑 | 光标向上移动一行  | Ctrl + P                | Ctrl + P                |
-| 文本编辑 | 光标向下移动一行  | Ctrl + N                | Ctrl + N                |
-| 文本编辑 | 光标后移一个单词  | Alt + B                 | Alt + B                 |
-| 文本编辑 | 光标前移一个单词  | Alt + F                 | Alt + F                 |
-| 文本编辑 | 光标移到开始  | Ctrl + Arrow Up                 |Cmd + Arrow Up                 |
-| 文本编辑 | 光标移到结束  |  Ctrl + Arrow Down                 |Cmd + Arrow Down                 |
-| 文本编辑 | 向前选中一个字符  | Ctrl + Shift + F          | Ctrl + Shift + F          |
-| 文本编辑 | 向后选中一个字符  | Ctrl + Shift + B          | Ctrl + Shift + B          |
-| 文本编辑 | 向前选中一个单词  | Alt + Shift + B           | Alt + Shift + B           |
-| 文本编辑 | 向后选中一个单词  | Alt + Shift + F           | Alt + Shift + F           |
-| 文本编辑 | 选中至行首     | Ctrl + Shift+A          | Ctrl + Shift + A          |
-| 文本编辑 | 选中至行尾     | Ctrl + Shift+E          | Ctrl + Shift + E          |
-| 文本编辑 | 向后删除一个单词  | Ctrl + W                | Ctrl + W                |
-| 文本编辑 | 向前删除一个单词  | Alt + D                 | Alt + D                 |
-| 文本编辑 | 删除到行首     | Ctrl + U                | Ctrl + U                |
-| 文本编辑 | 删除到行尾     | Ctrl + K                | Ctrl + K                |`)
+---
+
+${welcomeTag}`)
+
+    const welcomeCardHashLink = db.createNewCard(`## Reference other cards
+You can reference other cards by using \`@\`, like @${welcomeCardFirst}. Simply typing \`@\` will bring up an auto-suggested list of cards and you can continue to type to search the specific card you want to reference.
+
+---
+
+${welcomeTag}`)
+
+    const welcomeCardNestedTags = db.createNewCard(`## Organize tags with nested tags
+You can create nested tags by using \`/\`, like ${welcomeTag}. This allows you to organize your topics or themes in a hierarchical way.
+
+---
+
+${welcomeTag}`)
+
+    const welcomeCardTagging = db.createNewCard(`## Using tags in a card
+Slippod uses tags to organize cards since a card can belong to multiple categories. Just like social media, you can tag a card simply using the \`#\` symbol, like \`#slippod\`, and they can go anywhere in your cards. Slippod's Sidebar will collect your tags, and you can click a tag to instantly see all cards that contain it. 
+
+---
+
+${welcomeTag}`)
+
+    const welcomeCardMoreThanText = db.createNewCard(`## More than text
+Your card can contain images, videos, e.g.,
+
+![Buzz Lightyear](https://lumiere-a.akamaihd.net/v1/images/gallery_toystory_03jpg_2abbab4f.jpeg)
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/BwZs3H_UN3k?si=VdTLBmYxE8hv--c0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+Bascially anything that's stardard HTML syntax can be included in a card.
+
+---
+
+${welcomeTag}`)
+
+    const welcomeCardMarkdown = db.createNewCard(`## Writing with styles using markdown
+You can write markdown syntax to add all kinds of text styles and formatting your cards in a structureed way.
+
+For a full reference of what markdown syntax you can use, you can check out [this](https://sindresorhus.com/github-markdown-css/).
+
+---
+
+${welcomeTag}`)
+
+    const welcomeCardEditing = db.createNewCard(`## Editing a card
+For any card you want to edit, simply double clicks it to enter editting mode to make your edits. Once done editing, click the paper plane button to save it (\`⌘+Enter / Ctrl+Enter\`).
+
+---
+
+${welcomeTag}`)
+
+    const welcomeCardNewCard = db.createNewCard(`## How to create a new cards
+Simply click the always present top compose box at the top your current card stack (\`⌘+O / Ctrl+O\`), type what you want to note down and click the paper plane button to save it (`⌘+Enter / Ctrl+Enter`).
+
+![Slippod compose box](https://download.slippod.com/slippod-app-ui-compose-box.png)
+
+---
+
+${welcomeTag}`)
+
+    const welcomeCardFirst = db.createNewCard(`## 🎉 Welcome to Slippod 👋
+
+Slippod is a simple, privacy-first note-taking app designed specifically for your desktop. Effortlessly capture notes while you read, watch, or listen. Perfect for focused work, Slippod helps you organize your thoughts without distractions.
+
+To get started, click any of the referenced cards below to learn more about a feature or topic.
+
+---
+
+### 🚀 Get started
+* 📝 How to create a new card @${welcomeCardNewCard}
+* 🖍️ Formatting cards
+  * Editing a card @${welcomeCardEditing}
+  * Write with styles using markdown @${welcomeCardMarkdown}
+  * More than text @${welcomeCardMoreThanText}
+* 🗃️ Oganizing cards
+  * Use tags in a card @${welcomeCardTagging}
+  * Organize tags with nested tags @${welcomeCardNestedTags}
+  * Reference other cards @${welcomeCardHashLink}
+* 👀 Viewing cards
+  * View cards from different tags side by side @${welcomeCardMultiWindows}
+  * View a card's incoming and outgoing cards @${welcomeCardDetails}
+* 🔍 How to use search @${welcomeCardSearch}
+* 💾 Backup your cards @${welcomeCardBackup}
+
+### 🛠️ Under the hood
+* 🔒 Data privacy @${welcomeCardPrivacy}
+* ⌨️ Keyboard shortcuts @${welcomeCardKeyboard}
+
+---
+
+Thank you for trying out Slippod. You can use Slippod for free for 14 days. After the free trial period, a license is required to continue using the app.
+
+As we are now in the beta testing phase, we are gifting free licenses to our beta testers. All you have to do is [send us an email](https://slippod.com/pricing/) to request your free license.
+
+${welcomeTag}`)
 
 }
 
