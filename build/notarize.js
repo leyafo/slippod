@@ -1,19 +1,19 @@
-const { notarize } = require('@electron/notarize');
+const { notarize } = require("@electron/notarize");
 
-console.log(process.env.APPLE_ID_PASSWORD);
 exports.default = async function notarizing(context) {
-  const { electronPlatformName, appOutDir } = context;  
-  if (electronPlatformName !== 'darwin') {
+  const { electronPlatformName, appOutDir } = context;
+  if (electronPlatformName !== "darwin") {
     return;
   }
 
+  console.log(process.env.APPLE_ID_PASSWORD);
   const appName = context.packager.appInfo.productFilename;
 
   return await notarize({
-    appBundleId: 'com.anywherearctest.slippodtest',
+    appBundleId: "com.anywherearc.slippod",
     appPath: `${appOutDir}/${appName}.app`,
-    appleId: "iosmediadev@gmail.com",
+    appleId: "support@anywherearc.com",
     appleIdPassword: process.env.APPLE_ID_PASSWORD,
-    teamId: 'F2W7ZZD6VR',
+    teamId: "DN5KWP78X9",
   });
 };
