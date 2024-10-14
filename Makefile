@@ -8,11 +8,11 @@ all: release
 
 bundle_main:
 	mkdir -p $(MAIN_DIST)
-	cp -r src/main/* $(MAIN_DIST)/
+	cp -rf src/main/* $(MAIN_DIST)/
 
 preload:
 	mkdir -p $(PRELOAD_DIST)
-	cp -r src/preload/* $(PRELOAD_DIST)/
+	cp -rf src/preload/* $(PRELOAD_DIST)/
 
 renderer:
 	npx vite build 
