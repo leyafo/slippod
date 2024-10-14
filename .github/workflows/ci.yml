@@ -30,10 +30,10 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
-jobs:
-  draft_release:
-    with:
-      dry-run: ${{ github.event_name != 'push' || github.ref_name != 'master' }}
-    uses: ./.github/workflows/release.yml
-    secrets: inherit
+  #jobs:
+  #  draft_release:
+  #    with:
+  #      dry-run: ${{ github.event_name != 'push' || github.ref_name != 'master' }}
+  #    uses: ./.github/workflows/release.yml
+  #    secrets: inherit
 
