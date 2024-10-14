@@ -25,9 +25,6 @@ function showSettingItem(){
     return windowMgr.createSettingsWindow().show()
 }
 
-function showLicenseItem(){
-    return windowMgr.createRegisterWindow().show()
-}
 
 function reloadItem(){
     return BrowserWindow.getFocusedWindow().reload();
@@ -43,7 +40,6 @@ module.exports = {
     startSearchItem,
     appQuitItem,
     minimizeItem,
-    showLicenseItem,
     reloadItem,
     toggleDevToolsItem,
     showSettingItem,

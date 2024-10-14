@@ -1029,122 +1029,6 @@ let removeSplashScreen = function () {
     splashScreen.remove();
 }
 
-function trialBarTemplate(trialBarText) {
-    let template = `<div id="trialBar">
-                        <div id="trialBarContainer">
-                            <span id="trialBarCloseBtn"></span>
-                            <div id="trialBarText">${trialBarText}</div>
-                            <button id="trialBarUnlockBtn"><span class="icon"></span><span class="label">Unlock</span></button>
-                        </div>
-                    </div>`;
-    
-    return CM.htmlToElement(template);
-}
-
-async function checkLicense() {
-    try {
-        const licenseToken = await license.getLicense();
-        
-        if (licenseToken.Type === undefined) {
-            console.log('No license token found');
-            setReadOnlyMode();
-            showTrialPrompt();
-            return;
-        }
-
-        if (licenseToken.isValid) {
-            if (licenseToken.Type === 'trial') {
-                await showTrialBar();
-            }
-            if (licenseToken.Type === 'long') {
-                CM.hideTrialBar();
-            }
-            return;
-        } else {
-            setReadOnlyMode();
-            return;
-        }
-    } catch (error) {
-        console.error('Error during license check:', error);
-    }
-}
-
-async function showTrialPrompt() {
-    const trialBar = trialBarTemplate(`You are free to use Slippod for 14 days`);
-    const trialBarCloseBtn = trialBar.querySelector('#trialBarCloseBtn');
-    const trialBarUnlockBtn = trialBar.querySelector('#trialBarUnlockBtn');
-
-    trialBarCloseBtn.addEventListener('click', function() {
-        CM.hideTrialBar();
-    });
-    
-    trialBarUnlockBtn.addEventListener('click', async function() {
-        trialBarUnlockBtn.disabled = true;
-        trialBarUnlockBtn.classList.add('saving');
-
-        await license.register_trial();
-        const trialLicense = await license.getLicense();
-
-        if (trialLicense.isValid) {
-            unSetReadOnlyMode();
-            pages.reloadAll();
-            return;
-        } else {
-            console.log('Invalid trial license');
-        }
-    });
-
-    CM.main.appendChild(trialBar);
-}
-
-async function calTrialDaysLeft() {
-    const licenseToken = await license.getLicense();
-
-    if (licenseToken.Type == 'trial') {
-        let currentDate = new Date();
-        currentDate.setHours(0, 0, 0, 0);
-        // for test only
-        // currentDate.setDate(currentDate.getDate() + 30);
-        let targetDate = new Date(licenseToken.End);
-        let differenceInMilliseconds = targetDate - currentDate;
-    
-        return Math.floor(differenceInMilliseconds / (1000 * 60 * 60 * 24));
-    } else {
-        return;
-    }
-}
-
-async function showTrialBar() {
-    const trialDaysLeft = await calTrialDaysLeft();
-    let trialBar = {}
-    if (trialDaysLeft >= 0){
-        let daysLeft = (trialDaysLeft==0) ? 1 : trialDaysLeft;
-        trialBar = trialBarTemplate(`Trial version expires in ${daysLeft} days`);
-    }else{
-        let absDaysLeft = Math.abs(trialDaysLeft);
-        trialBar = trialBarTemplate(`Trial version expired ${absDaysLeft} days ago`);
-    }
-    const trialBarCloseBtn = trialBar.querySelector('#trialBarCloseBtn');
-    const trialBarUnlockBtn = trialBar.querySelector('#trialBarUnlockBtn');
-
-    trialBarCloseBtn.addEventListener('click', function() {
-        CM.hideTrialBar();
-    });
-    
-    trialBarUnlockBtn.addEventListener('click', function() {
-        license.showRegisterWindow();
-    });
-
-    CM.main.appendChild(trialBar);
-}
-
-function setReadOnlyMode() {
-    CM.listArea.dataset.readonly = 'true';
-}
-
-function unSetReadOnlyMode() {
-    CM.listArea.removeAttribute('data-readonly');
-}
 
 CM.appSettingsBtn.addEventListener('click', function(event) {
     pages.openSetting();
@@ -1187,7 +1071,6 @@ window.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    checkLicense();
 
     //load tags
     db.getAllTags().then(refreshTagTree)

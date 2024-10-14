@@ -77,14 +77,6 @@ export function htmlToElement(html) {
     return template.content.firstChild;
 }
 
-export function hideTrialBar() {
-    const trialBar = document.getElementById('trialBar');
-
-    if (trialBar) {
-        trialBar.remove();
-    }
-}
-
 export function selectSiblingElement(element, className) {
     const parent = element.parentElement;
     const sibling = parent.querySelector(className);
