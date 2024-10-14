@@ -2,29 +2,10 @@ const {dialog, shell, clipboard, ipcMain, app, BrowserWindow } = require("electr
 const windowMgr = require('./window')
 const createMarkdownRender = require("./md_render.js").createMarkdownRender  
 const config = require('./config.js');
-const licenseModule = require("./l.js");
 const db = require("./db.js");
 const path = require('path')
 const fs = require('fs')
 const dbSchema = require('./schema.js');
-
-const licenseKey = 'license'
-let globalLicense = {}
-
-function acquireLicense(){
-    let tokenStr = db.getConfig(licenseKey);
-    if(tokenStr == ''){
-        return {}
-    }
-    let licenseObj = {}
-    try{
-        licenseObj =  JSON.parse(tokenStr)
-    }catch(error){
-        console.error(error)
-        return {}
-    }
-    return licenseObj
-}
 
 ipcMain.handle("duplicateWindow", async function(event, ...args)  {
     let newMainWindow = windowMgr.duplicateMainWindow();
@@ -57,28 +38,7 @@ ipcMain.handle("showRegisterWindow", async function(event){
     windowMgr.createRegisterWindow() 
 });
 
-['register', 'register_trial'].forEach(function(funcName)  {
-    ipcMain.handle(funcName, async function(event, ...args)  {
-        let result = licenseModule[funcName](...args);
-        result.then(function(response){
-            if(response.statusCode == 200){
-                db.setConfig(licenseKey, response.body)
-            }
-        })
-        return result
-    });
-});
-
-ipcMain.handle("getLicense", async function(event){
-    globalLicense = acquireLicense()//refresh global license
-    let licenseObj = globalLicense
-    let isValid = await licenseModule.checkLicense(licenseObj)
-    licenseObj.isValid = isValid
-    return licenseObj
-})
-
 ipcMain.handle("reloadAll", async function(event, ...args)  {
-    globalLicense = acquireLicense()
     return windowMgr.reloadAllMainWindow()
 });
 
@@ -137,18 +97,6 @@ function registerDBFunctions(){
     }
 
     const functionNames = Object.keys(db);
-    const needCheckFunctions = new Set([
-        "moveCardToTrash",
-        "updateCardEntryByID",
-        "createNewCard",
-        "renameTag",
-        "updateDraft",
-        "removeCardFromTrash",
-        "removeCardPermanently",
-        "restoreCard",
-        "setConfig",
-    ])
-    globalLicense = acquireLicense()
     const lastCreatedCard = db.getCards(0, 1)
     let lastCreatedTime = Date.now()
     if(lastCreatedCard.length != 0){
@@ -156,12 +104,6 @@ function registerDBFunctions(){
     }
     functionNames.forEach(function(funcName)  {
         ipcMain.handle(funcName, async function(event, ...args)  {
-            if (needCheckFunctions.has(funcName)){
-                let result = await licenseModule.checkLicense(globalLicense, lastCreatedTime)
-                if (result == false){
-                    return {"error":"license is not valid"}
-                }
-            }
             return db[funcName](...args);
         });
     });

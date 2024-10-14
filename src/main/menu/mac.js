@@ -1,6 +1,5 @@
 const {BrowserWindow, app} = require('electron');
 const common = require("./common.js")
-
 // Create the Application's main menu
 function macTemplate() {
     let menuItems = [
@@ -18,13 +17,6 @@ function macTemplate() {
                     label: 'Settings...',
                     accelerator: 'Command+,',
                     click: common.showSettingItem,
-                },
-                {
-                    type: 'separator'
-                },
-                {
-                    label: 'License...',
-                    click: common.showLicenseItem,
                 },
                 {
                     type: 'separator'

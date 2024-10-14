@@ -1,6 +1,6 @@
 const common = require("./common.js")
 
-function linuxTemplate() {
+function template() {
     let menuItems = [
         {
             label: 'Slippod',
@@ -12,13 +12,6 @@ function linuxTemplate() {
                 {
                     label: 'Settings...',
                     click: common.showSettingItem, 
-                },
-                {
-                    type: 'separator'
-                },
-                {
-                    label: 'License...',
-                    click: common.showLicenseItem,
                 },
                 {
                     type: 'separator'
@@ -117,5 +110,5 @@ function linuxTemplate() {
 }
 
 module.exports={
-    linuxTemplate
+    template
 }

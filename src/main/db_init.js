@@ -205,10 +205,6 @@ To get started, click any of the referenced cards below to learn more about a fe
 
 ---
 
-Thank you for trying out Slippod. You can use Slippod for free for 14 days. After the free trial period, a license is required to continue using the app.
-
-As we are now in the beta testing phase, we are gifting free licenses to our beta testers. All you have to do is [send us an email](https://slippod.com/pricing/) to request your free license.
-
 ${welcomeTag}`)
 
 }

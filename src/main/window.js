@@ -195,37 +195,6 @@ function createDetailWindow(cardID) {
     return detailWindow;
 }
 
-function createRegisterWindow() {
-    if (!mainWindow) {
-        throw new Error("Main window must be initialized before register window");
-    }
-    if (registerWindow) {
-        registerWindow.show();
-        return registerWindow;
-    }
-
-    const windowConfig = {
-        width: 520,
-        height: 300,
-        icon: conf.getIconPath(),
-        show: false,
-        webPreferences: {
-            preload: getPreloadPath("license.js"),
-            scrollBounce: true,
-            nodeIntegration: true,
-        },
-    };
-
-    registerWindow = createWindow(windowConfig, 'license.html');
-    registerWindow.setMenuBarVisibility(false);
-
-    registerWindow.on("closed", () => {
-        registerWindow = null;
-    });
-
-    return registerWindow;
-}
-
 function setupDevTools(window) {
     if (env.isDev()) {
         const contextMenu = require("electron-context-menu");
@@ -255,7 +224,6 @@ module.exports = {
     createMainWindow,
     createSettingsWindow,
     createDetailWindow,
-    createRegisterWindow,
     duplicateMainWindow,
     getSettingsWindow,
     getRegisterWindow,
