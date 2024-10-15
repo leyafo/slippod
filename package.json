@@ -1,7 +1,7 @@
 {
   "name": "Slippod",
   "description": "just for fun",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "private": true,
   "author": {
     "name": "Anywhere Arc LTD"
@@ -29,9 +29,6 @@
   },
   "dependencies": {
     "better-sqlite3": "^8.6.0",
-    "bytenode": "^1.5.3",
-    "electron-updater": "6.1.4",
-    "marked": "^5.0.2",
-    "systeminformation": "^5.21.12"
+    "marked": "^5.0.2"
   }
 }
