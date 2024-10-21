@@ -1,0 +1,103 @@
+name: Release
+on:
+  workflow_call:
+    inputs:
+      dry-run:
+        description: 'Compiles the app but not upload artifacts to distribution server'
+        default: false
+        required: false
+        type: boolean
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: 'bash'
+  
+jobs:
+  draft_release:
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      
+    permissions:
+      contents: write # Allows this job to create releases
+
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ macos-latest, ubuntu-latest, windows-latest ]
+
+    runs-on: ${{ matrix.os }}
+     
+    steps:
+      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4
+      - uses: actions/setup-node@v3
+        with:
+          cache: 'npm'
+
+      - run: npm ci
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+
+      - run: make release
+
+      - name: Compile artifacts ${{ inputs.dry-run && '' || 'and upload them to github release' }}
+        # I use this action because it is capable of retrying multiple times if there are any issues with the distribution server
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 15
+          max_attempts: 6
+          retry_wait_seconds: 15
+          retry_on: error
+          shell: 'bash'
+          command: npx --no-install electron-builder --config electron-builder.config.js --publish ${{ inputs.dry-run && 'never' || 'always' }}
+        env:
+          # Code Signing params
+          # See https://www.electron.build/code-signing
+          MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+          MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+          CSC_LINK: ${{ secrets.MACOS_CERTIFICATE }}
+          CSC_KEY_PASSWORD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+          APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
+          # Publishing artifacts
+          GH_TOKEN: ${{ secrets.github_token }} # GitHub token, automatically provided (No need to define this secret in the repo settings)
+        
+      - name: Set File Path Based on OS
+        id: set-file-path
+        run: |
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            echo "Setting file for Windows"
+            echo "file=out/slippod.exe" >> $GITHUB_ENV
+            echo "filename=slippod.exe" >> $GITHUB_ENV
+            certUtil -hashfile out/slippod.exe SHA256
+          elif [ "${{ runner.os }}" = "macOS" ]; then
+            echo "Setting file for macOS"
+            echo "file=out/slippod.dmg" >> $GITHUB_ENV
+            echo "filename=slippod.dmg" >> $GITHUB_ENV
+            shasum -a 256 out/slippod.dmg
+          elif [ "${{ runner.os }}" = "Linux" ]; then
+            echo "Setting file for Linux"
+            echo "file=out/slippod.AppImage" >> $GITHUB_ENV
+            echo "filename=slippod.AppImage" >> $GITHUB_ENV
+            sha256sum out/slippod.AppImage
+          fi
+           
+        shell: bash
+
+      - name: Upload to Cloudflare
+        uses: cloudflare/wrangler-action@v3
+        with:
+          shell: 'bash'
+          accountId: '${{ secrets.CLOUDFLARE_ACCOUNT_ID }}'
+          apiToken: '${{ secrets.CLOUDFLARE_API_TOKEN }}'
+          command: 'whoami' 
+          postCommands: |
+            echo "Uploading ${{ env.file }} to Cloudflare slippod/${{ env.filename }}..."
+            wrangler r2 object put slippod/${{ env.filename }} --file="${{ env.file }}"
+            echo "***done***" 
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }} 
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
